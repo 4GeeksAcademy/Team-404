@@ -7,8 +7,7 @@ export const Home = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<div className="text-center mt-5">
-			<h1>Hello Rigo!! CAMBIADO OTRA VEZ</h1>
+	
 			<p>
 				<img src={rigoImageUrl} />
 			</p>
