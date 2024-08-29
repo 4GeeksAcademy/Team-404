@@ -1,7 +1,58 @@
-/*
-    home.css: This website contains selectors only used in home.css
+img{
+    border-radius: 10%;
+    margin: 2%;
+    width: 500px;
+}
+.divprincipal {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
 
-    All pages share the styles on index.css but you should create 
-    one more css for each page that will contain the selected used 
-    on that page only (the ones not reused in other pages).
-*/
+
+.cardDescription {
+    width: 90%;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 16px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1),
+                0 4px 6px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cardDescription:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15),
+                0 8px 10px rgba(0, 0, 0, 0.12);
+}
+
+.card-title {
+    margin: 0 0 15px;
+    font-size: 26px;
+    color: #333;
+    text-align: center;
+}
+
+.card-text {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    text-align: justify;
+}
+
+.card-link {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 16px;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.card-link:hover {
+    color: #0056b3;
+}

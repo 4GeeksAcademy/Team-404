@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 
 const LoginForm = () => {
+
     return (
         <div className="container mt-5 d-flex justify-content-center">
             <div className="card p-4" style={{ maxWidth: '400px', border: '1px solid #ccc' }}>
@@ -19,7 +20,7 @@ const LoginForm = () => {
                         <a href="#" className="text-decoration-none" style={{ color: '#007bff' }}><u>He olvidado mi contraseña</u></a>
                     </div>
                     <button type="submit" className="btn btn-danger w-100 mb-4" style={{ backgroundColor: '#ff0055' }}>Iniciar sesión</button>
-                </form>
+                
                 <hr />
                 <div className="text-center mb-3">
                     <span>¿Eres nuevo cliente?</span>
@@ -27,6 +28,7 @@ const LoginForm = () => {
                 <Link to="/crearCuenta">
                     <button className="btn btn-outline-secondary w-100">Crear cuenta</button>
                 </Link>
+                </form>
             </div>
         </div>
     );
