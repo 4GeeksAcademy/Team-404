@@ -23,7 +23,8 @@ export const Navbar = () => {
 							</a>
 							<ul className="dropdown-menu" aria-labelledby="navbarDropdownSobreNosotros">
 								<li><a className="dropdown-item" href="#">Nuestra historia</a></li>
-								<li><a className="dropdown-item" href="#">Nuestro equipo</a></li>							</ul>
+								<li><a className="dropdown-item" href="#">Nuestro equipo</a></li>							
+							</ul>
 						</li>
 						<li className="nav-item dropdown">
 							<a className="nav-link dropdown-toggle" href="#" id="navbarDropdownContactos" role="button" data-bs-toggle="dropdown" aria-expanded="false">
