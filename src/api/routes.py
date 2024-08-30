@@ -13,7 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your-database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
-@api.route('/hello', methods=['POST', 'GET'])
+@api.route('/api/hello', methods=['POST', 'GET'])
 def handle_hello():
 
     response_body = {
@@ -22,13 +22,17 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-    # Obtener todos los usuarios
+
+# Obtener todos los usuarios
 @api.route('/api/usuarios', methods=['GET'])
 def get_all_users():
     users = User.query.all()
     return jsonify([user.serialize() for user in users]), 200
 
-@api.route('/api/registro', methods=['POST'])
+
+# CREAR USUARIOS
+
+@api.route('/api', methods=['POST'])
 def create_user():
     data = request.get_json()
 

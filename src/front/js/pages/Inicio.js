@@ -25,7 +25,7 @@ export const Inicio = () => {
 
 		try {
 			const response = await axios.post(
-				process.env.BACKEND_URL + "/api/registro",
+				"https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api",
 				signupData, // Enviar los datos en el cuerpo de la solicitud
 				{
 					headers: { "Content-Type": "application/json" }, // Establecer el tipo de contenido
