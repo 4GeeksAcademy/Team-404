@@ -68,7 +68,7 @@ export const Inicio = () => {
 											/>
 										</div>
 										<div className="form-group mb-3">
-											<label htmlFor="password" style={{ color: 'red' }}>Password</label>
+											<label htmlFor="password" style={{ color: 'red' }}>Passsword</label>
 											<input
 												type="password"
 												className="form-control"
