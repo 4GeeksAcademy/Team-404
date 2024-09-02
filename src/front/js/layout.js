@@ -6,7 +6,7 @@ import { BackendURL } from "./component/backendURL";
 import { Inicio } from "./pages/Inicio";
 import LoginForm from "./pages/Acceso";
 import CrearCuenta from "./pages/crearCuenta";
-import Mapa from "./component/Mapa";
+import Mapa from "./pages/Logistica";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
