@@ -6,6 +6,7 @@ import { BackendURL } from "./component/backendURL";
 import { Inicio } from "./pages/Inicio";
 import LoginForm from "./pages/Acceso";
 import CrearCuenta from "./pages/crearCuenta";
+import Mapa from "./component/Mapa";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
@@ -29,6 +30,7 @@ const Layout = () => {
                         <Route element={<Inicio />} path="/" />
                         <Route element={<LoginForm />} path="/login" />
                         <Route element={<CrearCuenta />} path="/crearcuenta" />
+                        <Route element={<Mapa />} path="/mapa" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
