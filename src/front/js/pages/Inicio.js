@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../../styles/home.css";
-import principal from "../../img/ImgPrincipal.png"
-import fotocamion from "../../img/fotocamion.png"
-import fotoruta from "../../img/fotoruta.png"
-
-
+import principal from "../../img/ImgPrincipal.png";
+import fotocamion from "../../img/fotocamion.png";
+import fotoruta from "../../img/fotoruta.png";
 
 export const Inicio = () => {
 	const [signupData, setSignUpData] = useState({
@@ -22,35 +20,37 @@ export const Inicio = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
+	
 		try {
 			const response = await axios.post(
-				"https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api",
-				signupData, // Enviar los datos en el cuerpo de la solicitud
+				'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/inicio',
+				signupData,
 				{
-					headers: { "Content-Type": "application/json" }, // Establecer el tipo de contenido
+					headers: { "Content-Type": "application/json" },
 				}
 			);
-			console.log("Respuesta del servidor:", response);
-			console.log("Usuario registrado:", response.data);
+			console.log("Respuesta del servidor:", response.data);
 		} catch (error) {
-			console.log("Ha habido un error: " + error);
+			console.log("Ha habido un error:", error.response ? error.response.data : error.message);
 		}
 	};
-
 	return (
 		<div className="text-center mt-5">
 			<div className="divprincipal">
-				<div className="cardDescription" >
+				<div className="cardDescription">
 					<div className="card-body">
 						<h5 className="card-title">RUTA TRACK</h5>
-						<p className="card-text">Ruta Track es una innovadora aplicación web y móvil diseñada para gestionar y optimizar rutas de transporte en tiempo real. Los usuarios pueden planificar trayectos, calcular costos y tiempos estimados, y recibir actualizaciones en vivo sobre el progreso del viaje. Con funcionalidades como visualización de rutas, seguimiento en tiempo real, alertas automáticas y reportes detallados, Ruta Track mejora la transparencia, la eficiencia operativa y la toma de decisiones basadas en datos, beneficiando tanto a clientes como a proveedores.</p>
+						<p className="card-text">
+							Ruta Track es una innovadora aplicación web y móvil diseñada para gestionar y optimizar rutas de transporte en tiempo real. Los usuarios pueden planificar trayectos, calcular costos y tiempos estimados, y recibir actualizaciones en vivo sobre el progreso del viaje. Con funcionalidades como visualización de rutas, seguimiento en tiempo real, alertas automáticas y reportes detallados, Ruta Track mejora la transparencia, la eficiencia operativa y la toma de decisiones basadas en datos, beneficiando tanto a clientes como a proveedores.
+						</p>
 					</div>
 				</div>
 				<div>
-					<button type="button" className="btn btn-danger m-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Inicia Sesion</button>
-					<div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-						<div className="modal-dialog" style={{ maxWidth: '250px', }}>
+					<button type="button" className="btn btn-danger m-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+						Inicia Sesion
+					</button>
+					<div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+						<div className="modal-dialog" style={{ maxWidth: '250px' }}>
 							<div className="modal-content">
 								<div className="card p-4" style={{ maxWidth: '400px', border: '1px solid #ccc' }}>
 									<h3 className="text-center mb-4">Iniciar sesión</h3>
@@ -60,7 +60,8 @@ export const Inicio = () => {
 											<input
 												type="text"
 												className="form-control"
-												id="email" name="email"
+												id="email"
+												name="email"
 												placeholder="E-mail"
 												value={signupData.email}
 												onChange={handleChange}
@@ -68,7 +69,7 @@ export const Inicio = () => {
 											/>
 										</div>
 										<div className="form-group mb-3">
-											<label htmlFor="password" style={{ color: 'red' }}>Passsword</label>
+											<label htmlFor="password" style={{ color: 'red' }}>Password</label>
 											<input
 												type="password"
 												className="form-control"
@@ -115,7 +116,6 @@ export const Inicio = () => {
 						<span className="visually-hidden">Siguiente</span>
 					</button>
 				</div>
-
 			</div>
 		</div>
 	);
