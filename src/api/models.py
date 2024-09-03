@@ -3,20 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class User(db.Model):
-
-    __tablename__="user"
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)  # Asegúrate de que este campo exista
 
-    def __repr__(self):
-        return f'<User {self.email}>'
+    def __init__(self, email, password_hash):
+        self.email = email
+        self.password_hash = password_hash
 
     def serialize(self):
         return {
-            "id": self.id,
-            "email": self.email,
-            # do not serialize the password, its a security breach
+            'id': self.id,
+            'email': self.email
         }

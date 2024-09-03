@@ -4,7 +4,6 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Inicio } from "./pages/Inicio";
-import LoginForm from "./pages/Acceso";
 import CrearCuenta from "./pages/crearCuenta";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
@@ -26,8 +25,7 @@ const Layout = () => {
                 <ScrollToTop>
                     <Navbar />
                     <Routes>
-                        <Route element={<Inicio />} path="/" />
-                        <Route element={<LoginForm />} path="/login" />
+                        <Route element={<Inicio />} path="/inicio" />
                         <Route element={<CrearCuenta />} path="/crearcuenta" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
