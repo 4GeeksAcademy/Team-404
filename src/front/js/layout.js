@@ -5,7 +5,6 @@ import { BackendURL } from "./component/backendURL";
 
 import { Inicio } from "./pages/Inicio";
 import CrearCuenta from "./pages/crearCuenta";
-import Mapa from "./component/Mapa";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
@@ -28,7 +27,6 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Inicio />} path="/" />
                         <Route element={<CrearCuenta />} path="/crearcuenta" />
-                        <Route element={<Mapa />} path="/mapa" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
