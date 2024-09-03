@@ -26,7 +26,7 @@ def get_all_users():
     users = User.query.all()
     return jsonify([user.serialize() for user in users]), 200
 
-@api.route('/api/inicio', methods=['POST'])
+@api.route('/api', methods=['POST'])
 def create_user():
     try:
         data = request.get_json()

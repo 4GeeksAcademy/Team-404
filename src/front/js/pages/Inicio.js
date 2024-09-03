@@ -20,10 +20,10 @@ export const Inicio = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-	
+
 		try {
 			const response = await axios.post(
-				'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/inicio',
+				'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api',
 				signupData,
 				{
 					headers: { "Content-Type": "application/json" },
