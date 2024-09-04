@@ -5,24 +5,31 @@ import custom_pin2 from '../../img/custom_pin2.png';
 
 const Mapa = () => {
     const apiOptions = {
-        apiKey: "AIzaSyBWuBaficPm3aUL-DXQUMK8EUZn8Qttdqs"  // Reemplaza con tu clave de API real
+        apiKey: "AIzaSyBWuBaficPm3aUL-DXQUMK8EUZn8Qttdqs", // Reemplaza con tu clave de API real
     };
 
     useEffect(() => {
-        const loader = new Loader(apiOptions);
+        const loadMap = async () => {
+            const loader = new Loader(apiOptions);
+            await loader.load();
 
-        loader.load().then(() => {
             console.log('Maps JS API loaded');
+            
+            // Import the places library after loading the API
+            const { Place } = await google.maps.importLibrary("places");
+
             const map = displayMap();
             const markers = addMarkers(map);
             clusterMarkers(map, markers);
             addPanToMarker(map, markers);
-        });
+        };
+
+        loadMap();  // Call the async function
 
         function displayMap() {
             const mapOptions = {
                 center: { lat: -33.860664, lng: 151.208138 },
-                zoom: 14
+                zoom: 12
             };
             const mapDiv = document.getElementById('map');
             return new google.maps.Map(mapDiv, mapOptions);
@@ -44,7 +51,8 @@ const Mapa = () => {
                 kingStreetWharf: { lat: -33.8665445, lng: 151.1989808 },
                 aquarium: { lat: -33.869627, lng: 151.202146 },
                 darlingHarbour: { lat: -33.87488, lng: 151.1987113 },
-                barangaroo: { lat: -33.8605523, lng: 151.1972205 }
+                barangaroo: { lat: -33.8605523, lng: 151.1972205 },
+                bilbao: { lat: 43.26271, lng: -2.92528 }
             };
             const markers = [];
             for (const location in locations) {
@@ -60,52 +68,46 @@ const Mapa = () => {
         }
 
         function clusterMarkers(map, markers) {
-            const clustererOptions = { imagePath: './img/m' }; // Asegúrate de que esta ruta es correcta
-            new MarkerClusterer({ map, markers, ...clustererOptions });
-        }
-
-        function addPanToMarker(map, markers) {
-            markers.forEach(marker => {
-                marker.addListener('click', event => {
-                    const location = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-                    map.panTo(location);
-                });
-            });
+            const clustererOptions = { imagePath: '../../img/m' }; // Asegúrate de que esta ruta es correcta
+            new MarkerClusterer(map, markers, clustererOptions);
         }
 
         function drawCircle(map, location) {
             const circleOptions = {
-              strokeColor: '#FF0000',
-              strokeOpacity: 0.8,
-              strokeWeight: 1,
-              map: map,
-              center: location,
-              radius: 800
-            }
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 1,
+                map: map,
+                center: location,
+                radius: 800
+            };
             const circle = new google.maps.Circle(circleOptions);
             return circle;
-          }
-          
+        }
+
         function addPanToMarker(map, markers) {
             let circle;
-            markers.map(marker => {
-              marker.addListener('click', event => {
-                const location = { lat: event.latLng.lat(), lng: event.latLng.lng() };
-                map.panTo(location);
-                if (circle) {
-                  circle.setMap(null);
-                }
-                circle = drawCircle(map, location);
-              });
+            markers.forEach(marker => {
+                marker.addListener('click', event => {
+                    const location = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+                    map.panTo(location);
+                    if (circle) {
+                        circle.setMap(null);
+                    }
+                    circle = drawCircle(map, location);
+                });
             });
-          }
+        }
 
-    }, []); // El array vacío asegura que este efecto se ejecute solo una vez al montar el componente
+    }, []);  // Empty array ensures the effect runs only once
 
     return (
         <div>
             <h1>MAPA</h1>
-            <div id="map" style={{ width: '100%', height: '400px' }}></div>
+            <div className="bg-gray d-flex justify-content-start">
+                <input type="text" id="place-input" className="input" />
+            </div>
+            <div id="map" style={{ width: '100%', height: '700px' }}></div>
         </div>
     );
 };
