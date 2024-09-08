@@ -77,11 +77,12 @@
 		"@googlemaps/extended-component-library": "^0.6.11",
 		"@googlemaps/js-api-loader": "^1.16.8",
 		"@react-google-maps/api": "^2.19.3",
-		"@vis.gl/react-google-maps": "^1.1.0",
+		"@vis.gl/react-google-maps": "^1.1.2",
 		"axios": "^1.7.5",
+		"markerclustererplus": "^2.1.4",
 		"prop-types": "^15.6.1",
-		"react": "^16.8.4",
-		"react-dom": "^16.8.4",
+		"react": "^16.14.0",
+		"react-dom": "^16.14.0",
 		"react-polyfills": "0.0.1",
 		"react-router-dom": "^6.3.0"
 	}
