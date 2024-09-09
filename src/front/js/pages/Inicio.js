@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../styles/home.css";
 import principal from "../../img/ImgPrincipal.png";
@@ -10,6 +11,7 @@ export const Inicio = () => {
 		email: "",
 		password: ""
 	});
+	const navigate = useNavigate(); // hook para la redirección
 
 	const handleChange = (e) => {
 		setSignUpData({
@@ -30,10 +32,19 @@ export const Inicio = () => {
 				}
 			);
 			console.log("Respuesta del servidor:", response.data);
+
+			// Si la autenticación es exitosa, redirigir a otra página
+			if (response.status === 201) {
+				navigate('/Mapa'); // Redirige al Mapa
+			} else {
+				// Manejar caso de error en autenticación
+				console.log("Usuario no registrado o credenciales incorrectas");
+			}
 		} catch (error) {
 			console.log("Ha habido un error:", error.response ? error.response.data : error.message);
 		}
 	};
+
 	return (
 		<div className="text-center mt-5">
 			<div className="divprincipal">
@@ -49,7 +60,7 @@ export const Inicio = () => {
 					<button type="button" className="btn btn-danger m-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 						Inicia Sesion
 					</button>
-					<div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+					<div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 						<div className="modal-dialog" style={{ maxWidth: '250px' }}>
 							<div className="modal-content">
 								<div className="card p-4" style={{ maxWidth: '400px', border: '1px solid #ccc' }}>
