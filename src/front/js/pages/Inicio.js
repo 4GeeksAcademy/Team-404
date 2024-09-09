@@ -11,11 +11,25 @@ export const Inicio = () => {
 		email: "",
 		password: ""
 	});
+	const [registerData, setRegisterData] = useState({
+		name: "",
+		lastName: "",
+		company: "",
+		location: ""
+	});
+	const [showRegisterModal, setShowRegisterModal] = useState(false);
 	const navigate = useNavigate(); // hook para la redirección
 
 	const handleChange = (e) => {
 		setSignUpData({
 			...signupData,
+			[e.target.name]: e.target.value
+		});
+	};
+
+	const handleRegisterChange = (e) => {
+		setRegisterData({
+			...registerData,
 			[e.target.name]: e.target.value
 		});
 	};
@@ -45,6 +59,14 @@ export const Inicio = () => {
 		}
 	};
 
+	const handleRegisterSubmit = async (e) => {
+		e.preventDefault();
+		// Lógica para registrar al nuevo usuario
+		console.log("Datos de registro:", registerData);
+		// Cerrar modal después del registro
+		setShowRegisterModal(false);
+	};
+
 	return (
 		<div className="text-center mt-5">
 			<div className="divprincipal">
@@ -59,6 +81,9 @@ export const Inicio = () => {
 				<div>
 					<button type="button" className="btn btn-danger m-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 						Inicia Sesion
+					</button>
+					<button type="button" className="btn btn-outline-secondary m-3" onClick={() => setShowRegisterModal(true)}>
+						Crear cuenta
 					</button>
 					<div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 						<div className="modal-dialog" style={{ maxWidth: '250px' }}>
@@ -96,15 +121,77 @@ export const Inicio = () => {
 											<a href="#" className="text-decoration-none" style={{ color: '#007bff' }}><u>He olvidado mi contraseña</u></a>
 										</div>
 										<button type="submit" className="btn btn-danger w-100 mb-4" style={{ backgroundColor: '#ff0055' }}>Iniciar sesión</button>
-										<div className="text-center mb-3">
-											<span>¿Eres nuevo cliente?</span>
-										</div>
-										<button className="btn btn-outline-secondary w-100">Crear cuenta</button>
 									</form>
 								</div>
 							</div>
 						</div>
 					</div>
+					{showRegisterModal && (
+						<div className="modal fade show" style={{ display: 'block' }} aria-labelledby="registerModalLabel" aria-hidden="true" onClick={() => setShowRegisterModal(false)}>
+							<div className="modal-dialog" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
+								<div className="modal-content">
+									<div className="card p-4">
+										<h3 className="text-center mb-4">Crear cuenta</h3>
+										<form onSubmit={handleRegisterSubmit}>
+											<div className="form-group mb-3">
+												<label htmlFor="name" style={{ color: 'red' }}>Nombre</label>
+												<input
+													type="text"
+													className="form-control"
+													id="name"
+													name="name"
+													placeholder="Nombre"
+													value={registerData.name}
+													onChange={handleRegisterChange}
+													required
+												/>
+											</div>
+											<div className="form-group mb-3">
+												<label htmlFor="lastName" style={{ color: 'red' }}>Apellido</label>
+												<input
+													type="text"
+													className="form-control"
+													id="lastName"
+													name="lastName"
+													placeholder="Apellido"
+													value={registerData.lastName}
+													onChange={handleRegisterChange}
+													required
+												/>
+											</div>
+											<div className="form-group mb-3">
+												<label htmlFor="company" style={{ color: 'red' }}>Empresa</label>
+												<input
+													type="text"
+													className="form-control"
+													id="company"
+													name="company"
+													placeholder="Empresa"
+													value={registerData.company}
+													onChange={handleRegisterChange}
+													required
+												/>
+											</div>
+											<div className="form-group mb-3">
+												<label htmlFor="location" style={{ color: 'red' }}>Población</label>
+												<input
+													type="text"
+													className="form-control"
+													id="location"
+													name="location"
+													placeholder="Población"
+													value={registerData.location}
+													onChange={handleRegisterChange}
+													required
+												/>
+											</div>
+											<button type="submit" className="btn btn-danger w-100 mb-4" style={{ backgroundColor: '#ff0055' }}>Registrar</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					)}
 				</div>
 				<div id="carouselExampleRide" className="carousel slide w-50 mx-auto" data-bs-ride="carousel">
 					<div className="carousel-inner">
@@ -113,7 +200,7 @@ export const Inicio = () => {
 						</div>
 						<div className="carousel-item">
 							<img src={fotocamion} className="d-block w-100" alt="Foto camión" />
-						</div>
+							</div>
 						<div className="carousel-item">
 							<img src={fotoruta} className="d-block w-100" alt="Foto ruta" />
 						</div>
