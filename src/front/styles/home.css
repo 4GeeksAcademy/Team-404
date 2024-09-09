@@ -1,58 +1,134 @@
-img{
-    border-radius: 10%;
-    margin: 2%;
-    width: 500px;
-}
-.divprincipal {
+/* General hero-section styles */
+.hero-section {
     display: flex;
-    width: 100%;
     align-items: center;
+    justify-content: center;
     flex-direction: column;
+    text-align: center;
+    background: url('https://img.freepik.com/vector-gratis/camion-transporte-dibujado-mano_23-2149166245.jpg?t=st=1725906029~exp=1725909629~hmac=0b76f4fb3e5473bf3032e97bbc8f35b96890b700c3b405fd7e9cc35695e5c263&w=1380') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    color: #fff;
+    padding: 100px 20px; /* Ajusta el padding para un diseño más espacioso */
+    overflow: hidden;
+    height: 100vh; /* Altura completa del viewport */
+}
+
+/* Adding a gradient overlay */
+.hero-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Oscurece un poco el fondo para mejorar la legibilidad del texto */
+    z-index: 0;
+}
+
+/* Styles for the content within hero-section */
+.hero-content {
+    position: relative;
+    z-index: 1; /* Mantiene el contenido sobre el overlay */
+    max-width: 800px; /* Aumenta el ancho máximo para el contenido */
+}
+
+/* Modern title styling */
+.hero-title {
+    font-size: 4rem; /* Tamaño de fuente grande para el título */
+    font-weight: 700; /* Peso de fuente fuerte */
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Agrega sombra al texto para mejor legibilidad */
+}
+
+/* Modern slogan styling */
+.hero-slogan {
+    font-size: 2rem; /* Tamaño de fuente más grande */
+    font-style: italic;
+    margin-bottom: 20px;
+    color: #ffd700; /* Color dorado */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra para el slogan */
+}
+
+/* Modern text styling */
+.hero-text {
+    font-size: 1.25rem; /* Tamaño de fuente mayor para el texto */
+    margin-bottom: 20px;
+    line-height: 1.6; /* Espaciado entre líneas para mejor legibilidad */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra para el texto */
+}
+
+/* Button container styles */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px; /* Aumenta la separación entre botones */
+    margin-top: 30px; /* Ajusta el margen superior para mejor alineación */
+}
+
+/* Button styling */
+.btn-custom-primary {
+    background-color: #1e90ff; /* Color azul moderno */
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-custom-primary:hover {
+    background-color: #1c86ee;
+    transform: scale(1.05);
+}
+
+.btn-custom-secondary {
+    background-color: #4caf50; /* Color verde moderno */
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-custom-secondary:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+/* Modal styles */
+.modal-dialog {
+    display: flex;
+    align-items: center;
     justify-content: center;
 }
 
+.modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+}
 
-.cardDescription {
-    width: 90%;
-    background: linear-gradient(145deg, #ffffff, #f0f0f0);
-    border-radius: 16px;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1),
-                0 4px 6px rgba(0, 0, 0, 0.08);
+.card {
+    background: #fff;
     padding: 20px;
-    box-sizing: border-box;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
 }
 
-.cardDescription:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15),
-                0 8px 10px rgba(0, 0, 0, 0.12);
+.form-group label {
+    color: red;
 }
 
-.card-title {
-    margin: 0 0 15px;
-    font-size: 26px;
-    color: #333;
-    text-align: center;
+.form-group input {
+    margin-bottom: 10px;
 }
 
-.card-text {
-    font-size: 16px;
-    color: #555;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    text-align: justify;
-}
-
-.card-link {
-    display: inline-block;
-    margin-right: 10px;
-    font-size: 16px;
+.text-right a {
     color: #007bff;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.card-link:hover {
-    color: #0056b3;
 }
