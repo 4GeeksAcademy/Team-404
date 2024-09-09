@@ -49,7 +49,7 @@ export const Inicio = () => {
 					<button type="button" className="btn btn-danger m-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 						Inicia Sesion
 					</button>
-					<div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+					<div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 						<div className="modal-dialog" style={{ maxWidth: '250px' }}>
 							<div className="modal-content">
 								<div className="card p-4" style={{ maxWidth: '400px', border: '1px solid #ccc' }}>

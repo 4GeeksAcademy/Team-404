@@ -1,80 +1,121 @@
-// Mapa.js
-import React, { useEffect, useState } from 'react';
-import { Loader } from '@googlemaps/js-api-loader';
-import Autocomplete from '../component/AutoComplete';// Importa el componente Autocomplete
-import MarkerClusterer from '@google/markerclustererplus';
-import custom_pin2 from '../../img/custom_pin2.png';
+import React, { useEffect, useRef, useState } from 'react';
 
 const Mapa = () => {
-    const [map, setMap] = useState(null);
-    const [markers, setMarkers] = useState([]);
-
     const apiOptions = {
-        apiKey: "AIzaSyBWuBaficPm3aUL-DXQUMK8EUZn8Qttdqs", // Reemplaza con tu clave de API real
+        apiKey: "AIzaSyBWuBaficPm3aUL-DXQUMK8EUZn8Qttdqs"
+        // apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     };
+
+    const mapRef = useRef(null);
+    const autocompleteRef = useRef(null);
+    const [map, setMap] = useState(null);
+    const [marker, setMarker] = useState(null);
+    const [infoWindow, setInfoWindow] = useState(null);
 
     useEffect(() => {
-        const loadMap = async () => {
-            const loader = new Loader(apiOptions);
-            await loader.load();
+        const loadMap = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        const myLatLng = { lat: latitude, lng: longitude };
 
-            console.log('Maps JS API loaded');
-            const mapInstance = displayMap();
-            setMap(mapInstance);
-            const markerArray = addMarkers(mapInstance);
-            setMarkers(markerArray);
-            clusterMarkers(mapInstance, markerArray);
+                        const mapInstance = new window.google.maps.Map(mapRef.current, {
+                            center: myLatLng,
+                            zoom: 12,
+                        });
+
+                        const markerInstance = new window.google.maps.Marker({
+                            position: myLatLng,
+                            map: mapInstance,
+                        });
+
+                        const infoWindowInstance = new window.google.maps.InfoWindow();
+
+                        setMap(mapInstance);
+                        setMarker(markerInstance);
+                        setInfoWindow(infoWindowInstance);
+
+                        const autocomplete = new window.google.maps.places.Autocomplete(autocompleteRef.current);
+                        autocomplete.bindTo("bounds", mapInstance);
+
+                        autocomplete.addListener('place_changed', function () {
+                            const place = autocomplete.getPlace();
+
+                            if (!place.geometry || !place.geometry.location) {
+                                window.alert("No se encontraron detalles para: '" + place.name + "'");
+                                return;
+                            }
+
+                            if (place.geometry.viewport) {
+                                mapInstance.fitBounds(place.geometry.viewport);
+                            } else {
+                                mapInstance.setCenter(place.geometry.location);
+                                mapInstance.setZoom(17);
+                            }
+
+                            markerInstance.setPosition(place.geometry.location);
+                            markerInstance.setVisible(true);
+
+                            let content = `<h2>${place.name}</h2>`;
+                            if (place.formatted_address) {
+                                content += `<p>${place.formatted_address}</p>`;
+                            }
+                            if (place.website) {
+                                content += `<a href="${place.website}" target="_blank">Sitio web</a>`;
+                            }
+
+                            infoWindowInstance.setContent(content);
+                            infoWindowInstance.open(mapInstance, markerInstance);
+                        });
+                    },
+                    () => {
+                        handleLocationError(true, mapRef.current.getCenter());
+                    }
+                );
+            } else {
+                handleLocationError(false, mapRef.current.getCenter());
+            }
         };
 
-        loadMap();
+        const handleLocationError = (browserHasGeolocation, pos) => {
+            const content = browserHasGeolocation ?
+                'Error: El servicio de geolocalización falló.' :
+                'Error: Tu navegador no soporta geolocalización.';
+            alert(content);
+        };
 
-        function displayMap() {
-            const mapOptions = {
-                center: { lat: -33.860664, lng: 151.208138 },
-                zoom: 12,
-            };
-            const mapDiv = document.getElementById('map');
-            return new google.maps.Map(mapDiv, mapOptions);
-        }
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiOptions.apiKey}&libraries=places&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
 
-        function addMarkers(map) {
-            const locations = {
-                operaHouse: { lat: -33.8567844, lng: 151.213108 },
-                // Agrega más ubicaciones aquí
-            };
-            const markers = [];
-            for (const location in locations) {
-                const markerOptions = {
-                    map: map,
-                    position: locations[location],
-                    icon: custom_pin2, // Usar la URL o ruta de la imagen directamente
-                };
-                const marker = new google.maps.Marker(markerOptions);
-                markers.push(marker);
-            }
-            return markers;
-        }
+        window.initMap = loadMap;
 
-        function clusterMarkers(map, markers) {
-            const clustererOptions = { imagePath: '../../img/m' };
-            new MarkerClusterer(map, markers, clustererOptions);
-        }
+        return () => {
+            document.head.removeChild(script);
+        };
     }, []);
 
-    const handlePlaceSelected = (place) => {
-        if (place.geometry && map) {
-            map.panTo(place.geometry.location);
-            map.setZoom(14);
-        }
-    };
-
     return (
-        <div>
-            <h1>MAPA</h1>
-            <div className="bg-gray d-flex justify-content-start">
-                <Autocomplete onPlaceSelected={handlePlaceSelected} /> {/* Usa el Autocomplete */}
+        <div className="container-fluid d-flex justify-content-center align-items-center min-vh-100">
+            <div className="row w-100">
+                <div className="col-lg-10 col-md-12 mx-auto">
+                    <h1 className="text-center mb-4">MAPA</h1>
+                    <input
+                        ref={autocompleteRef}
+                        type="text"
+                        className="form-control mb-3"
+                        placeholder="Buscar lugares"
+                    />
+                    <div
+                        ref={mapRef}
+                        style={{ width: "100%", height: "80vh" }}
+                        className="border"
+                    ></div>
+                </div>
             </div>
-            <div id="map" style={{ width: '100%', height: '700px' }}></div>
         </div>
     );
 };
