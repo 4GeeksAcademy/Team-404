@@ -1,17 +1,10 @@
-"""
-This module defines API routes and handles requests.
-"""
-from flask import Blueprint, Flask, jsonify, request
+from flask import Blueprint, jsonify, request
 from api.models import db, User
-from flask_cors import CORS, cross_origin
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import CORS
+from werkzeug.security import generate_password_hash
 
 api = Blueprint('api', __name__)
 CORS(api, support_credentials=True)
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your-database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
 
 @api.route('/api/hello', methods=['POST', 'GET'])
 def handle_hello():
@@ -26,12 +19,16 @@ def get_all_users():
     users = User.query.all()
     return jsonify([user.serialize() for user in users]), 200
 
-@api.route('/api', methods=['POST'])
+@api.route('/api/register', methods=['POST'])
 def create_user():
     try:
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
+        name = data.get('name')
+        last_name = data.get('lastName')
+        company = data.get('company')
+        location = data.get('location')
 
         if not email or not password:
             return jsonify({"error": "Email y contraseña son requeridos"}), 400
@@ -42,7 +39,11 @@ def create_user():
 
         new_user = User(
             email=email,
-            password_hash=generate_password_hash(password)  # Asegúrate de que `password_hash` es un campo válido
+            password_hash=generate_password_hash(password),
+            name=name,
+            last_name=last_name,
+            company=company,
+            location=location
         )
         db.session.add(new_user)
         db.session.commit()
@@ -50,9 +51,5 @@ def create_user():
         return jsonify({"message": "Usuario registrado exitosamente"}), 201
 
     except Exception as e:
-        # Log the exception and return a generic error message
         print(f"Error: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
-
-if __name__ == "__main__":
-    app.run(debug=True)

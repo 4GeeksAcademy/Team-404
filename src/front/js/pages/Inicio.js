@@ -9,15 +9,17 @@ export const Inicio = () => {
         password: ""
     });
     const [registerData, setRegisterData] = useState({
-        name: "",
-        lastName: "",
-        company: "",
-        location: "",
-        email: "",
-        password: ""
+        name: '',
+        lastName: '',
+        company: '',
+        location: '',
+        email: '',
+        password: ''
     });
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para el modal de éxito
+    const [error, setError] = useState(''); // Estado para manejar errores
     const navigate = useNavigate(); // Hook para la redirección
 
     const handleChange = (e) => {
@@ -47,13 +49,11 @@ export const Inicio = () => {
             );
             console.log("Respuesta del servidor:", response.data);
 
-            // Si la autenticación es exitosa, redirigir a otra página
             if (response.status === 200) {
                 const { token } = response.data;
                 localStorage.setItem('token', token); // Guardar el token en el almacenamiento local
                 navigate('/Mapa'); // Redirige al Mapa
             } else {
-                // Manejar caso de error en autenticación
                 console.log("Usuario no registrado o credenciales incorrectas");
             }
         } catch (error) {
@@ -63,24 +63,29 @@ export const Inicio = () => {
 
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
             const response = await axios.post(
-                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/register', // Endpoint para registro de usuarios
+                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/register',
                 registerData,
                 {
                     headers: { "Content-Type": "application/json" },
                 }
             );
+    
             console.log("Usuario registrado exitosamente:", response.data);
+            setError(''); // Limpiar el mensaje de error si el registro es exitoso
+            setShowSuccessModal(true); // Mostrar el modal de éxito
 
-            // Cerrar modal después del registro
-            setShowRegisterModal(false);
-
-            // Mostrar el modal de inicio de sesión si lo deseas
-            setShowLoginModal(true);
+            // Ocultar el modal de éxito después de 3 segundos y mostrar el modal de inicio de sesión
+            setTimeout(() => {
+                setShowSuccessModal(false); // Ocultar el modal de éxito
+                setShowRegisterModal(false); // Cerrar el modal de registro
+                setShowLoginModal(true); // Mostrar el modal de inicio de sesión
+            }, 3000); // 3 segundos
         } catch (error) {
             console.log("Error al registrar el usuario:", error.response ? error.response.data : error.message);
+            setError(error.response ? error.response.data.error : 'Error interno del servidor'); // Mostrar el mensaje de error
         }
     };
 
@@ -88,7 +93,13 @@ export const Inicio = () => {
         if (e.target === e.currentTarget) {
             setShowRegisterModal(false);
             setShowLoginModal(false);
+            setShowSuccessModal(false); // Cerrar el modal de éxito
         }
+    };
+
+    const handleSuccessModalClose = () => {
+        setShowSuccessModal(false);
+        setShowLoginModal(true); // Mostrar el modal de inicio de sesión
     };
 
     return (
@@ -124,7 +135,7 @@ export const Inicio = () => {
                                         <div className="form-group mb-3">
                                             <label htmlFor="email" style={{ color: 'red' }}>Email</label>
                                             <input
-                                                type="text"
+                                                type="email"
                                                 className="form-control"
                                                 id="email"
                                                 name="email"
@@ -219,7 +230,7 @@ export const Inicio = () => {
                                         <div className="form-group mb-3">
                                             <label htmlFor="registerEmail" style={{ color: 'red' }}>Email</label>
                                             <input
-                                                type="text"
+                                                type="email"
                                                 className="form-control"
                                                 id="registerEmail"
                                                 name="email"
@@ -243,7 +254,25 @@ export const Inicio = () => {
                                             />
                                         </div>
                                         <button type="submit" className="btn-custom-secondary w-100 mb-4">Registrar</button>
+                                        {error && (
+                                            <div className="alert alert-danger mt-3" role="alert">
+                                                {error}
+                                            </div>
+                                        )}
                                     </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {showSuccessModal && (
+                    <div className="modal fade show" style={{ display: 'block' }} aria-labelledby="successModalLabel" aria-hidden="true" onClick={handleCloseModal}>
+                        <div className="modal-dialog" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
+                            <div className="modal-content">
+                                <div className="card p-4 text-center">
+                                    <h3>¡Registro Exitoso!</h3>
+                                    <p>Tu cuenta ha sido registrada exitosamente. Ahora puedes iniciar sesión.</p>
+                                    <button type="button" className="btn-custom-primary mt-3" onClick={handleSuccessModalClose}>Ir a Iniciar Sesión</button>
                                 </div>
                             </div>
                         </div>
