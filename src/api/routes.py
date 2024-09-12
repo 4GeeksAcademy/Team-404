@@ -21,8 +21,12 @@ def handle_hello():
 # Obtener todos los usuarios
 @api.route('/api/usuarios', methods=['GET'])
 def get_all_users():
-    users = User.query.all()
-    return jsonify([user.serialize() for user in users]), 200
+    try:
+        users = User.query.all()
+        return jsonify([user.serialize() for user in users]), 200
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Error interno del servidor"}), 500
 
 # Registrar un nuevo usuario
 @api.route('/api/register', methods=['POST'])

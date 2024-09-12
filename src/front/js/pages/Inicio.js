@@ -103,7 +103,7 @@ export const Inicio = () => {
     };
 
     return (
-        <div className="text-center mt-5">
+        <div className="text-center">
             <div className="divprincipal">
                 <div className="hero-section">
                     <div className="hero-content">
