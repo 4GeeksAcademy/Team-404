@@ -18,9 +18,10 @@ export const Inicio = () => {
     });
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
-    const [showSuccessModal, setShowSuccessModal] = useState(false); // Estado para el modal de éxito
-    const [error, setError] = useState(''); // Estado para manejar errores
-    const navigate = useNavigate(); // Hook para la redirección
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [warningMessage, setWarningMessage] = useState('');
+    const [loginWarningMessage, setLoginWarningMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setSignUpData({
@@ -38,32 +39,34 @@ export const Inicio = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoginWarningMessage(''); // Limpiar mensaje de advertencia anterior
 
         try {
             const response = await axios.post(
-                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/login', // Endpoint para inicio de sesión
+                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/login',
                 signupData,
                 {
                     headers: { "Content-Type": "application/json" },
                 }
             );
-            console.log("Respuesta del servidor:", response.data);
 
             if (response.status === 200) {
                 const { token } = response.data;
-                localStorage.setItem('token', token); // Guardar el token en el almacenamiento local
-                navigate('/Mapa'); // Redirige al Mapa
-            } else {
-                console.log("Usuario no registrado o credenciales incorrectas");
+                localStorage.setItem('token', token);
+                navigate('/Mapa');
             }
         } catch (error) {
-            console.log("Ha habido un error:", error.response ? error.response.data : error.message);
+            if (error.response && error.response.status === 401) {
+                setLoginWarningMessage('Usuario no registrado o credenciales incorrectas');
+            } else {
+                setLoginWarningMessage(error.response ? error.response.data.error : 'Error en el inicio de sesión');
+            }
         }
     };
 
     const handleRegisterSubmit = async (e) => {
         e.preventDefault();
-    
+
         try {
             const response = await axios.post(
                 'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/register',
@@ -72,20 +75,17 @@ export const Inicio = () => {
                     headers: { "Content-Type": "application/json" },
                 }
             );
-    
-            console.log("Usuario registrado exitosamente:", response.data);
-            setError(''); // Limpiar el mensaje de error si el registro es exitoso
-            setShowSuccessModal(true); // Mostrar el modal de éxito
 
-            // Ocultar el modal de éxito después de 3 segundos y mostrar el modal de inicio de sesión
-            setTimeout(() => {
-                setShowSuccessModal(false); // Ocultar el modal de éxito
-                setShowRegisterModal(false); // Cerrar el modal de registro
-                setShowLoginModal(true); // Mostrar el modal de inicio de sesión
-            }, 3000); // 3 segundos
+            if (response.status === 201) {
+                setShowRegisterModal(false);
+                setShowSuccessModal(true);
+                setTimeout(() => {
+                    setShowSuccessModal(false);
+                    setShowLoginModal(true);
+                }, 3000); // Cambiado a 3 segundos
+            }
         } catch (error) {
-            console.log("Error al registrar el usuario:", error.response ? error.response.data : error.message);
-            setError(error.response ? error.response.data.error : 'Error interno del servidor'); // Mostrar el mensaje de error
+            setWarningMessage(error.response ? error.response.data.error : 'Error en el registro');
         }
     };
 
@@ -93,13 +93,13 @@ export const Inicio = () => {
         if (e.target === e.currentTarget) {
             setShowRegisterModal(false);
             setShowLoginModal(false);
-            setShowSuccessModal(false); // Cerrar el modal de éxito
+            setShowSuccessModal(false);
         }
     };
 
     const handleSuccessModalClose = () => {
         setShowSuccessModal(false);
-        setShowLoginModal(true); // Mostrar el modal de inicio de sesión
+        setShowLoginModal(true);
     };
 
     return (
@@ -162,6 +162,7 @@ export const Inicio = () => {
                                             <a href="#" className="text-decoration-none" style={{ color: '#007bff' }}><u>He olvidado mi contraseña</u></a>
                                         </div>
                                         <button type="submit" className="btn-custom-primary w-100 mb-4">Iniciar sesión</button>
+                                        {loginWarningMessage && <p className="warning-message">{loginWarningMessage}</p>}
                                     </form>
                                 </div>
                             </div>
@@ -240,12 +241,12 @@ export const Inicio = () => {
                                                 required
                                             />
                                         </div>
-                                        <div className="form-group mb-3">
-                                            <label htmlFor="registerPassword" style={{ color: 'red' }}>Contraseña</label>
+                                        <div className="form-group mb-4">
+                                            <label htmlFor="password" style={{ color: 'red' }}>Contraseña</label>
                                             <input
                                                 type="password"
                                                 className="form-control"
-                                                id="registerPassword"
+                                                id="password"
                                                 name="password"
                                                 placeholder="Contraseña"
                                                 value={registerData.password}
@@ -253,12 +254,8 @@ export const Inicio = () => {
                                                 required
                                             />
                                         </div>
-                                        <button type="submit" className="btn-custom-secondary w-100 mb-4">Registrar</button>
-                                        {error && (
-                                            <div className="alert alert-danger mt-3" role="alert">
-                                                {error}
-                                            </div>
-                                        )}
+                                        <button type="submit" className="btn-custom-primary w-100 mb-4">Registrar</button>
+                                        {warningMessage && <p className="warning-message">{warningMessage}</p>}
                                     </form>
                                 </div>
                             </div>
@@ -270,9 +267,9 @@ export const Inicio = () => {
                         <div className="modal-dialog" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
                             <div className="modal-content">
                                 <div className="card p-4 text-center">
-                                    <h3>¡Registro Exitoso!</h3>
-                                    <p>Tu cuenta ha sido registrada exitosamente. Ahora puedes iniciar sesión.</p>
-                                    <button type="button" className="btn-custom-primary mt-3" onClick={handleSuccessModalClose}>Ir a Iniciar Sesión</button>
+                                    <h3 className="text-success">¡Registro exitoso!</h3>
+                                    <p>Ahora puedes iniciar sesión.</p>
+                                    <button type="button" className="btn-custom-primary" onClick={handleSuccessModalClose}>Cerrar</button>
                                 </div>
                             </div>
                         </div>
