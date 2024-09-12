@@ -132,3 +132,11 @@
 .text-right a {
     color: #007bff;
 }
+.warning-message {
+    background-color: #f8d7da; /* Fondo rojo claro */
+    color: #721c24; /* Texto rojo oscuro */
+    border: 1px solid #f5c6cb; /* Borde rojo claro */
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+}
