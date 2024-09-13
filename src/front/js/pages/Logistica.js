@@ -8,7 +8,6 @@ const Mapa = () => {
     };
 
     const mapRef = useRef(null);
-    const autocompleteRef = useRef(null);
     const [map, setMap] = useState(null);
     const [directionsRenderer, setDirectionsRenderer] = useState(null);
     const [routeInfo, setRouteInfo] = useState(null);
@@ -22,7 +21,7 @@ const Mapa = () => {
 
         loader.load().then(() => {
             const mapInstance = new window.google.maps.Map(mapRef.current, {
-                center: { lat: 40.416775, lng: -3.703790 }, // Centro en Madrid por defecto
+                center: { lat: 40.416775, lng: -3.703790 },
                 zoom: 6,
             });
 
@@ -31,25 +30,6 @@ const Mapa = () => {
 
             setMap(mapInstance);
             setDirectionsRenderer(directionsRendererInstance);
-
-            const autocomplete = new window.google.maps.places.Autocomplete(autocompleteRef.current);
-            autocomplete.bindTo("bounds", mapInstance);
-
-            autocomplete.addListener('place_changed', function () {
-                const place = autocomplete.getPlace();
-
-                if (!place.geometry || !place.geometry.location) {
-                    window.alert("No se encontraron detalles para: '" + place.name + "'");
-                    return;
-                }
-
-                if (place.geometry.viewport) {
-                    mapInstance.fitBounds(place.geometry.viewport);
-                } else {
-                    mapInstance.setCenter(place.geometry.location);
-                    mapInstance.setZoom(17);
-                }
-            });
         });
     }, []);
 
@@ -71,59 +51,66 @@ const Mapa = () => {
     };
 
     return (
-        <div className="container-fluid d-flex flex-column" style={{ height: "100vh" }}>
-            <div className="row flex-grow-1">
-                <div className="col-lg-4 col-md-12 d-flex flex-column">
+        <div className="container-fluid">
+            <div className="row">
+                <div className="col-lg-4 col-md-12">
                     <h1 className="mb-4">Planner</h1>
-                    <input
-                        ref={autocompleteRef}
-                        type="text"
-                        className="form-control mb-3"
-                        placeholder="Buscar lugares"
-                    />
                     <CalculateDistance
                         map={map}
                         onRouteCalculated={handleRouteCalculated}
                         onRouteInfo={handleRouteInfo}
-                        onInputChange={clearRoute}
+                        onClearRoute={clearRoute}
                     />
+                    {routeInfo && (
+                        <div className="mt-4 border rounded p-3">
+                            <h3>Información de la ruta</h3>
+                            <table className="table table-striped table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>Distancia</th>
+                                        <td>{routeInfo.distance}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Duración</th>
+                                        <td>{routeInfo.duration}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Coste por km</th>
+                                        <td>{routeInfo.costPerKm}€/km</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Costes totales</th>
+                                        <td>{routeInfo.totalCost}€</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Peaje</th>
+                                        <td>{routeInfo.toll}€</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Precio por km</th>
+                                        <td>{routeInfo.pricePerKm}€/km</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Beneficio</th>
+                                        <td>{routeInfo.profit}€</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Precio</th>
+                                        <td>{routeInfo.price}€</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
-                <div className="col-lg-8 d-flex flex-column">
+                <div className="col-lg-8 col-md-12">
                     <div
                         ref={mapRef}
-                        style={{ flexGrow: 1 }}
+                        style={{ height: "80vh", borderRadius: "10px", border: "2px solid #007BFF" }}
                         className="border"
                     ></div>
                 </div>
             </div>
-            {routeInfo && (
-                <div className="row bg-light py-2">
-                    <div className="col">
-                        <strong>Distancia:</strong> {routeInfo.distance}
-                    </div>
-                    <div className="col">
-                        <strong>Hora:</strong> {routeInfo.duration}
-                    </div>
-                    <div className="col">
-                        <strong>Coste por km:</strong> {routeInfo.costPerKm}€/km
-                    </div>
-                    <div className="col">
-                        <strong>Costes totales:</strong> {routeInfo.totalCost}€
-                    </div>
-                    <div className="col">
-                        <strong>Peaje:</strong> {routeInfo.toll}€
-                    </div>
-                    <div className="col">
-                        <strong>Precio por km:</strong> {routeInfo.pricePerKm}€/km
-                    </div>
-                    <div className="col">
-                        <strong>Beneficio:</strong> {routeInfo.profit}€
-                    </div>
-                    <div className="col">
-                        <strong>Precio:</strong> {routeInfo.price}€
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
