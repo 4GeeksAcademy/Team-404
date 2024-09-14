@@ -19,8 +19,10 @@ export const Inicio = () => {
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false); // Nuevo estado
     const [warningMessage, setWarningMessage] = useState('');
     const [loginWarningMessage, setLoginWarningMessage] = useState('');
+    const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -37,9 +39,13 @@ export const Inicio = () => {
         });
     };
 
+    const handleForgotPasswordChange = (e) => {
+        setForgotPasswordEmail(e.target.value);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoginWarningMessage(''); // Limpiar mensaje de advertencia anterior
+        setLoginWarningMessage('');
 
         try {
             const response = await axios.post(
@@ -53,7 +59,7 @@ export const Inicio = () => {
             if (response.status === 200) {
                 const { token } = response.data;
                 localStorage.setItem('token', token);
-                navigate('/Mapa');
+                navigate('/profile');
             }
         } catch (error) {
             if (error.response && error.response.status === 401) {
@@ -82,10 +88,28 @@ export const Inicio = () => {
                 setTimeout(() => {
                     setShowSuccessModal(false);
                     setShowLoginModal(true);
-                }, 3000); // Cambiado a 3 segundos
+                }, 3000);
             }
         } catch (error) {
             setWarningMessage(error.response ? error.response.data.error : 'Error en el registro');
+        }
+    };
+
+    const handleForgotPasswordSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            await axios.post(
+                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/forgot-password',
+                { email: forgotPasswordEmail },
+                {
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+            alert('Si el correo electrónico está registrado, recibirás instrucciones para restablecer tu contraseña.');
+            setShowForgotPasswordModal(false);
+        } catch (error) {
+            alert('Error al enviar el correo de recuperación.');
         }
     };
 
@@ -94,6 +118,7 @@ export const Inicio = () => {
             setShowRegisterModal(false);
             setShowLoginModal(false);
             setShowSuccessModal(false);
+            setShowForgotPasswordModal(false); // Cerrar modal de recuperación de contraseña
         }
     };
 
@@ -103,7 +128,7 @@ export const Inicio = () => {
     };
 
     return (
-        <div className="text-center mt-5">
+        <div className="text-center">
             <div className="divprincipal">
                 <div className="hero-section">
                     <div className="hero-content">
@@ -159,7 +184,7 @@ export const Inicio = () => {
                                             />
                                         </div>
                                         <div className="form-group text-right mb-4">
-                                            <a href="#" className="text-decoration-none" style={{ color: '#007bff' }}><u>He olvidado mi contraseña</u></a>
+                                            <a href="#" className="text-decoration-none" style={{ color: '#007bff' }} onClick={() => setShowForgotPasswordModal(true)}><u>He olvidado mi contraseña</u></a>
                                         </div>
                                         <button type="submit" className="btn-custom-primary w-100 mb-4">Iniciar sesión</button>
                                         {loginWarningMessage && <p className="warning-message">{loginWarningMessage}</p>}
@@ -256,6 +281,33 @@ export const Inicio = () => {
                                         </div>
                                         <button type="submit" className="btn-custom-primary w-100 mb-4">Registrar</button>
                                         {warningMessage && <p className="warning-message">{warningMessage}</p>}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {showForgotPasswordModal && (
+                    <div className="modal fade show" style={{ display: 'block' }} aria-labelledby="forgotPasswordModalLabel" aria-hidden="true" onClick={handleCloseModal}>
+                        <div className="modal-dialog" style={{ maxWidth: '400px' }} onClick={(e) => e.stopPropagation()}>
+                            <div className="modal-content">
+                                <div className="card p-4">
+                                    <h3 className="text-center mb-4">Recuperar Contraseña</h3>
+                                    <form onSubmit={handleForgotPasswordSubmit}>
+                                        <div className="form-group mb-3">
+                                            <label htmlFor="forgotPasswordEmail" style={{ color: 'red' }}>Email</label>
+                                            <input
+                                                type="email"
+                                                className="form-control"
+                                                id="forgotPasswordEmail"
+                                                name="forgotPasswordEmail"
+                                                placeholder="E-mail"
+                                                value={forgotPasswordEmail}
+                                                onChange={handleForgotPasswordChange}
+                                                required
+                                            />
+                                        </div>
+                                        <button type="submit" className="btn-custom-primary w-100 mb-4">Enviar instrucciones</button>
                                     </form>
                                 </div>
                             </div>
