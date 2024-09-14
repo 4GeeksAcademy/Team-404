@@ -4,7 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Inicio } from "./pages/Inicio";
-import CrearCuenta from "./pages/crearCuenta";
+import Profile from "./pages/profile";
 import Mapa from "./pages/Logistica";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
@@ -27,7 +27,7 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Inicio />} path="/" />
-                        <Route element={<CrearCuenta />} path="/crearcuenta" />
+                        <Route element={<Profile />} path="/profile" />
                         <Route element={<Mapa />} path="/mapa" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
