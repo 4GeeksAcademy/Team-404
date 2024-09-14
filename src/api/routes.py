@@ -45,8 +45,6 @@ def get_all_users():
     except Exception as e:
         print(f"Error en /api/usuarios: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
-    
-
 
 # Registrar un nuevo usuario
 @api.route('/api/register', methods=['POST'])
@@ -84,7 +82,7 @@ def create_user():
         print(f"Error en /api/register: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
 
-# Iniciar sesión
+# Iniciar sesión (sin cambios)
 @api.route('/api/login', methods=['POST'])
 def login_user():
     try:
@@ -107,6 +105,37 @@ def login_user():
 
     except Exception as e:
         print(f"Error en /api/login: {e}")
+        return jsonify({"error": "Error interno del servidor"}), 500
+
+# Obtener datos del usuario autenticado (con JWT)
+@api.route('/api/user', methods=['GET'])
+def get_user_profile():
+    try:
+        # Obtener el token JWT de la cabecera Authorization
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return jsonify({"error": "Token de autorización faltante o inválido"}), 401
+        
+        token = auth_header.split(" ")[1]
+        
+        try:
+            # Decodificar el token JWT para obtener el ID del usuario
+            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            user_id = payload['user_id']
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "El token ha expirado"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Token inválido"}), 401
+
+        # Consultar el usuario en la base de datos
+        user = User.query.get(user_id)
+        if user:
+            return jsonify(user.serialize()), 200
+        else:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+    except Exception as e:
+        print(f"Error en /api/user: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
 
 # Solicitar recuperación de contraseña
