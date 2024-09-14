@@ -1,20 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt, faCar, faUserTie, faUsers, faRoute } from '@fortawesome/free-solid-svg-icons';
-import '../../styles/Profile.css';
+import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { Loader } from '@googlemaps/js-api-loader';
+import '../../styles/Profile.css'; // Archivo CSS actualizado
 
 const Profile = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [map, setMap] = useState(null);
+    const mapRef = useRef(null);
+    
+    // Función para obtener los datos del usuario autenticado
     const fetchUserData = async () => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get("https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/user", {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
             setUser(response.data);
         } catch (err) {
@@ -24,29 +30,75 @@ const Profile = () => {
         }
     };
 
+    // Función para inicializar el mapa
+    const initializeMap = () => {
+        const loader = new Loader({
+            apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Usa la clave API desde el archivo .env
+            version: 'weekly',
+        });
+        loader.load().then(() => {
+            const newMap = new window.google.maps.Map(mapRef.current, {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 8,
+            });
+            setMap(newMap);
+        }).catch(e => {
+            console.error("Error al cargar la API de Google Maps: ", e);
+        });
+    };
+
+    // Función para buscar la ubicación en el mapa
+    const searchLocation = async (location) => {
+        if (!map || !location) return;
+
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ address: location }, (results, status) => {
+            if (status === 'OK') {
+                const { lat, lng } = results[0].geometry.location;
+                map.setCenter({ lat: lat(), lng: lng() });
+                new window.google.maps.Marker({
+                    position: { lat: lat(), lng: lng() },
+                    map: map,
+                });
+            } else {
+                console.error('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    };
+
     useEffect(() => {
         fetchUserData();
     }, []);
 
+    useEffect(() => {
+        initializeMap();
+    }, []);
+
+    useEffect(() => {
+        if (user && user.location) {
+            searchLocation(user.location);
+        }
+    }, [user, map]);
+
     return (
-        <div className="profile-container">
-            {/* Left side - Control Panel */}
-            <div className="control-panel">
-                <h2>Panel de Control</h2>
+        <div className="profile-page-container">
+            {/* Panel de control */}
+            <div className="profile-control-panel">
+                <h1>Panel de Control</h1>
                 <ul>
                     <li>
                         <Link to="/planner">
-                            <FontAwesomeIcon icon={faRoute} /> Planner
+                            <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
                         </Link>
                     </li>
                     <li>
                         <Link to="/direcciones">
-                            <FontAwesomeIcon icon={faMapMarkerAlt} /> Mis Direcciones
+                            <FontAwesomeIcon icon={faHome} /> Mis Direcciones
                         </Link>
                     </li>
                     <li>
-                        <Link to="/vehiculos">
-                            <FontAwesomeIcon icon={faCar} /> Vehículos y Conductores
+                        <Link to="/vehiculos-conductores">
+                            <FontAwesomeIcon icon={faTruck} /> Vehículos y Conductores
                         </Link>
                     </li>
                     <li>
@@ -62,9 +114,9 @@ const Profile = () => {
                 </ul>
             </div>
 
-            {/* Right side - User Profile */}
-            <div className="profile-content">
-                <h1 className="profile-title">Perfil del Usuario</h1>
+            {/* Perfil de usuario */}
+            <div className="profile-section">
+                <h1>Perfil del Usuario</h1>
                 {loading ? (
                     <div className="profile-loading">
                         <div className="loading-circle"></div>
@@ -76,26 +128,27 @@ const Profile = () => {
                 ) : user ? (
                     <div className="profile-card">
                         <div className="profile-header">
-                            <div className="profile-avatar">
-                                <FontAwesomeIcon icon={faUserTie} size="3x" />
-                            </div>
-                            <h2 className="profile-name">{user.name} {user.last_name}</h2>
+                            <FontAwesomeIcon icon={faUserCircle} />
+                            <h2>{user.name} {user.last_name}</h2>
                         </div>
-                        <div className="profile-body">
-                            <p><strong>Email:</strong> {user.email}</p>
-                            <p><strong>Empresa:</strong> {user.company || 'No especificada'}</p>
-                            <p><strong>Ubicación:</strong> {user.location || 'No especificada'}</p>
-                            <p><strong>Cuenta creada en:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
-                        </div>
+                        <p><strong>Email:</strong> {user.email}</p>
+                        <p><strong>Empresa:</strong> {user.company || 'No especificada'}</p>
+                        <p><strong>Ubicación:</strong> {user.location || 'No especificada'}</p>
+                        <p><strong>Cuenta creada en:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
                     </div>
                 ) : (
                     <div className="profile-no-data">
                         <p>No se encontraron datos del usuario.</p>
                     </div>
                 )}
-                <Link to="/">
-                    <button className="btn btn-primary">Volver a Inicio</button>
-                </Link>
+            </div>
+
+            {/* Sección del mapa */}
+            <div className="profile-map-section">
+                <div
+                    ref={mapRef}
+                    className="map-container"
+                ></div>
             </div>
         </div>
     );

@@ -1,136 +1,108 @@
-.profile-container {
-    display: flex;
-    max-width: 1000px;
-    margin: 0 auto;
+.profile-page-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr; /* Distribución 25% Panel de Control, 50% Perfil del Usuario, 25% Mapa */
+    gap: 20px;
     padding: 20px;
-    background-color: #f4f7f9;
+}
+
+.profile-control-panel {
+    background-color: #f9f9f9;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    grid-column: 1; /* Panel de Control en la primera columna */
 }
 
-.control-panel {
-    flex: 1;
-    margin-right: 20px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.profile-control-panel h1 {
+    font-size: 1.5rem; /* Tamaño de fuente para títulos */
+    color: #007BFF; /* Color azul */
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif; /* Tipo de letra para los títulos */
 }
 
-.control-panel h2 {
-    font-size: 1.4rem;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.control-panel ul {
+.profile-control-panel ul {
     list-style-type: none;
     padding: 0;
 }
 
-.control-panel li {
-    margin: 15px 0;
+.profile-control-panel li {
+    margin-bottom: 15px;
 }
 
-.control-panel li a {
+.profile-control-panel a {
     text-decoration: none;
-    font-size: 1.1rem;
-    color: #4A90E2;
+    color: #333;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
+    font-family: Arial, sans-serif; /* Tipo de letra para los enlaces */
 }
 
-.control-panel li a:hover {
-    color: #357ABD;
+.profile-control-panel a:hover {
+    color: #007BFF;
 }
 
-.control-panel li a svg {
+.profile-control-panel a svg {
     margin-right: 10px;
 }
 
-.profile-content {
-    flex: 2;
-    background-color: #fff;
+.profile-section {
     padding: 20px;
+    background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    grid-column: 2; /* Perfil del Usuario en la segunda columna */
+    text-align: center; /* Centrar el texto */
 }
 
-.profile-title {
-    text-align: center;
-    color: #333;
-    font-size: 2rem;
+.profile-section h1 {
+    font-size: 1.5rem; /* Tamaño de fuente para títulos */
+    color: #007BFF; /* Color azul */
     margin-bottom: 20px;
+    font-family: Arial, sans-serif; /* Tipo de letra para los títulos */
 }
 
 .profile-card {
-    background: #fff;
+    font-family: Arial, sans-serif; /* Tipo de letra para el contenido del perfil */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar el contenido */
+    gap: 10px;
+    border: 1px solid #e0e0e0;
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    background-color: #f9f9f9;
 }
 
-.profile-avatar {
+.profile-card .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
-.profile-avatar img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #4A90E2;
+.profile-card .profile-header svg {
+    font-size: 3rem; /* Tamaño del ícono */
+    color: #007BFF; /* Color del ícono */
 }
 
-.profile-name {
-    font-size: 1.6rem;
+.profile-card h2 {
+    font-size: 1.5rem;
     color: #333;
-    margin-top: 10px;
+    margin: 0;
 }
 
-.profile-body p {
-    margin: 8px 0;
-    font-size: 1rem;
-    color: #555;
+.profile-card p {
+    font-size: 1.2rem; /* Tamaño de fuente para el contenido del perfil */
+    margin: 5px 0; /* Espaciado vertical */
 }
 
-.btn-primary {
-    display: block;
+.profile-map-section {
+    height: 80vh;
+    grid-column: 3; /* Mapa en la tercera columna */
+}
+
+.map-container {
     width: 100%;
-    max-width: 180px;
-    margin: 20px auto;
-    padding: 10px;
-    font-size: 1rem;
-    color: #fff;
-    background-color: #4A90E2;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-primary:hover {
-    background-color: #357ABD;
-}
-
-.profile-loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.loading-circle {
-    width: 50px;
-    height: 50px;
-    border: 6px solid rgba(0, 0, 255, 0.2);
-    border-top: 6px solid blue;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    height: 100%;
 }
