@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const LoginForm = () => {
 
     return (
-        <div className="container mt-5 d-flex justify-content-center">
+        <div className="container my-5 d-flex justify-content-center">
             <div className="card p-4" style={{ maxWidth: '400px', border: '1px solid #ccc' }}>
                 <h3 className="text-center mb-4">Iniciar sesión</h3>
                 <form>
@@ -20,14 +20,14 @@ const LoginForm = () => {
                         <a href="#" className="text-decoration-none" style={{ color: '#007bff' }}><u>He olvidado mi contraseña</u></a>
                     </div>
                     <button type="submit" className="btn btn-danger w-100 mb-4" style={{ backgroundColor: '#ff0055' }}>Iniciar sesión</button>
-                
-                <hr />
-                <div className="text-center mb-3">
-                    <span>¿Eres nuevo cliente?</span>
-                </div>
-                <Link to="/crearCuenta">
-                    <button className="btn btn-outline-secondary w-100">Crear cuenta</button>
-                </Link>
+
+                    <hr />
+                    <div className="text-center mb-3">
+                        <span>¿Eres nuevo cliente?</span>
+                    </div>
+                    <Link to="/crearCuenta">
+                        <button className="btn btn-outline-secondary w-100">Crear cuenta</button>
+                    </Link>
                 </form>
             </div>
         </div>
@@ -35,3 +35,4 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+
