@@ -54,11 +54,11 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
   };
 
   const toggleOption = (option) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter(item => item !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
-    }
+    setSelectedOptions(prevOptions =>
+      prevOptions.includes(option)
+        ? prevOptions.filter(item => item !== option)
+        : [...prevOptions, option]
+    );
   };
 
   const calculateRoute = () => {
@@ -147,28 +147,30 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
   return (
     <div className="card">
       <div className="card-body">
-        <h5 className="card-title mb-3">Paradas</h5>
-        {stops.map((stop, index) => (
-          <div key={stop.key} className="mb-2 d-flex align-items-center">
-            <input
-              id={`location-${index}`}
-              type="text"
-              className="form-control me-2"
-              placeholder={index === 0 ? "Origen" : index === stops.length - 1 ? "Destino final" : `Parada ${index}`}
-              value={stop.location}
-              onChange={(e) => updateStop(index, 'location', e.target.value)}
-            />
-            {index === stops.length - 1 && (
-              <button className="btn btn-outline-secondary me-2" onClick={addStop}>+</button>
-            )}
-            {stops.length > 2 && index !== 0 && index !== stops.length - 1 && (
-              <button className="btn btn-outline-danger" onClick={() => removeStop(index)}>×</button>
-            )}
-          </div>
-        ))}
+        <h5 className="card-title mb-3 justify-content-start">Paradas</h5>
+        <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+          {stops.map((stop, index) => (
+            <div key={stop.key} className="mb-2 d-flex align-items-center">
+              <input
+                id={`location-${index}`}
+                type="text"
+                className="form-control me-2"
+                placeholder={index === 0 ? "Origen" : index === stops.length - 1 ? "Destino final" : `Parada ${index}`}
+                value={stop.location}
+                onChange={(e) => updateStop(index, 'location', e.target.value)}
+              />
+              {index === stops.length - 1 && (
+                <button className="btn btn-outline-secondary me-2" onClick={addStop}>+</button>
+              )}
+              {stops.length > 2 && index !== 0 && index !== stops.length - 1 && (
+                <button className="btn btn-outline-danger" onClick={() => removeStop(index)}>×</button>
+              )}
+            </div>
+          ))}
+        </div>
 
         <div className="mt-3">
-          <label>Tipo de contenedor:</label>
+          <h5 className="card-title mb-3 justify-content-start">Tipo de contenedor:</h5>
           <select
             className="form-control"
             value={containerType}
@@ -183,7 +185,7 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
         </div>
 
         <div className="mt-3">
-          <label>Peso de la carga (toneladas):</label>
+        <h5 className="card-title mb-3 justify-content-start">Peso de la carga (toneladas):</h5>
           <input
             type="number"
             className="form-control"
@@ -229,22 +231,17 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
 
         <div className="mt-3">
           <h5 className="card-title mb-3">Opciones adicionales</h5>
-          <table className="table table-bordered">
-            <tbody>
-              <tr>
-                {options.map(option => (
-                  <td key={option}>
-                    <button
-                      className={`btn btn-sm ${selectedOptions.includes(option) ? 'btn-primary' : 'btn-outline-primary'}`}
-                      onClick={() => toggleOption(option)}
-                    >
-                      {option}
-                    </button>
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
+          <div className="d-flex flex-wrap gap-2">
+            {options.map(option => (
+              <button
+                key={option}
+                className={`btn ${selectedOptions.includes(option) ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => toggleOption(option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         </div>
 
         {selectedOptions.length > 0 && (
@@ -271,6 +268,3 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
 };
 
 export default CalculateDistance;
-
-
-
