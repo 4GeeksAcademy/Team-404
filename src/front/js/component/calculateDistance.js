@@ -7,15 +7,14 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
   ]);
   const [cargoWeight, setCargoWeight] = useState(0);
   const [containerType, setContainerType] = useState('');
-  const [costPerKm, setCostPerKm] = useState('');
-  const [pricePerKm, setPricePerKm] = useState('');
+  const [tarifa, setTarifa] = useState('');
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [showWeightAlert, setShowWeightAlert] = useState(false);
 
-  const options = [
+  const additionalOptions = [
     'Nocturnidad',
-    'Mercancia peligrosa',
+    'Mercancía peligrosa',
     'Festivo',
-    'Reefer',
     'Basculante'
   ];
 
@@ -36,6 +35,21 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
     }
   }, [map, stops]);
 
+  useEffect(() => {
+    checkWeightLimit();
+  }, [cargoWeight, containerType]);
+
+  const checkWeightLimit = () => {
+    // Define the weight limits for each container type
+    if ((containerType === '20' || containerType === '20reefer') && cargoWeight > 25) {
+      setShowWeightAlert(true);
+    } else if ((containerType === '40' || containerType === '40reefer') && cargoWeight > 24) {
+      setShowWeightAlert(true);
+    } else {
+      setShowWeightAlert(false);
+    }
+  };
+
   const updateStop = (index, field, value) => {
     const newStops = [...stops];
     newStops[index][field] = value;
@@ -53,82 +67,74 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
     }
   };
 
-  const toggleOption = (option) => {
-    setSelectedOptions(prevOptions =>
-      prevOptions.includes(option)
-        ? prevOptions.filter(item => item !== option)
-        : [...prevOptions, option]
+  const handleOptionChange = (option) => {
+    setSelectedOptions(prev =>
+      prev.includes(option)
+        ? prev.filter(item => item !== option)
+        : [...prev, option]
     );
   };
 
   const calculateRoute = () => {
-    if (stops.some(stop => !stop.location) || !costPerKm || !pricePerKm) {
-      alert('Por favor, complete todas las ubicaciones y los datos de coste y precio por km.');
+    if (!window.google || !map) {
+      console.error('Google Maps API not loaded');
       return;
     }
 
     const directionsService = new window.google.maps.DirectionsService();
-    const origin = stops[0].location;
-    const destination = stops[stops.length - 1].location;
     const waypoints = stops.slice(1, -1).map(stop => ({
       location: stop.location,
       stopover: true
     }));
 
-    directionsService.route(
-      {
-        origin: origin,
-        destination: destination,
-        waypoints: waypoints,
-        travelMode: window.google.maps.TravelMode.DRIVING,
-      },
-      (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK) {
-          onRouteCalculated(result);
-          const distance = result.routes[0].legs.reduce((total, leg) => total + leg.distance.value, 0) / 1000;
-          const duration = result.routes[0].legs.reduce((total, leg) => total + leg.duration.value, 0) / 60;
+    const request = {
+      origin: stops[0].location,
+      destination: stops[stops.length - 1].location,
+      waypoints: waypoints,
+      travelMode: 'DRIVING'
+    };
 
-          // Cost calculations
-          const totalCost = (distance * parseFloat(costPerKm)).toFixed(2);
-          const toll = (24.40).toFixed(2);
-          const price = (distance * parseFloat(pricePerKm)).toFixed(2);
-          const profit = (parseFloat(price) - parseFloat(totalCost) - parseFloat(toll)).toFixed(2);
+    directionsService.route(request, (result, status) => {
+      if (status === 'OK') {
+        onRouteCalculated(result);
 
-          // Calculate surcharge based on container type and weight
-          let surcharge = 0;
-          let showSurchargeAlert = false;
+        const route = result.routes[0];
+        let totalDistance = 0;
+        let totalDuration = 0;
 
-          if (containerType === '20gp' && cargoWeight > 26) {
-            surcharge = 0.25 * totalCost;
-            showSurchargeAlert = true;
-          } else if (['40dry', '40hc', '40out'].includes(containerType) && cargoWeight > 24) {
-            surcharge = 0.25 * totalCost;
-            showSurchargeAlert = true;
-          }
+        route.legs.forEach(leg => {
+          totalDistance += leg.distance.value;
+          totalDuration += leg.duration.value;
+        });
 
-          if (showSurchargeAlert) {
-            alert("Recibirás un recargo del 25%");
-          }
+        const distanceKm = totalDistance / 1000; // Convert to km
+        const durationHours = totalDuration / 3600; // Convert to hours
 
-          const finalCost = (parseFloat(totalCost) + surcharge).toFixed(2);
+        let price = distanceKm * parseFloat(tarifa); // Base price
 
-          onRouteInfo({
-            distance: distance.toFixed(2) + ' km',
-            duration: Math.floor(duration / 60) + 'h ' + (duration % 60).toFixed(0) + 'min',
-            costPerKm: parseFloat(costPerKm).toFixed(2) + '€',
-            pricePerKm: parseFloat(pricePerKm).toFixed(2) + '€',
-            totalCost: finalCost + '€',
-            toll: toll + '€',
-            profit: profit + '€',
-            price: price + '€',
-            surcharge: surcharge.toFixed(2) + '€',
-            selectedOptions: selectedOptions
-          });
-        } else {
-          alert('No se pudo calcular la ruta: ' + status);
+        // Apply weight surcharge if necessary
+        if (showWeightAlert) {
+          price *= 1.25; // 25% surcharge
         }
+
+        const surchargePercentage = selectedOptions.length * 0.05;
+        const surcharge = price * surchargePercentage;
+
+        const routeInfo = {
+          distance: `${distanceKm.toFixed(2)} km`,
+          duration: `${durationHours.toFixed(2)} horas`,
+          pricePerKm: `€${parseFloat(tarifa).toFixed(2)}`,
+          price: `€${(price + surcharge).toFixed(2)}`, // Final price including surcharges
+          surcharge: `€${surcharge.toFixed(2)}`,
+          toll: 'N/A',
+          profit: `€${price.toFixed(2)}` // Base price
+        };
+
+        onRouteInfo(routeInfo);
+      } else {
+        console.error('Directions request failed due to ' + status);
       }
-    );
+    });
   };
 
   const resetRoute = () => {
@@ -138,54 +144,54 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
     ]);
     setCargoWeight(0);
     setContainerType('');
-    setCostPerKm('');
-    setPricePerKm('');
+    setTarifa('');
     setSelectedOptions([]);
+    setShowWeightAlert(false);
     onClearRoute();
   };
 
   return (
     <div className="card">
       <div className="card-body">
-        <h5 className="card-title mb-3 justify-content-start">Paradas</h5>
-        <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-          {stops.map((stop, index) => (
-            <div key={stop.key} className="mb-2 d-flex align-items-center">
-              <input
-                id={`location-${index}`}
-                type="text"
-                className="form-control me-2"
-                placeholder={index === 0 ? "Origen" : index === stops.length - 1 ? "Destino final" : `Parada ${index}`}
-                value={stop.location}
-                onChange={(e) => updateStop(index, 'location', e.target.value)}
-              />
-              {index === stops.length - 1 && (
-                <button className="btn btn-outline-secondary me-2" onClick={addStop}>+</button>
-              )}
-              {stops.length > 2 && index !== 0 && index !== stops.length - 1 && (
-                <button className="btn btn-outline-danger" onClick={() => removeStop(index)}>×</button>
-              )}
-            </div>
-          ))}
+        <h5 className="card-title mb-3">Paradas</h5>
+        {stops.map((stop, index) => (
+          <div key={stop.key} className="mb-2 d-flex align-items-center">
+            <input
+              id={`location-${index}`}
+              type="text"
+              className="form-control me-2"
+              placeholder={index === 0 ? "Origen" : index === stops.length - 1 ? "Destino final" : `Parada ${index}`}
+              value={stop.location}
+              onChange={(e) => updateStop(index, 'location', e.target.value)}
+            />
+            {index === stops.length - 1 && (
+              <button className="btn btn-outline-secondary me-2" onClick={addStop}>+</button>
+            )}
+            {stops.length > 2 && index !== 0 && index !== stops.length - 1 && (
+              <button className="btn btn-outline-danger" onClick={() => removeStop(index)}>×</button>
+            )}
+          </div>
+        ))}
+
+        <div className="mt-3">
+          <label>Tipo de contenedor:</label>
+          <div className="input-group">
+            <select
+              className="form-select"
+              value={containerType}
+              onChange={(e) => setContainerType(e.target.value)}
+            >
+              <option value="">Selecciona un tipo</option>
+              <option value="20">20'</option>
+              <option value="40">40'</option>
+              <option value="20reefer">20' Reefer</option>
+              <option value="40reefer">40' Reefer</option>
+            </select>
+          </div>
         </div>
 
         <div className="mt-3">
-          <h5 className="card-title mb-3 justify-content-start">Tipo de contenedor:</h5>
-          <select
-            className="form-control"
-            value={containerType}
-            onChange={(e) => setContainerType(e.target.value)}
-          >
-            <option value="">Selecciona un tipo</option>
-            <option value="20gp">20GP</option>
-            <option value="40dry">40DRY</option>
-            <option value="40hc">40HC</option>
-            <option value="40out">40OUT</option>
-          </select>
-        </div>
-
-        <div className="mt-3">
-        <h5 className="card-title mb-3 justify-content-start">Peso de la carga (toneladas):</h5>
+          <label>Peso de la carga (toneladas):</label>
           <input
             type="number"
             className="form-control"
@@ -195,68 +201,46 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
           />
         </div>
 
+        {showWeightAlert && (
+          <div className="alert alert-warning mt-3">
+            Recibirás un recargo del 25% debido al exceso de peso.
+          </div>
+        )}
+
         <div className="mt-3">
-          <h5 className="card-title mb-3">Costes y Precios</h5>
-          <table className="table table-bordered">
-            <tbody>
-              <tr>
-                <th>Coste por km (€)</th>
-                <td>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={costPerKm}
-                    onChange={(e) => setCostPerKm(e.target.value)}
-                    placeholder="0.00"
-                    step="0.01"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>Precio por km (€)</th>
-                <td>
-                  <input
-                    type="number"
-                    className="form-control"
-                    value={pricePerKm}
-                    onChange={(e) => setPricePerKm(e.target.value)}
-                    placeholder="0.00"
-                    step="0.01"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <h5 className="card-title mb-3">Introducir Tarifa</h5>
+          <div className="input-group">
+            <input
+              type="number"
+              className="form-control"
+              value={tarifa}
+              onChange={(e) => setTarifa(e.target.value)}
+              placeholder="0.00"
+              step="0.01"
+            />
+            <span className="input-group-text">€/km</span>
+          </div>
         </div>
 
         <div className="mt-3">
-          <h5 className="card-title mb-3">Opciones adicionales</h5>
-          <div className="d-flex flex-wrap gap-2">
-            {options.map(option => (
-              <button
-                key={option}
-                className={`btn ${selectedOptions.includes(option) ? 'btn-primary' : 'btn-outline-primary'}`}
-                onClick={() => toggleOption(option)}
-              >
-                {option}
-              </button>
+          <h5 className="card-title mb-3">Opciones Adicionales</h5>
+          <div className="d-flex flex-wrap">
+            {additionalOptions.map((option, index) => (
+              <div key={index} className="form-check me-3 mb-2">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id={`option-${index}`}
+                  checked={selectedOptions.includes(option)}
+                  onChange={() => handleOptionChange(option)}
+                />
+                <label className="form-check-label" htmlFor={`option-${index}`}>
+                  {option}
+                </label>
+              </div>
             ))}
           </div>
         </div>
-
-        {selectedOptions.length > 0 && (
-          <div className="mt-3">
-            <h6>Opciones seleccionadas:</h6>
-            <ul className="list-group">
-              {selectedOptions.map(option => (
-                <li key={option} className="list-group-item d-flex justify-content-between align-items-center">
-                  {option}
-                  <button className="btn btn-sm btn-danger" onClick={() => toggleOption(option)}>×</button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
         <div className="mt-3">
           <button onClick={calculateRoute} className="btn btn-primary me-2">Calcular ruta</button>

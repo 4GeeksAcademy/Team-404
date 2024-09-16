@@ -79,6 +79,7 @@
 		"@googlemaps/extended-component-library": "^0.6.11",
 		"@googlemaps/js-api-loader": "^1.16.8",
 		"@googlemaps/markerclusterer": "^2.5.3",
+		"@radix-ui/react-alert-dialog": "^1.1.1",
 		"@react-google-maps/api": "^2.19.3",
 		"@vis.gl/react-google-maps": "^1.1.2",
 		"axios": "^1.7.5",
