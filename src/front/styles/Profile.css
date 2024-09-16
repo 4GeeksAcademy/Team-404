@@ -1,6 +1,6 @@
 .profile-page-container {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr; /* Distribución 25% Panel de Control, 50% Perfil del Usuario, 25% Mapa */
+    grid-template-columns: 15% 50% 35%; /* Distribución 15% Panel de Control, 50% Perfil del Usuario, 35% Mapa */
     gap: 20px;
     padding: 20px;
 }
@@ -9,15 +9,13 @@
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    grid-column: 1; /* Panel de Control en la primera columna */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .profile-control-panel h1 {
-    font-size: 1.5rem; /* Tamaño de fuente para títulos */
-    color: #007BFF; /* Color azul */
+    font-size: 1.8rem;
+    color: #007BFF;
     margin-bottom: 20px;
-    font-family: Arial, sans-serif; /* Tipo de letra para los títulos */
 }
 
 .profile-control-panel ul {
@@ -26,16 +24,15 @@
 }
 
 .profile-control-panel li {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .profile-control-panel a {
     text-decoration: none;
     color: #333;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     display: flex;
     align-items: center;
-    font-family: Arial, sans-serif; /* Tipo de letra para los enlaces */
 }
 
 .profile-control-panel a:hover {
@@ -43,63 +40,97 @@
 }
 
 .profile-control-panel a svg {
-    margin-right: 10px;
+    margin-right: 12px;
 }
 
 .profile-section {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    grid-column: 2; /* Perfil del Usuario en la segunda columna */
-    text-align: center; /* Centrar el texto */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar el contenido horizontalmente */
+    background: linear-gradient(135deg, #f0f4f8, #e0e7ff); /* Gradiente de fondo sutil */
+    /* background: url('path-to-your-background-image.jpg') no-repeat center center; */
+    /* background-size: cover; */
 }
 
 .profile-section h1 {
-    font-size: 1.5rem; /* Tamaño de fuente para títulos */
-    color: #007BFF; /* Color azul */
-    margin-bottom: 20px;
-    font-family: Arial, sans-serif; /* Tipo de letra para los títulos */
+    font-size: 2rem;
+    font-weight: bold;
+    color: #007BFF;
+    margin-bottom: 25px;
 }
 
 .profile-card {
-    font-family: Arial, sans-serif; /* Tipo de letra para el contenido del perfil */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centrar el contenido */
-    gap: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    background-color: #f9f9f9;
-}
-
-.profile-card .profile-header {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 30px; /* Espacio entre la imagen y la información */
+    text-align: center; /* Centrar texto dentro del card */
+    flex-direction: column; /* Colocar imagen y texto en columna */
 }
 
-.profile-card .profile-header svg {
-    font-size: 3rem; /* Tamaño del ícono */
-    color: #007BFF; /* Color del ícono */
+.profile-avatar {
+    width: 150px; /* Tamaño de la imagen */
+    height: 150px; /* Tamaño de la imagen */
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px; /* Espacio debajo de la imagen */
 }
 
-.profile-card h2 {
-    font-size: 1.5rem;
+.profile-info {
+    width: 100%; /* Asegurarse de que el texto ocupe todo el ancho del contenedor */
+}
+
+.profile-info h2 {
+    font-size: 1.8rem;
     color: #333;
-    margin: 0;
+    margin-bottom: 10px;
 }
 
-.profile-card p {
-    font-size: 1.2rem; /* Tamaño de fuente para el contenido del perfil */
-    margin: 5px 0; /* Espaciado vertical */
+.profile-info p {
+    font-size: 1.2rem;
+    color: #666;
+    margin: 5px 0;
+}
+
+.profile-info p strong {
+    color: #333;
+}
+
+.profile-loading .loading-circle {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007BFF;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.profile-error {
+    color: #e74c3c;
+    font-size: 1.3rem;
+}
+
+.profile-no-data {
+    color: #888;
+    font-size: 1.3rem;
 }
 
 .profile-map-section {
     height: 80vh;
-    grid-column: 3; /* Mapa en la tercera columna */
+    grid-column: 3;
 }
 
 .map-container {
