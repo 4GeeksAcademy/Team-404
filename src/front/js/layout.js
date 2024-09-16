@@ -5,8 +5,7 @@ import { BackendURL } from "./component/backendURL";
 
 import { Inicio } from "./pages/Inicio";
 import Profile from "./pages/profile";
-import Mapa from "./pages/Logistica";
-import LoginForm from "./pages/Acceso";
+import Mapa from "./pages/Planner";
 import CondicionesDeUso from "./pages/CondicionesUso";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
