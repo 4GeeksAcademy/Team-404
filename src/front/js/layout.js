@@ -5,7 +5,7 @@ import { BackendURL } from "./component/backendURL";
 
 import { Inicio } from "./pages/Inicio";
 import Profile from "./pages/profile";
-import Mapa from "./pages/Planner";
+import Mapa from "./pages/Logistica";
 import LoginForm from "./pages/Acceso";
 import CondicionesDeUso from "./pages/CondicionesUso";
 import { Single } from "./pages/single";
@@ -36,7 +36,6 @@ const Layout = () => {
                         <Route element={<Inicio />} path="/" />
                         <Route element={<Profile />} path="/profile" />
                         <Route element={<Mapa />} path="/mapa" />
-                        <Route element={<LoginForm />} path="/login" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                         <Route element={<CondicionesDeUso />} path="/condicionesUso" />
