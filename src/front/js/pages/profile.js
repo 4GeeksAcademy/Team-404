@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { Loader } from '@googlemaps/js-api-loader';
 import '../../styles/Profile.css'; // Archivo CSS actualizado
 
@@ -12,7 +12,7 @@ const Profile = () => {
     const [error, setError] = useState(null);
     const [map, setMap] = useState(null);
     const mapRef = useRef(null);
-    
+
     // Función para obtener los datos del usuario autenticado
     const fetchUserData = async () => {
         try {
@@ -128,13 +128,15 @@ const Profile = () => {
                 ) : user ? (
                     <div className="profile-card">
                         <div className="profile-header">
-                            <FontAwesomeIcon icon={faUserCircle} />
-                            <h2>{user.name} {user.last_name}</h2>
+                            <img src="https://i.pravatar.cc/150" alt="Avatar" className="profile-avatar" />
+                            <div className="profile-info">
+                                <h2>{user.name} {user.last_name}</h2>
+                                <p><strong>Email:</strong> {user.email}</p>
+                                <p><strong>Empresa:</strong> {user.company || 'No especificada'}</p>
+                                <p><strong>Ubicación:</strong> {user.location || 'No especificada'}</p>
+                                <p><strong>Cuenta creada en:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
+                            </div>
                         </div>
-                        <p><strong>Email:</strong> {user.email}</p>
-                        <p><strong>Empresa:</strong> {user.company || 'No especificada'}</p>
-                        <p><strong>Ubicación:</strong> {user.location || 'No especificada'}</p>
-                        <p><strong>Cuenta creada en:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
                     </div>
                 ) : (
                     <div className="profile-no-data">
