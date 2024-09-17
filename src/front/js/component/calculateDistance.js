@@ -40,7 +40,6 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
   }, [cargoWeight, containerType]);
 
   const checkWeightLimit = () => {
-    // Define the weight limits for each container type
     if ((containerType === '20' || containerType === '20reefer') && cargoWeight > 25) {
       setShowWeightAlert(true);
     } else if ((containerType === '40' || containerType === '40reefer') && cargoWeight > 24) {
@@ -107,27 +106,48 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
           totalDuration += leg.duration.value;
         });
 
-        const distanceKm = totalDistance / 1000; // Convert to km
-        const durationHours = totalDuration / 3600; // Convert to hours
+        const distanceKm = totalDistance / 1000; // Convertir a km
+        const durationHours = totalDuration / 3600; // Convertir a horas
 
-        let price = distanceKm * parseFloat(tarifa); // Base price
+        // Cálculo de costos
+        const fuelCostPerKm = 0.5; // Estimación de costo de combustible por km
+        const maintenanceCostPerKm = 0.1; // Estimación de costo de mantenimiento por km
+        const driverCostPerHour = 15; // Estimación de costo del conductor por hora
 
-        // Apply weight surcharge if necessary
+        const fuelCost = distanceKm * fuelCostPerKm;
+        const maintenanceCost = distanceKm * maintenanceCostPerKm;
+        const driverCost = durationHours * driverCostPerHour;
+
+        const totalOperationalCost = fuelCost + maintenanceCost + driverCost;
+
+        // Cálculo del precio base
+        let basePrice = distanceKm * parseFloat(tarifa);
+
+        // Aplicar recargo por peso si es necesario
         if (showWeightAlert) {
-          price *= 1.25; // 25% surcharge
+          basePrice *= 1.25; // 25% de recargo
         }
 
+        // Aplicar recargos por opciones adicionales
         const surchargePercentage = selectedOptions.length * 0.05;
-        const surcharge = price * surchargePercentage;
+        const surcharge = basePrice * surchargePercentage;
+
+        // Precio final a cobrar
+        const finalPrice = basePrice + surcharge;
+
+        // Cálculo del beneficio
+        const profit = finalPrice - totalOperationalCost;
 
         const routeInfo = {
           distance: `${distanceKm.toFixed(2)} km`,
           duration: `${durationHours.toFixed(2)} horas`,
           pricePerKm: `€${parseFloat(tarifa).toFixed(2)}`,
-          price: `€${(price + surcharge).toFixed(2)}`, // Final price including surcharges
+          operationalCost: `€${totalOperationalCost.toFixed(2)}`,
+          basePrice: `€${basePrice.toFixed(2)}`,
           surcharge: `€${surcharge.toFixed(2)}`,
-          toll: 'N/A',
-          profit: `€${price.toFixed(2)}` // Base price
+          finalPrice: `€${finalPrice.toFixed(2)}`,
+          profit: `€${profit.toFixed(2)}`,
+          toll: 'N/A' // Mantener esto si no se calcula el peaje
         };
 
         onRouteInfo(routeInfo);

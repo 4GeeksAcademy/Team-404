@@ -82,12 +82,12 @@ const Mapa = () => {
                                                 <td>{routeInfo.duration}</td>
                                             </tr>
                                             <tr>
-                                                <th>Peaje</th>
-                                                <td>{routeInfo.toll}</td>
-                                            </tr>
-                                            <tr>
                                                 <th>Precio por km</th>
                                                 <td>{routeInfo.pricePerKm}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Costo operacional</th>
+                                                <td>{routeInfo.operationalCost}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -96,19 +96,21 @@ const Mapa = () => {
                                     <table className="table table-striped table-bordered">
                                         <tbody>
                                             <tr>
+                                                <th>Precio base</th>
+                                                <td>{routeInfo.basePrice}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Recargo</th>
+                                                <td>{routeInfo.surcharge}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Precio final</th>
+                                                <td>{routeInfo.finalPrice}</td>
+                                            </tr>
+                                            <tr>
                                                 <th>Beneficio</th>
                                                 <td>{routeInfo.profit}</td>
                                             </tr>
-                                            <tr>
-                                                <th>Precio a cobrar</th>
-                                                <td>{routeInfo.price}</td>
-                                            </tr>
-                                            {routeInfo.surcharge && parseFloat(routeInfo.surcharge) > 0 && (
-                                                <tr>
-                                                    <th>Recargo</th>
-                                                    <td>{routeInfo.surcharge}</td>
-                                                </tr>
-                                            )}
                                         </tbody>
                                     </table>
                                 </div>
