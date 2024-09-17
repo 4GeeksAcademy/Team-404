@@ -50,75 +50,93 @@ const Mapa = () => {
 
     return (
         <div className="container-fluid">
-            <div className="row">
-                <div className="col-lg-4 col-md-12">
-                    <h1 className="mb-4">Planner</h1>
-                    <CalculateDistance
-                        map={map}
-                        onRouteCalculated={handleRouteCalculated}
-                        onRouteInfo={handleRouteInfo}
-                        onClearRoute={clearRoute}
-                    />
+            <div className="row g-4">
+                <div className="col-lg-4">
+                    <div className="card h-100">
+                        <div className="card-body">
+                            <h1 className="card-title mb-4">Planner</h1>
+                            <CalculateDistance
+                                map={map}
+                                onRouteCalculated={handleRouteCalculated}
+                                onRouteInfo={handleRouteInfo}
+                                onClearRoute={clearRoute}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div className="col-lg-8 col-md-12">
-                    <div
-                        ref={mapRef}
-                        style={{ height: "60vh", borderRadius: "10px", border: "2px solid #007BFF" }}
-                        className="border mb-4"
-                    ></div>
-                    {routeInfo && (
-                        <div className="mt-4 border rounded p-3">
-                            <h3>Información de la ruta</h3>
-                            <div className="row">
-                                <div className="col">
-                                    <table className="table table-striped table-bordered">
-                                        <tbody>
-                                            <tr>
-                                                <th>Distancia</th>
-                                                <td>{routeInfo.distance}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Duración</th>
-                                                <td>{routeInfo.duration}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Precio por km</th>
-                                                <td>{routeInfo.pricePerKm}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Costo operacional</th>
-                                                <td>{routeInfo.operationalCost}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="col">
-                                    <table className="table table-striped table-bordered">
-                                        <tbody>
-                                            <tr>
-                                                <th>Precio base</th>
-                                                <td>{routeInfo.basePrice}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Recargo</th>
-                                                <td>{routeInfo.surcharge}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Precio final</th>
-                                                <td>{routeInfo.finalPrice}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Beneficio</th>
-                                                <td>{routeInfo.profit}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                <div className="col-lg-8">
+                    <div className="card h-100">
+                        <div className="card-body">
+                            <div
+                                ref={mapRef}
+                                style={{ height: "100%", minHeight: "500px", borderRadius: "10px" }}
+                                className="border border-primary"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {routeInfo && (
+                <div className="row mt-4">
+                    <div className="col-12">
+                        <div className="card">
+                            <div className="card-body">
+                                <h3 className="card-title">Información de la ruta</h3>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <table className="table table-striped table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Distancia</th>
+                                                    <td>{routeInfo.distance}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Duración</th>
+                                                    <td>{routeInfo.duration}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Precio por km</th>
+                                                    <td>{routeInfo.pricePerKm}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Costo operacional</th>
+                                                    <td>{routeInfo.operationalCost}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <table className="table table-striped table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Precio base</th>
+                                                    <td>{routeInfo.basePrice}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Recargo por peso</th>
+                                                    <td>{routeInfo.weightSurcharge}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Adicionales</th>
+                                                    <td>{routeInfo.optionsSurcharge}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Precio final</th>
+                                                    <td>{routeInfo.finalPrice}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Beneficio</th>
+                                                    <td>{routeInfo.profit}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    )}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

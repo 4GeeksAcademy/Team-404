@@ -74,6 +74,35 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
     );
   };
 
+  // Nuevo: Función para calcular el consumo de combustible basado en el tipo de contenedor y peso
+  const calculateFuelConsumption = (distanceKm) => {
+    let baseFuelConsumption;
+    switch (containerType) {
+      case '20':
+      case '20reefer':
+        baseFuelConsumption = 28; // 28 litros por 100 km para contenedores de 20'
+        break;
+      case '40':
+      case '40reefer':
+        baseFuelConsumption = 32; // 32 litros por 100 km para contenedores de 40'
+        break;
+      default:
+        baseFuelConsumption = 30; // Valor por defecto
+    }
+
+    // Ajuste por peso: aumenta el consumo un 2% por cada tonelada sobre las 20
+    const weightAdjustment = Math.max(0, cargoWeight - 20) * 0.02;
+    const adjustedConsumption = baseFuelConsumption * (1 + weightAdjustment);
+
+    return (adjustedConsumption / 100) * distanceKm;
+  };
+
+  // Nuevo: Función para calcular el BAF más detallado
+  const calculateBAF = (baseFuelPrice, currentFuelPrice, totalFuelConsumption) => {
+    const fuelPriceDifference = currentFuelPrice - baseFuelPrice;
+    return fuelPriceDifference * totalFuelConsumption;
+  };
+
   const calculateRoute = () => {
     if (!window.google || !map) {
       console.error('Google Maps API not loaded');
@@ -109,31 +138,38 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
         const distanceKm = totalDistance / 1000; // Convertir a km
         const durationHours = totalDuration / 3600; // Convertir a horas
 
-        // Cálculo de costos
-        const fuelCostPerKm = 0.5; // Estimación de costo de combustible por km
-        const maintenanceCostPerKm = 0.1; // Estimación de costo de mantenimiento por km
-        const driverCostPerHour = 15; // Estimación de costo del conductor por hora
+        // Cálculo del cambio porcentual en el precio del combustible
+        const baseFuelPrice = 1.10; // Precio base del ejemplo
+        const currentFuelPrice = 1.50; // Precio actual del ejemplo
 
-        const fuelCost = distanceKm * fuelCostPerKm;
-        const maintenanceCost = distanceKm * maintenanceCostPerKm;
-        const driverCost = durationHours * driverCostPerHour;
+        // Nuevo: Cálculo del consumo de combustible utilizando la nueva función
+        const totalFuelConsumption = calculateFuelConsumption(distanceKm);
 
-        const totalOperationalCost = fuelCost + maintenanceCost + driverCost;
+        // Nuevo: Cálculo del BAF utilizando la nueva función
+        const bafCost = calculateBAF(baseFuelPrice, currentFuelPrice, totalFuelConsumption);
+
+        // Cálculo del costo del conductor fijo a 0.80 €/km
+        const driverCostPerKm = 0.80;
+        const driverCost = distanceKm * driverCostPerKm;
+
+        // Costo operacional total
+        const totalOperationalCost = bafCost + driverCost;
 
         // Cálculo del precio base
-        let basePrice = distanceKm * parseFloat(tarifa);
+        const basePrice = distanceKm * parseFloat(tarifa);
 
-        // Aplicar recargo por peso si es necesario
+        // Cálculo de recargos
+        let weightSurcharge = 0;
         if (showWeightAlert) {
-          basePrice *= 1.25; // 25% de recargo
+          weightSurcharge = basePrice * 0.25; // 25% de recargo por peso
         }
 
-        // Aplicar recargos por opciones adicionales
-        const surchargePercentage = selectedOptions.length * 0.05;
-        const surcharge = basePrice * surchargePercentage;
+        // Recargo por opciones adicionales
+        const optionsSurchargePercentage = selectedOptions.length * 0.05;
+        const optionsSurcharge = basePrice * optionsSurchargePercentage;
 
         // Precio final a cobrar
-        const finalPrice = basePrice + surcharge;
+        const finalPrice = basePrice + weightSurcharge + optionsSurcharge;
 
         // Cálculo del beneficio
         const profit = finalPrice - totalOperationalCost;
@@ -144,9 +180,12 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
           pricePerKm: `€${parseFloat(tarifa).toFixed(2)}`,
           operationalCost: `€${totalOperationalCost.toFixed(2)}`,
           basePrice: `€${basePrice.toFixed(2)}`,
-          surcharge: `€${surcharge.toFixed(2)}`,
+          weightSurcharge: `€${weightSurcharge.toFixed(2)}`,
+          optionsSurcharge: `€${optionsSurcharge.toFixed(2)}`,
           finalPrice: `€${finalPrice.toFixed(2)}`,
           profit: `€${profit.toFixed(2)}`,
+          fuelConsumption: `${totalFuelConsumption.toFixed(2)} litros`,
+          bafCost: `€${bafCost.toFixed(2)}`,
           toll: 'N/A' // Mantener esto si no se calcula el peaje
         };
 
@@ -223,7 +262,7 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
 
         {showWeightAlert && (
           <div className="alert alert-warning mt-3">
-            Recibirás un recargo del 25% debido al exceso de peso.
+            Se aplicará un recargo del 25% debido al exceso de peso.
           </div>
         )}
 
@@ -250,22 +289,21 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
                 <input
                   className="form-check-input"
                   type="checkbox"
-                  id={`option-${index}`}
                   checked={selectedOptions.includes(option)}
                   onChange={() => handleOptionChange(option)}
                 />
-                <label className="form-check-label" htmlFor={`option-${index}`}>
-                  {option}
-                </label>
+                <label className="form-check-label">{option}</label>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-3">
-          <button onClick={calculateRoute} className="btn btn-primary me-2">Calcular ruta</button>
-          <button onClick={resetRoute} className="btn btn-secondary">Resetear</button>
-        </div>
+        <button className="btn btn-primary mt-3" onClick={calculateRoute}>
+          Calcular Ruta
+        </button>
+        <button className="btn btn-secondary mt-3 ms-2" onClick={resetRoute}>
+          Limpiar
+        </button>
       </div>
     </div>
   );
