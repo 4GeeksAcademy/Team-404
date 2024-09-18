@@ -17,23 +17,11 @@ export const Navbar = () => {
 						<li className="nav-item">
 							<Link className="nav-link active" to="/Mapa" aria-current="page" href="#">Planner</Link>
 						</li>
-						<li className="nav-item dropdown">
-							<a className="nav-link dropdown-toggle" href="#" id="navbarDropdownSobreNosotros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								Sobre nosotros
-							</a>
-							<ul className="dropdown-menu" aria-labelledby="navbarDropdownSobreNosotros">
-								<li><a className="dropdown-item" href="#">Nuestra historia</a></li>
-								<li><a className="dropdown-item" href="#">Nuestro equipo</a></li>
-							</ul>
+						<li className="nav-item">
+							<Link className="nav-link active" to="/sobreNosotros">Nosotros</Link>
 						</li>
 						<li className="nav-item dropdown">
-							<a className="nav-link dropdown-toggle" href="#" id="navbarDropdownContactos" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-								Contactos
-							</a>
-							<ul className="dropdown-menu" aria-labelledby="navbarDropdownContactos">
-								<li><a className="dropdown-item" href="#">Soporte</a></li>
-								<li><a className="dropdown-item" href="#">Servicio al Cliente</a></li>
-							</ul>
+						<Link className="nav-link active" to="/Contacto">Contacto</Link>
 						</li>
 					</ul>
 				</div>

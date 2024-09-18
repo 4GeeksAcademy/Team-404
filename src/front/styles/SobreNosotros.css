@@ -1,0 +1,31 @@
+.image-container {
+    position: relative;
+    display: flex;
+    align-items: center; /* Alinea verticalmente */
+    justify-content: center; /* Alinea horizontalmente */
+    height: 100vh; /* Ocupa la altura completa de la ventana */
+    text-align: center; /* Centra el texto */
+    
+
+}
+
+.h1-text {
+    font-size: calc(1.5rem + 1vw); /* Escala el tamaño del h1 de forma responsiva */
+    color: rgb(255, 255, 255); /* Asegúrate de que el texto sea visible sobre la imagen */
+}
+
+.image-text {
+    font-size: calc(1rem + 0.5vw); /* Ajusta el tamaño del párrafo de forma responsiva */
+    color: rgb(255, 255, 255); /* Asegúrate de que el texto sea visible sobre la imagen */
+    max-width: 800px; /* Limita el ancho del texto para que no se extienda demasiado */
+}
+
+.image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegúrate de que la imagen cubra todo el espacio */
+    z-index: -1; /* Envía la imagen al fondo para que el texto esté por encima */
+}

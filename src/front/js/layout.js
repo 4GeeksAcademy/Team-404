@@ -17,6 +17,8 @@ import ProteccionDeDatos from "./pages/proteccionDatos";
 import PoliticaDeCookies from "./pages/politicaCookies";
 import LimitacionDeResponsabilidad from "./pages/limitacionResponsabilidad";
 import Jurisdiccion from "./pages/jurisdiccion";
+import SobreNosotros from "./pages/sobreNosotros";
+import Contacto from "./pages/Contactos";
 
 //create your first component
 const Layout = () => {
@@ -33,6 +35,8 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Inicio />} path="/" />
+                        <Route element={<SobreNosotros />} path="/SobreNosotros" />
+                        <Route element={<Contacto />} path="/Contacto" />
                         <Route element={<Profile />} path="/profile" />
                         <Route element={<Mapa />} path="/mapa" />
                         <Route element={<Single />} path="/single/:theid" />
