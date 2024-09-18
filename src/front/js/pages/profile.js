@@ -87,7 +87,7 @@ const Profile = () => {
                 <h1>Panel de Control</h1>
                 <ul>
                     <li>
-                        <Link to="/planner">
+                        <Link to="/Mapa">
                             <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
                         </Link>
                     </li>
@@ -97,7 +97,7 @@ const Profile = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/vehiculos-conductores">
+                        <Link to="/flota">
                             <FontAwesomeIcon icon={faTruck} /> Vehículos y Conductores
                         </Link>
                     </li>
