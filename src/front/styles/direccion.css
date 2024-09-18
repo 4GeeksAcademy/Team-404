@@ -1,0 +1,137 @@
+/* Estilo para el overlay del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Estilo para el contenido del modal */
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 1200px;
+    height: 80%; /* Aumenta la altura del modal */
+    max-height: 80%; /* Asegura que el modal no exceda el 80% de la altura de la ventana */
+    position: relative;
+    display: flex;
+    overflow: hidden;
+}
+
+/* Contenedor del contenido desplazable del modal */
+.modal-body {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+    height: calc(100% - 50px); /* Ajusta la altura para dejar espacio para el botón de cerrar */
+    overflow: auto; /* Habilita el desplazamiento si el contenido es demasiado grande */
+}
+
+/* Parte 1: Estilos del formulario y detalle */
+.form-detail-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto; /* Habilita el desplazamiento vertical en la sección del formulario */
+}
+
+.form-section, .detail-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-section h3, .detail-section h3 {
+    margin-bottom: 10px;
+}
+
+.form-section label, .detail-section label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.form-section input, .detail-section input, .detail-section textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f5f5f5; /* Gris claro */
+}
+
+.required {
+    color: red;
+    margin-left: 5px;
+}
+
+/* Parte 2: Estilos del mapa */
+.map-section {
+    flex: 1;
+    height: 100%; /* Ajusta la altura del mapa para que llene el contenedor */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Estilo para el botón de cerrar el modal */
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #007bff; /* Azul para el botón de cerrar */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.modal-close-btn:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
+
+/* Estilo para el botón de dirección */
+.direccion-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.direccion-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para el encabezado de direcciones */
+.direcciones-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Estilo para la sección sin direcciones */
+.no-direcciones {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.no-direcciones p {
+    margin-bottom: 10px;
+}

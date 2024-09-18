@@ -9,6 +9,7 @@ import Mapa from "./pages/Planner";
 import CondicionesDeUso from "./pages/CondicionesUso";
 import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
+import { Direcciones } from "./pages/direcciones"
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -39,6 +40,7 @@ const Layout = () => {
                         <Route element={<Contacto />} path="/Contacto" />
                         <Route element={<Profile />} path="/profile" />
                         <Route element={<Mapa />} path="/mapa" />
+                        <Route element={<Direcciones />} path="/direcciones" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                         <Route element={<CondicionesDeUso />} path="/condicionesUso" />
