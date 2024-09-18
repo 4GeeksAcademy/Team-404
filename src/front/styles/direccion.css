@@ -1,0 +1,50 @@
+/* Estilo para el contenedor del título y el botón */
+.direcciones-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 20px;  /* Añadir margen superior */
+    padding: 10px;     /* Añadir relleno interno */
+}
+
+/* Estilo unificado para ambos botones */
+.direccion-btn {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 20px; /* Espacio adicional al lado izquierdo */
+}
+
+.direccion-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Contenedor del mensaje cuando no hay direcciones */
+.no-direcciones {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Estilos para la tabla */
+.table {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 12px;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
