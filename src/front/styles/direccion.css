@@ -23,16 +23,18 @@
     max-height: 80%; /* Asegura que el modal no exceda el 80% de la altura de la ventana */
     position: relative;
     display: flex;
+    flex-direction: column; /* Orden vertical para que el contenido y los botones estén en secuencia */
     overflow: hidden;
 }
 
 /* Contenedor del contenido desplazable del modal */
 .modal-body {
+    flex: 1;
     display: flex;
     flex-direction: row;
     gap: 20px;
     width: 100%;
-    height: calc(100% - 50px); /* Ajusta la altura para dejar espacio para el botón de cerrar */
+    height: calc(100% - 60px); /* Ajusta la altura para dejar espacio para el botón de cerrar y los botones de acción */
     overflow: auto; /* Habilita el desplazamiento si el contenido es demasiado grande */
 }
 
@@ -61,7 +63,7 @@
     margin-bottom: 10px;
 }
 
-.form-section input, .detail-section input, .detail-section textarea {
+.form-section input, .detail-section input, .detail-section textarea, .form-section select {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -86,8 +88,8 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #007bff; /* Azul para el botón de cerrar */
-    color: white;
+    background-color: none; /* Sin color de fondo */
+    color: black;
     border: none;
     border-radius: 50%;
     width: 30px;
@@ -96,24 +98,11 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    font-size: 20px;
 }
 
 .modal-close-btn:hover {
-    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
-}
-
-/* Estilo para el botón de dirección */
-.direccion-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.direccion-btn:hover {
-    background-color: #0056b3;
+    background-color: #f2f2f2; /* Fondo gris claro al pasar el ratón */
 }
 
 /* Estilo para el encabezado de direcciones */
@@ -134,4 +123,72 @@
 
 .no-direcciones p {
     margin-bottom: 10px;
+}
+
+/* Estilo para el select de país */
+.form-section select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f5f5f5; /* Gris claro */
+}
+
+.search-btn {
+    background-color: #007bff; /* Azul moderno */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.search-btn:hover {
+    background-color: #0056b3; /* Azul oscuro al pasar el ratón */
+}
+
+/* Contenedor de los botones en el modal */
+.modal-buttons {
+    display: flex;
+    flex-direction: row; /* Mantiene los botones en una fila */
+    justify-content: flex-end; /* Alinear los botones a la derecha */
+    gap: 10px;
+    margin-top: 20px; /* Espacio superior */
+}
+
+/* Estilo para el botón de cancelar */
+.cancel-btn {
+    background-color: #6c757d; /* Gris para el botón de cancelar */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268; /* Gris más oscuro al pasar el ratón */
+}
+
+/* Estilo para el botón de dirección */
+.direccion-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.direccion-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo para el mensaje de advertencia */
+.warning-message {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
 }

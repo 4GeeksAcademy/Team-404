@@ -1,20 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { Loader } from '@googlemaps/js-api-loader';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faArrowRight, faUser } from '@fortawesome/free-solid-svg-icons';
 import "../../styles/direccion.css"; // Asegúrate de que la ruta al archivo CSS sea correcta
 
 export const Direcciones = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [map, setMap] = useState(null);
+    const [countries, setCountries] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState(null);
+    const [address, setAddress] = useState(""); // Estado para la dirección
+    const [postalCode, setPostalCode] = useState(""); // Estado para el código postal
+    const [street, setStreet] = useState(""); // Estado para la calle
+    const [name, setName] = useState(""); // Estado para el nombre
+    const [category, setCategory] = useState(""); // Estado para la categoría
+    const [warning, setWarning] = useState(""); // Estado para el mensaje de advertencia
     const mapRef = useRef(null);
     const direcciones = []; // Simula un array vacío de direcciones
+    const [marker, setMarker] = useState(null); // Estado para guardar el marcador actual
 
-    // Funciones para abrir y cerrar el modal
     const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const closeModal = () => {
+        setIsModalOpen(false);
+        window.location.reload(); // Recargar la página al cerrar modal
+    };
 
-    // Función para inicializar el mapa
     const initializeMap = () => {
         const loader = new Loader({
             apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -23,13 +32,82 @@ export const Direcciones = () => {
 
         loader.load().then(() => {
             const newMap = new window.google.maps.Map(mapRef.current, {
-                center: { lat: -34.397, lng: 150.644 }, // Coordenadas iniciales
+                center: { lat: -34.397, lng: 150.644 },
                 zoom: 8,
             });
             setMap(newMap);
         }).catch(e => {
             console.error("Error al cargar la API de Google Maps: ", e);
         });
+    };
+
+    useEffect(() => {
+        axios.get('https://restcountries.com/v3.1/all')
+            .then(response => {
+                setCountries(response.data);
+            })
+            .catch(error => {
+                console.error("Error al obtener la lista de países:", error);
+            });
+    }, []);
+
+    const handleCountryChange = (event) => {
+        const countryCode = event.target.value;
+        setSelectedCountry(countryCode);
+        const selectedCountryData = countries.find(country => country.cca2 === countryCode);
+
+        if (selectedCountryData && map) {
+            const { latlng } = selectedCountryData;
+            const latLng = new window.google.maps.LatLng(latlng[0], latlng[1]);
+            map.setCenter(latLng);
+            if (marker) marker.setMap(null); // Eliminar marcador anterior
+            const newMarker = new window.google.maps.Marker({
+                position: latLng,
+                map: map,
+                icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+            });
+            setMarker(newMarker);
+        }
+    };
+
+    const searchAddress = () => {
+        if (!address && !postalCode && !street) return;
+
+        const geocoder = new window.google.maps.Geocoder();
+        const query = `${street}, ${address}, ${postalCode}`;
+
+        geocoder.geocode({ address: query }, (results, status) => {
+            if (status === "OK" && results[0] && map) {
+                const { location } = results[0].geometry;
+                map.setCenter(location);
+                if (marker) marker.setMap(null); // Eliminar marcador anterior
+                const newMarker = new window.google.maps.Marker({
+                    position: location,
+                    map: map,
+                    icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                });
+                setMarker(newMarker);
+            } else {
+                console.error("Geocoding error: ", status);
+            }
+        });
+    };
+
+    const handleCreateAddress = () => {
+        if (!name || !selectedCountry || !postalCode || !address || !street || !category) {
+            setWarning("Por favor, rellena todos los campos obligatorios.");
+            return;
+        }
+
+        console.log("Crear dirección con los datos: ", { address, postalCode, street, name, category });
+
+        setAddress("");
+        setPostalCode("");
+        setStreet("");
+        setName("");
+        setCategory("");
+        setWarning("");
+        closeModal();
     };
 
     useEffect(() => {
@@ -46,45 +124,34 @@ export const Direcciones = () => {
                 <button className="direccion-btn" onClick={openModal}>Nueva dirección</button>
             </div>
 
-            {/* Si no hay direcciones, muestra el mensaje y el botón */}
             {direcciones.length === 0 ? (
                 <div className="no-direcciones">
                     <p>¡Aún no tienes direcciones guardadas!</p>
                     <button className="direccion-btn" onClick={openModal}>+ Nueva dirección</button>
                 </div>
             ) : (
-                <table className="table">
+                <table className="direcciones-table">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
+                            <th>Nombre</th>
+                            <th>Dirección</th>
+                            <th>Contacto</th>
+                            <th>Comentario</th>
+                            <th>Categoría</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td colSpan="2">Larry the Bird</td>
-                            <td>@twitter</td>
+                            <td>Ejemplo Nombre</td>
+                            <td>Ejemplo Dirección</td>
+                            <td>Ejemplo Contacto</td>
+                            <td>Ejemplo Comentario</td>
+                            <td>Ejemplo Categoría</td>
                         </tr>
                     </tbody>
                 </table>
             )}
 
-            {/* Modal para crear una nueva dirección */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -98,20 +165,43 @@ export const Direcciones = () => {
                                     <form>
                                         <label>
                                             País <span className="required">*</span>
-                                            <input type="text" name="pais" required />
+                                            <select name="pais" required onChange={handleCountryChange}>
+                                                <option value="">Seleccionar país</option>
+                                                {countries.map(country => (
+                                                    <option key={country.cca2} value={country.cca2}>
+                                                        {country.name.common}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </label>
                                         <label>
                                             Código Postal <span className="required">*</span>
-                                            <input type="text" name="codigoPostal" required />
+                                            <input
+                                                type="text"
+                                                name="codigoPostal"
+                                                value={postalCode}
+                                                onChange={(e) => setPostalCode(e.target.value)}
+                                            />
                                         </label>
                                         <label>
                                             Ciudad <span className="required">*</span>
-                                            <input type="text" name="ciudad" required />
+                                            <input
+                                                type="text"
+                                                name="ciudad"
+                                                value={address}
+                                                onChange={(e) => setAddress(e.target.value)}
+                                            />
                                         </label>
                                         <label>
                                             Calle <span className="required">*</span>
-                                            <input type="text" name="calle" required />
+                                            <input
+                                                type="text"
+                                                name="calle"
+                                                value={street}
+                                                onChange={(e) => setStreet(e.target.value)}
+                                            />
                                         </label>
+                                        <button type="button" className="search-btn" onClick={searchAddress}>Buscar</button>
                                     </form>
                                 </div>
                                 <div className="detail-section">
@@ -119,19 +209,31 @@ export const Direcciones = () => {
                                     <form>
                                         <label>
                                             Nombre <span className="required">*</span>
-                                            <input type="text" name="nombre" required />
+                                            <input
+                                                type="text"
+                                                name="nombre"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                required
+                                            />
                                         </label>
                                         <label>
                                             Categoría <span className="required">*</span>
-                                            <select name="categoria" required>
+                                            <select
+                                                name="categoria"
+                                                value={category}
+                                                onChange={(e) => setCategory(e.target.value)}
+                                                required
+                                            >
+                                                <option value="">Seleccionar categoría</option>
                                                 <option value="ubicacion-propia">
-                                                🏚️ ​Ubicación propia
+                                                    🏚️​​​  Ubicación propia
                                                 </option>
                                                 <option value="recogida-entrega">
-                                                🔄​ Recogida/Entrega
+                                                    🔄  Recogida/Entrega
                                                 </option>
                                                 <option value="cliente">
-                                                🤵​ Cliente
+                                                    🤵  Cliente
                                                 </option>
                                             </select>
                                         </label>
@@ -156,6 +258,20 @@ export const Direcciones = () => {
                             </div>
                             {/* Parte 2: Mapa */}
                             <div className="map-section" ref={mapRef}></div> {/* Aquí se renderiza el mapa */}
+                        </div>
+                        {/* Botones y Mensaje de Advertencia debajo del modal-body */}
+                        <div className="modal-footer">
+                            {/* Mensaje de advertencia */}
+                            {warning && (
+                                <div className="warning-message">
+                                    {warning}
+                                </div>
+                            )}
+
+                            <div className="modal-buttons">
+                                <button type="button" className="cancel-btn" onClick={closeModal}>Cancelar</button>
+                                <button type="button" className="direccion-btn" onClick={handleCreateAddress}>Crear Dirección</button>
+                            </div>
                         </div>
                     </div>
                 </div>
