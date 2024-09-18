@@ -5,7 +5,18 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
     { location: '', key: 0 },
     { location: '', key: 1 }
   ]);
-  const [cargoWeight, setCargoWeight] = useState(0); // New state for cargo weight
+  const [cargoWeight, setCargoWeight] = useState(0);
+  const [containerType, setContainerType] = useState('');
+  const [tarifa, setTarifa] = useState('');
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [showWeightAlert, setShowWeightAlert] = useState(false);
+
+  const additionalOptions = [
+    'Nocturnidad',
+    'Mercancía peligrosa',
+    'Festivo',
+    'Basculante'
+  ];
 
   useEffect(() => {
     if (window.google && map) {
@@ -24,6 +35,20 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
     }
   }, [map, stops]);
 
+  useEffect(() => {
+    checkWeightLimit();
+  }, [cargoWeight, containerType]);
+
+  const checkWeightLimit = () => {
+    if ((containerType === '20' || containerType === '20reefer') && cargoWeight > 25) {
+      setShowWeightAlert(true);
+    } else if ((containerType === '40' || containerType === '40reefer') && cargoWeight > 24) {
+      setShowWeightAlert(true);
+    } else {
+      setShowWeightAlert(false);
+    }
+  };
+
   const updateStop = (index, field, value) => {
     const newStops = [...stops];
     newStops[index][field] = value;
@@ -41,70 +66,134 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
     }
   };
 
+  const handleOptionChange = (option) => {
+    setSelectedOptions(prev =>
+      prev.includes(option)
+        ? prev.filter(item => item !== option)
+        : [...prev, option]
+    );
+  };
+
+  // Nuevo: Función para calcular el consumo de combustible basado en el tipo de contenedor y peso
+  const calculateFuelConsumption = (distanceKm) => {
+    let baseFuelConsumption;
+    switch (containerType) {
+      case '20':
+      case '20reefer':
+        baseFuelConsumption = 28; // 28 litros por 100 km para contenedores de 20'
+        break;
+      case '40':
+      case '40reefer':
+        baseFuelConsumption = 32; // 32 litros por 100 km para contenedores de 40'
+        break;
+      default:
+        baseFuelConsumption = 30; // Valor por defecto
+    }
+
+    // Ajuste por peso: aumenta el consumo un 2% por cada tonelada sobre las 20
+    const weightAdjustment = Math.max(0, cargoWeight - 20) * 0.02;
+    const adjustedConsumption = baseFuelConsumption * (1 + weightAdjustment);
+
+    return (adjustedConsumption / 100) * distanceKm;
+  };
+
+  // Nuevo: Función para calcular el BAF más detallado
+  const calculateBAF = (baseFuelPrice, currentFuelPrice, totalFuelConsumption) => {
+    const fuelPriceDifference = currentFuelPrice - baseFuelPrice;
+    return fuelPriceDifference * totalFuelConsumption;
+  };
+
   const calculateRoute = () => {
-    if (stops.some(stop => !stop.location)) {
-      alert('Por favor, complete todas las ubicaciones.');
+    if (!window.google || !map) {
+      console.error('Google Maps API not loaded');
       return;
     }
 
     const directionsService = new window.google.maps.DirectionsService();
-    const origin = stops[0].location;
-    const destination = stops[stops.length - 1].location;
     const waypoints = stops.slice(1, -1).map(stop => ({
       location: stop.location,
       stopover: true
     }));
 
-    directionsService.route(
-      {
-        origin: origin,
-        destination: destination,
-        waypoints: waypoints,
-        travelMode: window.google.maps.TravelMode.DRIVING,
-      },
-      (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK) {
-          onRouteCalculated(result);
-          const distance = result.routes[0].legs.reduce((total, leg) => total + leg.distance.value, 0) / 1000;
-          const duration = result.routes[0].legs.reduce((total, leg) => total + leg.duration.value, 0) / 60;
+    const request = {
+      origin: stops[0].location,
+      destination: stops[stops.length - 1].location,
+      waypoints: waypoints,
+      travelMode: 'DRIVING'
+    };
 
-          // Fuel consumption calculation for heavy trucks
-          const fuelConsumptionPerKm = 0.4; // liters per kilometer for heavy-duty trucks
-          const totalFuelConsumption = (distance * fuelConsumptionPerKm).toFixed(2); // Total liters consumed
-          
-          // Cost calculations
-          const costPerKm = 1.02;
-          const totalCost = (distance * costPerKm).toFixed(2);
-          const toll = (24.40).toFixed(2);
-          const pricePerKm = 1.12;
-          const profit = (76.30).toFixed(2);
-          const price = (839.34).toFixed(2);
-          
-          // Calculate surcharge if cargo exceeds 26 tons
-          let surcharge = 0;
-          if (cargoWeight > 26) {
-            surcharge = 0.25 * totalCost;
-            alert(`Esta carga tendrá un recargo del 25% del coste. Surcharge: €${surcharge.toFixed(2)}`);
-          }
+    directionsService.route(request, (result, status) => {
+      if (status === 'OK') {
+        onRouteCalculated(result);
 
-          const finalCost = (parseFloat(totalCost) + surcharge).toFixed(2);
+        const route = result.routes[0];
+        let totalDistance = 0;
+        let totalDuration = 0;
 
-          onRouteInfo({
-            distance: distance.toFixed(2) + ' km',
-            duration: Math.floor(duration / 60) + 'h ' + (duration % 60).toFixed(0) + 'min',
-            totalFuelConsumption: totalFuelConsumption + ' L', // Display fuel consumption
-            costPerKm: costPerKm.toFixed(2),
-            totalCost: finalCost + '€',
-            toll,
-            pricePerKm: pricePerKm.toFixed(2),
-            profit,
-            price
-          });
-        } else {
-          alert('No se pudo calcular la ruta: ' + status);
+        route.legs.forEach(leg => {
+          totalDistance += leg.distance.value;
+          totalDuration += leg.duration.value;
+        });
+
+        const distanceKm = totalDistance / 1000; // Convertir a km
+        const durationHours = totalDuration / 3600; // Convertir a horas
+
+        // Cálculo del cambio porcentual en el precio del combustible
+        const baseFuelPrice = 1.10; // Precio base del ejemplo
+        const currentFuelPrice = 1.50; // Precio actual del ejemplo
+
+        // Nuevo: Cálculo del consumo de combustible utilizando la nueva función
+        const totalFuelConsumption = calculateFuelConsumption(distanceKm);
+
+        // Nuevo: Cálculo del BAF utilizando la nueva función
+        const bafCost = calculateBAF(baseFuelPrice, currentFuelPrice, totalFuelConsumption);
+
+        // Cálculo del costo del conductor fijo a 0.80 €/km
+        const driverCostPerKm = 0.80;
+        const driverCost = distanceKm * driverCostPerKm;
+
+        // Costo operacional total
+        const totalOperationalCost = bafCost + driverCost;
+
+        // Cálculo del precio base
+        const basePrice = distanceKm * parseFloat(tarifa);
+
+        // Cálculo de recargos
+        let weightSurcharge = 0;
+        if (showWeightAlert) {
+          weightSurcharge = basePrice * 0.25; // 25% de recargo por peso
         }
+
+        // Recargo por opciones adicionales
+        const optionsSurchargePercentage = selectedOptions.length * 0.05;
+        const optionsSurcharge = basePrice * optionsSurchargePercentage;
+
+        // Precio final a cobrar
+        const finalPrice = basePrice + weightSurcharge + optionsSurcharge;
+
+        // Cálculo del beneficio
+        const profit = finalPrice - totalOperationalCost;
+
+        const routeInfo = {
+          distance: `${distanceKm.toFixed(2)} km`,
+          duration: `${durationHours.toFixed(2)} horas`,
+          pricePerKm: `€${parseFloat(tarifa).toFixed(2)}`,
+          operationalCost: `€${totalOperationalCost.toFixed(2)}`,
+          basePrice: `€${basePrice.toFixed(2)}`,
+          weightSurcharge: `€${weightSurcharge.toFixed(2)}`,
+          optionsSurcharge: `€${optionsSurcharge.toFixed(2)}`,
+          finalPrice: `€${finalPrice.toFixed(2)}`,
+          profit: `€${profit.toFixed(2)}`,
+          fuelConsumption: `${totalFuelConsumption.toFixed(2)} litros`,
+          bafCost: `€${bafCost.toFixed(2)}`,
+          toll: 'N/A' // Mantener esto si no se calcula el peaje
+        };
+
+        onRouteInfo(routeInfo);
+      } else {
+        console.error('Directions request failed due to ' + status);
       }
-    );
+    });
   };
 
   const resetRoute = () => {
@@ -112,7 +201,11 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
       { location: '', key: 0 },
       { location: '', key: 1 }
     ]);
-    setCargoWeight(0); // Reset cargo weight
+    setCargoWeight(0);
+    setContainerType('');
+    setTarifa('');
+    setSelectedOptions([]);
+    setShowWeightAlert(false);
     onClearRoute();
   };
 
@@ -139,7 +232,23 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
           </div>
         ))}
 
-        {/* Input for cargo weight */}
+        <div className="mt-3">
+          <label>Tipo de contenedor:</label>
+          <div className="input-group">
+            <select
+              className="form-select"
+              value={containerType}
+              onChange={(e) => setContainerType(e.target.value)}
+            >
+              <option value="">Selecciona un tipo</option>
+              <option value="20">20'</option>
+              <option value="40">40'</option>
+              <option value="20reefer">20' Reefer</option>
+              <option value="40reefer">40' Reefer</option>
+            </select>
+          </div>
+        </div>
+
         <div className="mt-3">
           <label>Peso de la carga (toneladas):</label>
           <input
@@ -151,10 +260,50 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
           />
         </div>
 
+        {showWeightAlert && (
+          <div className="alert alert-warning mt-3">
+            Se aplicará un recargo del 25% debido al exceso de peso.
+          </div>
+        )}
+
         <div className="mt-3">
-          <button onClick={calculateRoute} className="btn btn-primary me-2">Calcular ruta</button>
-          <button onClick={resetRoute} className="btn btn-secondary">Resetear</button>
+          <h5 className="card-title mb-3">Introducir Tarifa</h5>
+          <div className="input-group">
+            <input
+              type="number"
+              className="form-control"
+              value={tarifa}
+              onChange={(e) => setTarifa(e.target.value)}
+              placeholder="0.00"
+              step="0.01"
+            />
+            <span className="input-group-text">€/km</span>
+          </div>
         </div>
+
+        <div className="mt-3">
+          <h5 className="card-title mb-3">Opciones Adicionales</h5>
+          <div className="d-flex flex-wrap">
+            {additionalOptions.map((option, index) => (
+              <div key={index} className="form-check me-3 mb-2">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  checked={selectedOptions.includes(option)}
+                  onChange={() => handleOptionChange(option)}
+                />
+                <label className="form-check-label">{option}</label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <button className="btn btn-primary mt-3" onClick={calculateRoute}>
+          Calcular Ruta
+        </button>
+        <button className="btn btn-secondary mt-3 ms-2" onClick={resetRoute}>
+          Limpiar
+        </button>
       </div>
     </div>
   );

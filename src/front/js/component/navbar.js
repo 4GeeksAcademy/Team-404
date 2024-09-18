@@ -15,7 +15,7 @@ export const Navbar = () => {
 							<Link className="nav-link active" to="/" aria-current="page" href="#" >Inicio</Link>
 						</li>
 						<li className="nav-item">
-							<Link className="nav-link active" to="/Mapa" aria-current="page" href="#">Logística</Link>
+							<Link className="nav-link active" to="/Mapa" aria-current="page" href="#">Planner</Link>
 						</li>
 						<li className="nav-item dropdown">
 							<a className="nav-link dropdown-toggle" href="#" id="navbarDropdownSobreNosotros" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -23,7 +23,7 @@ export const Navbar = () => {
 							</a>
 							<ul className="dropdown-menu" aria-labelledby="navbarDropdownSobreNosotros">
 								<li><a className="dropdown-item" href="#">Nuestra historia</a></li>
-								<li><a className="dropdown-item" href="#">Nuestro equipo</a></li>							
+								<li><a className="dropdown-item" href="#">Nuestro equipo</a></li>
 							</ul>
 						</li>
 						<li className="nav-item dropdown">
@@ -34,9 +34,6 @@ export const Navbar = () => {
 								<li><a className="dropdown-item" href="#">Soporte</a></li>
 								<li><a className="dropdown-item" href="#">Servicio al Cliente</a></li>
 							</ul>
-						</li>
-						<li className="nav-item">
-							<Link className="nav-link" to="/login">Acceso</Link>
 						</li>
 					</ul>
 				</div>
