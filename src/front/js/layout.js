@@ -18,7 +18,7 @@ import PoliticaDeCookies from "./pages/politicaCookies";
 import LimitacionDeResponsabilidad from "./pages/limitacionResponsabilidad";
 import Jurisdiccion from "./pages/jurisdiccion";
 import SobreNosotros from "./pages/sobreNosotros";
-import Contacto from "./pages/Contactos";
+import Contacto from "./pages/Contacto";
 
 //create your first component
 const Layout = () => {
