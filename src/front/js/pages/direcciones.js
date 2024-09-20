@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Loader } from '@googlemaps/js-api-loader';
-import "../../styles/direccion.css"; // Asegúrate de que la ruta al archivo CSS sea correcta
+import "../../styles/direccion.css";
 
 export const Direcciones = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,6 +14,7 @@ export const Direcciones = () => {
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [warning, setWarning] = useState("");
+    const [direcciones, setDirecciones] = useState([]); // Nuevo estado para almacenar las direcciones
     const mapRef = useRef(null);
     const [marker, setMarker] = useState(null);
 
@@ -22,6 +23,17 @@ export const Direcciones = () => {
         setIsModalOpen(false);
         window.location.reload(); // Recargar la página al cerrar modal
     };
+
+    // Obtener direcciones al cargar el componente
+    useEffect(() => {
+        axios.get('https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones')
+            .then(response => {
+                setDirecciones(response.data); // Guardar direcciones en el estado
+            })
+            .catch(error => {
+                console.error("Error al obtener las direcciones:", error);
+            });
+    }, []);
 
     const initializeMap = () => {
         const loader = new Loader({
@@ -39,16 +51,6 @@ export const Direcciones = () => {
             console.error("Error al cargar la API de Google Maps: ", e);
         });
     };
-
-    useEffect(() => {
-        axios.get('https://restcountries.com/v3.1/all')
-            .then(response => {
-                setCountries(response.data);
-            })
-            .catch(error => {
-                console.error("Error al obtener la lista de países:", error);
-            });
-    }, []);
 
     const handleCountryChange = (event) => {
         const countryCode = event.target.value;
@@ -97,7 +99,7 @@ export const Direcciones = () => {
             setWarning("Por favor, rellena todos los campos obligatorios.");
             return;
         }
-    
+
         const newAddress = {
             nombre: name,
             direccion: `${street}, ${address}, ${postalCode}`,
@@ -105,11 +107,12 @@ export const Direcciones = () => {
             contacto: "", // Aquí puedes agregar contacto si lo deseas
             comentarios: "", // Aquí puedes agregar comentarios si lo deseas
         };
-    
+
         axios.post('https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones', newAddress)
             .then(response => {
                 console.log("Dirección creada: ", response.data);
                 closeModal();
+                setDirecciones([...direcciones, response.data]); // Añadir nueva dirección a la lista
             })
             .catch(error => {
                 console.error("Error al crear la dirección: ", error.response ? error.response.data : error.message);
@@ -130,6 +133,36 @@ export const Direcciones = () => {
                 <button className="direccion-btn" onClick={openModal}>Nueva dirección</button>
             </div>
 
+            {/* Tabla para mostrar las direcciones */}
+            <div className="container mt-4">
+                <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
+                    <h3>Mis Direcciones</h3>
+                    <button className="btn btn-primary" onClick={openModal}>Nueva dirección</button>
+                </div>
+
+                <table className="table table-striped table-hover">
+                    <thead className="thead-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Dirección</th>
+                            <th>Categoría</th>
+                            <th>Contacto</th>
+                            <th>Comentarios</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {direcciones.map(direccion => (
+                            <tr key={direccion.id}>
+                                <td>{direccion.nombre}</td>
+                                <td>{direccion.direccion}</td>
+                                <td>{direccion.categoria}</td>
+                                <td>{direccion.contacto}</td>
+                                <td>{direccion.comentarios}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">

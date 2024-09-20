@@ -190,7 +190,12 @@ def reset_password(token):
         print(f"Error en /api/reset-password: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
 
-   
+
+@api.route('/api/direcciones', methods=['GET'])
+def get_direcciones():
+    direcciones = Direccion.query.all()
+    return jsonify([direccion.serialize() for direccion in direcciones]), 200
+
 # Define el blueprint para las direcciones
 direcciones_bp = Blueprint('direcciones', __name__)
 
