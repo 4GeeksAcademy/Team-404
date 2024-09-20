@@ -23,6 +23,8 @@ export const Direcciones = () => {
     const closeModal = () => {
         setIsModalOpen(false);
         resetForm(); // Reiniciar el formulario al cerrar el modal
+        // Recargar la página
+        window.location.reload();
     };
 
     const resetForm = () => {
@@ -33,6 +35,12 @@ export const Direcciones = () => {
         setCategory("");
         setSelectedCountry(null);
         setWarning("");
+    };
+    const [filter, setFilter] = useState("");
+    const categoryColors = {
+        "ubicacion-propia": "lightblue",
+        "recogida-entrega": "lightgreen",
+        "cliente": "lightcoral",
     };
 
     // Obtener direcciones al cargar el componente
@@ -131,6 +139,13 @@ export const Direcciones = () => {
             });
     };
 
+
+
+    const categoryIcons = {
+        "ubicacion-propia": "🏚️",
+        "recogida-entrega": "🔄",
+        "cliente": "🤵",
+    };
     const handleEdit = (direccion) => {
         setCurrentAddressId(direccion.id); // Guardar el ID de la dirección
         setName(direccion.nombre);
@@ -140,6 +155,10 @@ export const Direcciones = () => {
         setIsModalOpen(true);
     };
 
+    const reloadPage = () => {
+        // Recargar la página
+        window.location.reload();
+    };
     const handleSaveChanges = () => {
         if (!currentAddressId) return; // Asegúrate de que haya una dirección para editar
 
@@ -151,11 +170,12 @@ export const Direcciones = () => {
             comentarios: "", // Añadir comentarios si es necesario
         };
 
+
         axios.put(`https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones/${currentAddressId}`, updatedAddress)
             .then(response => {
                 console.log("Dirección actualizada: ", response.data);
-                setDirecciones(prevDirecciones => 
-                    prevDirecciones.map(direccion => 
+                setDirecciones(prevDirecciones =>
+                    prevDirecciones.map(direccion =>
                         direccion.id === currentAddressId ? response.data : direccion
                     )
                 );
@@ -166,6 +186,8 @@ export const Direcciones = () => {
                 setWarning("Error al actualizar la dirección.");
             });
     };
+
+
 
     const handleDelete = (id) => {
         const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta dirección?");
@@ -200,21 +222,27 @@ export const Direcciones = () => {
         }
     }, [isModalOpen]);
 
+
+
     return (
         <div>
-            <div className="direcciones-header">
-                <h3>Mis Direcciones</h3>
-                <button className="direccion-btn" onClick={openModal}>Nueva dirección</button>
-            </div>
-
             {/* Tabla para mostrar las direcciones */}
             <div className="container mt-4">
                 <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
                     <h3>Mis Direcciones</h3>
+                    <label>
+                        Filtrar por categoría:
+                        <select onChange={(e) => setFilter(e.target.value)}>
+                            <option value="">Todas</option>
+                            <option value="ubicacion-propia">🏚️  Ubicación propia</option>
+                            <option value="recogida-entrega">🔄  Recogida/Entrega</option>
+                            <option value="cliente">🤵  Cliente</option>
+                        </select>
+                    </label>
                     <button className="btn btn-primary" onClick={openModal}>Nueva dirección</button>
                 </div>
 
-                <table className="table table-striped table-hover">
+                <table className="table table-striped table-hover text-center">
                     <thead className="thead-dark">
                         <tr>
                             <th>Nombre</th>
@@ -226,16 +254,18 @@ export const Direcciones = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {direcciones.map(direccion => (
+                        {direcciones.filter(direccion => !filter || direccion.categoria === filter).map(direccion => (
                             <tr key={direccion.id}>
                                 <td>{direccion.nombre}</td>
                                 <td>{direccion.direccion}</td>
-                                <td>{direccion.categoria}</td>
+                                <td style={{ backgroundColor: categoryColors[direccion.categoria] }}>
+                                    {categoryIcons[direccion.categoria]} {direccion.categoria} {/* Emoticono + texto */}
+                                </td>
                                 <td>{direccion.contacto}</td>
                                 <td>{direccion.comentarios}</td>
                                 <td>
-                                    <button className="btn btn-warning btn-sm mr-2" onClick={() => handleEdit(direccion)}>Editar</button>
-                                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(direccion.id)}>Eliminar</button>
+                                    <button className="btn btn-warning btn-sm button-spacing" onClick={() => handleEdit(direccion)}>✏️</button>
+                                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(direccion.id)}>❌​</button>
                                 </td>
                             </tr>
                         ))}

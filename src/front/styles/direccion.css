@@ -19,11 +19,11 @@
     border-radius: 5px;
     width: 80%;
     max-width: 1200px;
-    height: 80%; /* Aumenta la altura del modal */
-    max-height: 80%; /* Asegura que el modal no exceda el 80% de la altura de la ventana */
+    height: 80%;
+    max-height: 80%;
     position: relative;
     display: flex;
-    flex-direction: column; /* Orden vertical para que el contenido y los botones estén en secuencia */
+    flex-direction: column;
     overflow: hidden;
 }
 
@@ -34,8 +34,8 @@
     flex-direction: row;
     gap: 20px;
     width: 100%;
-    height: calc(100% - 60px); /* Ajusta la altura para dejar espacio para el botón de cerrar y los botones de acción */
-    overflow: auto; /* Habilita el desplazamiento si el contenido es demasiado grande */
+    height: calc(100% - 60px);
+    overflow: auto;
 }
 
 /* Parte 1: Estilos del formulario y detalle */
@@ -44,7 +44,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    overflow-y: auto; /* Habilita el desplazamiento vertical en la sección del formulario */
+    overflow-y: auto;
 }
 
 .form-section, .detail-section {
@@ -67,7 +67,7 @@
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #f5f5f5; /* Gris claro */
+    background-color: #f5f5f5;
 }
 
 .required {
@@ -78,7 +78,7 @@
 /* Parte 2: Estilos del mapa */
 .map-section {
     flex: 1;
-    height: 100%; /* Ajusta la altura del mapa para que llene el contenedor */
+    height: 100%;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
@@ -88,7 +88,7 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: none; /* Sin color de fondo */
+    background-color: none;
     color: black;
     border: none;
     border-radius: 50%;
@@ -102,7 +102,7 @@
 }
 
 .modal-close-btn:hover {
-    background-color: #f2f2f2; /* Fondo gris claro al pasar el ratón */
+    background-color: #f2f2f2;
 }
 
 /* Estilo para el encabezado de direcciones */
@@ -130,11 +130,11 @@
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #f5f5f5; /* Gris claro */
+    background-color: #f5f5f5;
 }
 
 .search-btn {
-    background-color: #007bff; /* Azul moderno */
+    background-color: #007bff;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -146,21 +146,21 @@
 }
 
 .search-btn:hover {
-    background-color: #0056b3; /* Azul oscuro al pasar el ratón */
+    background-color: #0056b3;
 }
 
 /* Contenedor de los botones en el modal */
 .modal-buttons {
     display: flex;
-    flex-direction: row; /* Mantiene los botones en una fila */
-    justify-content: flex-end; /* Alinear los botones a la derecha */
+    flex-direction: row;
+    justify-content: flex-end;
     gap: 10px;
-    margin-top: 20px; /* Espacio superior */
+    margin-top: 20px;
 }
 
 /* Estilo para el botón de cancelar */
 .cancel-btn {
-    background-color: #6c757d; /* Gris para el botón de cancelar */
+    background-color: #6c757d;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -169,7 +169,7 @@
 }
 
 .cancel-btn:hover {
-    background-color: #5a6268; /* Gris más oscuro al pasar el ratón */
+    background-color: #5a6268;
 }
 
 /* Estilo para el botón de dirección */
@@ -192,22 +192,17 @@
     font-weight: bold;
     margin-top: 10px;
 }
+
+/* Estilos para la tabla de direcciones */
 .direcciones-table {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
 }
 
-.direcciones-table table {
-    width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
 .direcciones-table th, .direcciones-table td {
     padding: 12px;
-    text-align: left;
+    text-align: center; /* Centra el texto */
     border-bottom: 1px solid #ddd;
 }
 
@@ -229,6 +224,7 @@
     border-bottom: none;
 }
 
+/* Estilo para separación de columnas en la tabla */
 .direcciones-table th, .direcciones-table td {
     border-right: 1px solid #ddd;
 }
@@ -237,23 +233,7 @@
     border-right: none;
 }
 
-.direcciones-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.direccion-btn {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.direccion-btn:hover {
-    background-color: #0056b3;
+/* Espaciado de botones */
+.button-spacing {
+    margin-right: 10px;
 }
