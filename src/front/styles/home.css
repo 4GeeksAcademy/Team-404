@@ -5,7 +5,7 @@
     justify-content: center;
     flex-direction: column;
     text-align: center;
-    background: url('https://assets.verizonconnect.com/cdn-cgi/image/width=3802,height=1080,format=auto/v/fleet/gpsfleet/gps-tracking-software/es-fleet-tracking-lp-hero-desktop.jpg') no-repeat center center;
+    background: url('../../../public/FOTO-CAMION.jpg') no-repeat center center;
     background-size: cover;
     position: relative;
     color: #fff;
