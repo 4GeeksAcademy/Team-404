@@ -1,0 +1,58 @@
+import React from 'react';
+import { FaUser, FaEnvelope, FaPhoneAlt, FaPaperPlane } from 'react-icons/fa';
+
+const Contacto = () => {
+    return (
+        <div className="container my-5">
+            <div className="row justify-content-center">
+                <div className="col-md-8">
+                    <div className="card shadow">
+                        <div className="card-body p-4">
+                            <h2 className="card-title text-center mb-4">Contáctanos</h2>
+                            <form>
+                                <div className="mb-3">
+                                    <label htmlFor="nombre" className="form-label">Nombre *</label>
+                                    <div className="input-group">
+                                        <input type="text" className="form-control" id="nombre" placeholder="Tu nombre completo" required />
+                                        <span className="input-group-text bg-transparent border-start-0">
+                                            <FaUser />
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="email" className="form-label">Correo electrónico *</label>
+                                    <div className="input-group">
+                                        <input type="email" className="form-control" id="email" placeholder="Tu dirección de correo electrónico" required />
+                                        <span className="input-group-text bg-transparent border-start-0">
+                                            <FaEnvelope />
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="telefono" className="form-label">Teléfono (opcional)</label>
+                                    <div className="input-group">
+                                        <input type="tel" className="form-control" id="telefono" placeholder="Tu número de teléfono" />
+                                        <span className="input-group-text bg-transparent border-start-0">
+                                            <FaPhoneAlt />
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="mensaje" className="form-label">Mensaje</label>
+                                    <textarea className="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje aquí"></textarea>
+                                </div>
+                                <div className="text-center">
+                                    <button type="submit" className="btn btn-warning px-4 py-2">
+                                        Enviar Mensaje <FaPaperPlane className="ms-2" />
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Contacto;
