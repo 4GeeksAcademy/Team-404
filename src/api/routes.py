@@ -227,6 +227,20 @@ def add_direccion():
     except Exception as e:
         print(f"Error en /api/direcciones: {e}")  # Esto imprimirá el error en la consola
         return jsonify({"error": str(e)}), 500  # Muestra el error real en la respuesta
+    
+
+#ELIMINAR DIRECCION
+@api.route('/api/direcciones/<int:id>', methods=['DELETE'])
+def delete_direccion(id):
+    direccion = Direccion.query.get(id)
+    if direccion:
+        db.session.delete(direccion)
+        db.session.commit()
+        return jsonify({'message': 'Dirección eliminada exitosamente.'}), 200
+    return jsonify({'error': 'Dirección no encontrada.'}), 404
+
+
+
 # Contact
 @api.route('/api/contact', methods=['POST'])
 def submit_contact_form():

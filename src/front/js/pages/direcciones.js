@@ -17,8 +17,8 @@ export const Direcciones = () => {
     const [direcciones, setDirecciones] = useState([]); // Nuevo estado para almacenar las direcciones
     const mapRef = useRef(null);
     const [marker, setMarker] = useState(null);
-
     const openModal = () => setIsModalOpen(true);
+    const [loading, setLoading] = useState(true);
     const closeModal = () => {
         setIsModalOpen(false);
         window.location.reload(); // Recargar la página al cerrar modal
@@ -119,6 +119,43 @@ export const Direcciones = () => {
                 setWarning("Error al crear la dirección.");
             });
     };
+    const handleEdit = (direccion) => {
+        // Lógica para editar la dirección
+        // Aquí puedes abrir el modal con los datos prellenados de la dirección seleccionada
+        console.log("Editar dirección: ", direccion);
+        setIsModalOpen(true);
+        setName(direccion.nombre);
+        setAddress(direccion.direccion);
+        setCategory(direccion.categoria);
+        // Completa con los campos que necesites
+    };
+
+    const handleDelete = (id) => {
+        const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta dirección?");
+        if (confirmDelete) {
+            axios.delete(`https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones/${id}`)
+                .then(() => {
+                    setDirecciones(prevDirecciones => prevDirecciones.filter(direccion => direccion.id !== id));
+                    console.log("Dirección eliminada");
+                })
+                .catch(error => {
+                    console.error("Error al eliminar la dirección: ", error);
+                    alert("Error al eliminar la dirección. Por favor, intenta de nuevo.");
+                });
+        }
+    };
+
+    useEffect(() => {
+        axios.get('https://restcountries.com/v3.1/all')
+            .then(response => {
+                setCountries(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("Error al obtener la lista de países:", error);
+                setLoading(false);
+            });
+    }, []);
 
     useEffect(() => {
         if (isModalOpen && !map) {
@@ -148,6 +185,7 @@ export const Direcciones = () => {
                             <th>Categoría</th>
                             <th>Contacto</th>
                             <th>Comentarios</th>
+                            <th>Acciones</th> {/* Nueva columna para los botones */}
                         </tr>
                     </thead>
                     <tbody>
@@ -158,6 +196,10 @@ export const Direcciones = () => {
                                 <td>{direccion.categoria}</td>
                                 <td>{direccion.contacto}</td>
                                 <td>{direccion.comentarios}</td>
+                                <td>
+                                    <button className="btn btn-warning btn-sm mr-2" onClick={() => handleEdit(direccion)}>Editar</button>
+                                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(direccion.id)}>Eliminar</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
