@@ -4,7 +4,7 @@ import '../../styles/SobreNosotros.css';
 const SobreNosotros = () => {
     return (
         <div>
-            <div className="hero-section mb-5">
+            <div className="hero-section2 mb-5">
                 <div className="hero-content">
                     <h1 className="h1-text">Digitalización y automatización de la<br />logística del transporte para transportistas</h1>
                     <p className="hero-text">

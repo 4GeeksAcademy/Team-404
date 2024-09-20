@@ -17,8 +17,10 @@ flask-cors = "*"
 gunicorn = "*"
 cloudinary = "*"
 flask-admin = "*"
+Flask-Mail= "*"
 typing-extensions = "*"
 pyjwt = "*"
+jwt= "*"
 
 [requires]
 python_version = "3.10"

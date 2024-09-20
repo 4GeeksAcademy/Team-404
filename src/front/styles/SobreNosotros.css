@@ -1,11 +1,11 @@
-.hero-section {
+.hero-section2 {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
     text-align: center;
-    background-image: url('../../../src/front/img/FOTO-CAMION.jpg');
+    background: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1') no-repeat center center;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -35,7 +35,7 @@
 .logistics-image {
     width: 600px;
     height: 400px;
-    background-image: url('https://img.freepik.com/foto-gratis/hombre-tiro-completo-caminando-flota-camiones_23-2149426496.jpg?t=st=1726687813~exp=1726691413~hmac=13574290c3c9d803cfc37e8100dde6c95021b99f7ab0a1ee8cac7ae26ac7d52c&w=996');
+    background: url('https://images.pexels.com/photos/2226458/pexels-photo-2226458.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

@@ -1,7 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaUser, FaEnvelope, FaPhoneAlt, FaPaperPlane } from 'react-icons/fa';
 
 const Contacto = () => {
+    const [formData, setFormData] = useState({
+        nombre: '',
+        email: '',
+        telefono: '',
+        mensaje: ''
+    });
+    const [status, setStatus] = useState('');
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.id]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            if (response.ok) {
+                setStatus('Mensaje enviado correctamente');
+                setFormData({ nombre: '', email: '', telefono: '', mensaje: '' });
+            } else {
+                setStatus('Error al enviar el mensaje');
+            }
+        } catch (error) {
+            setStatus('Error de conexión');
+        }
+    };
+
     return (
         <div className="container my-5">
             <div className="row justify-content-center">
@@ -9,7 +42,9 @@ const Contacto = () => {
                     <div className="card shadow">
                         <div className="card-body p-4">
                             <h2 className="card-title text-center mb-4">Contáctanos</h2>
-                            <form>
+                            {status && <div className="alert alert-info">{status}</div>}
+                            <form onSubmit={handleSubmit}>
+
                                 <div className="mb-3">
                                     <label htmlFor="nombre" className="form-label">Nombre *</label>
                                     <div className="input-group">
