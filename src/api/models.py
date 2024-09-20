@@ -32,3 +32,23 @@ class User(db.Model):
             'location': self.location,
             'created_at': self.created_at
         }
+
+class Direccion(db.Model):
+    __tablename__ = 'direcciones'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String, nullable=False)
+    direccion = db.Column(db.String, nullable=False)
+    categoria = db.Column(db.String, nullable=False)
+    contacto = db.Column(db.String, nullable=True)
+    comentarios = db.Column(db.String, nullable=True)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'nombre': self.nombre,
+            'direccion': self.direccion,
+            'categoria': self.categoria,
+            'contacto': self.contacto,
+            'comentarios': self.comentarios,
+        }
