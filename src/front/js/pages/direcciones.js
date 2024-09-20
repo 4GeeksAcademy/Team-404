@@ -8,15 +8,14 @@ export const Direcciones = () => {
     const [map, setMap] = useState(null);
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState(null);
-    const [address, setAddress] = useState(""); // Estado para la dirección
-    const [postalCode, setPostalCode] = useState(""); // Estado para el código postal
-    const [street, setStreet] = useState(""); // Estado para la calle
-    const [name, setName] = useState(""); // Estado para el nombre
-    const [category, setCategory] = useState(""); // Estado para la categoría
-    const [warning, setWarning] = useState(""); // Estado para el mensaje de advertencia
+    const [address, setAddress] = useState("");
+    const [postalCode, setPostalCode] = useState("");
+    const [street, setStreet] = useState("");
+    const [name, setName] = useState("");
+    const [category, setCategory] = useState("");
+    const [warning, setWarning] = useState("");
     const mapRef = useRef(null);
-    const direcciones = []; // Simula un array vacío de direcciones
-    const [marker, setMarker] = useState(null); // Estado para guardar el marcador actual
+    const [marker, setMarker] = useState(null);
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => {
@@ -60,7 +59,7 @@ export const Direcciones = () => {
             const { latlng } = selectedCountryData;
             const latLng = new window.google.maps.LatLng(latlng[0], latlng[1]);
             map.setCenter(latLng);
-            if (marker) marker.setMap(null); // Eliminar marcador anterior
+            if (marker) marker.setMap(null);
             const newMarker = new window.google.maps.Marker({
                 position: latLng,
                 map: map,
@@ -80,7 +79,7 @@ export const Direcciones = () => {
             if (status === "OK" && results[0] && map) {
                 const { location } = results[0].geometry;
                 map.setCenter(location);
-                if (marker) marker.setMap(null); // Eliminar marcador anterior
+                if (marker) marker.setMap(null);
                 const newMarker = new window.google.maps.Marker({
                     position: location,
                     map: map,
@@ -98,16 +97,24 @@ export const Direcciones = () => {
             setWarning("Por favor, rellena todos los campos obligatorios.");
             return;
         }
-
-        console.log("Crear dirección con los datos: ", { address, postalCode, street, name, category });
-
-        setAddress("");
-        setPostalCode("");
-        setStreet("");
-        setName("");
-        setCategory("");
-        setWarning("");
-        closeModal();
+    
+        const newAddress = {
+            nombre: name,
+            direccion: `${street}, ${address}, ${postalCode}`,
+            categoria: category,
+            contacto: "", // Aquí puedes agregar contacto si lo deseas
+            comentarios: "", // Aquí puedes agregar comentarios si lo deseas
+        };
+    
+        axios.post('https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones', newAddress)
+            .then(response => {
+                console.log("Dirección creada: ", response.data);
+                closeModal();
+            })
+            .catch(error => {
+                console.error("Error al crear la dirección: ", error.response ? error.response.data : error.message);
+                setWarning("Error al crear la dirección.");
+            });
     };
 
     useEffect(() => {
@@ -118,39 +125,10 @@ export const Direcciones = () => {
 
     return (
         <div>
-            {/* Contenedor del título y el botón */}
             <div className="direcciones-header">
                 <h3>Mis Direcciones</h3>
                 <button className="direccion-btn" onClick={openModal}>Nueva dirección</button>
             </div>
-
-            {direcciones.length === 0 ? (
-                <div className="no-direcciones">
-                    <p>¡Aún no tienes direcciones guardadas!</p>
-                    <button className="direccion-btn" onClick={openModal}>+ Nueva dirección</button>
-                </div>
-            ) : (
-                <table className="direcciones-table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Dirección</th>
-                            <th>Contacto</th>
-                            <th>Comentario</th>
-                            <th>Categoría</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Ejemplo Nombre</td>
-                            <td>Ejemplo Dirección</td>
-                            <td>Ejemplo Contacto</td>
-                            <td>Ejemplo Comentario</td>
-                            <td>Ejemplo Categoría</td>
-                        </tr>
-                    </tbody>
-                </table>
-            )}
 
             {isModalOpen && (
                 <div className="modal-overlay">
@@ -158,7 +136,6 @@ export const Direcciones = () => {
                         <button className="modal-close-btn" onClick={closeModal}>✖️</button>
                         <h2>Crear Nueva Dirección</h2>
                         <div className="modal-body">
-                            {/* Parte 1: Formulario y Detalle */}
                             <div className="form-detail-section">
                                 <div className="form-section">
                                     <h3>Dirección</h3>
@@ -226,15 +203,9 @@ export const Direcciones = () => {
                                                 required
                                             >
                                                 <option value="">Seleccionar categoría</option>
-                                                <option value="ubicacion-propia">
-                                                    🏚️​​​  Ubicación propia
-                                                </option>
-                                                <option value="recogida-entrega">
-                                                    🔄  Recogida/Entrega
-                                                </option>
-                                                <option value="cliente">
-                                                    🤵  Cliente
-                                                </option>
+                                                <option value="ubicacion-propia">🏚️​​​  Ubicación propia</option>
+                                                <option value="recogida-entrega">🔄  Recogida/Entrega</option>
+                                                <option value="cliente">🤵  Cliente</option>
                                             </select>
                                         </label>
                                         <label>
@@ -256,18 +227,14 @@ export const Direcciones = () => {
                                     </form>
                                 </div>
                             </div>
-                            {/* Parte 2: Mapa */}
-                            <div className="map-section" ref={mapRef}></div> {/* Aquí se renderiza el mapa */}
+                            <div className="map-section" ref={mapRef}></div>
                         </div>
-                        {/* Botones y Mensaje de Advertencia debajo del modal-body */}
                         <div className="modal-footer">
-                            {/* Mensaje de advertencia */}
                             {warning && (
                                 <div className="warning-message">
                                     {warning}
                                 </div>
                             )}
-
                             <div className="modal-buttons">
                                 <button type="button" className="cancel-btn" onClick={closeModal}>Cancelar</button>
                                 <button type="button" className="direccion-btn" onClick={handleCreateAddress}>Crear Dirección</button>

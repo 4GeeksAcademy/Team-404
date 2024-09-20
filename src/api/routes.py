@@ -6,8 +6,8 @@ import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from api.models import db, User
-from .models import db, User, ContactMessage
+from api.models import Direccion, db, User, ContactMessage
+
 
 api = Blueprint('api', __name__)
 CORS(api, support_credentials=True)
@@ -189,6 +189,39 @@ def reset_password(token):
     except Exception as e:
         print(f"Error en /api/reset-password: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
+
+   
+# Define el blueprint para las direcciones
+direcciones_bp = Blueprint('direcciones', __name__)
+
+@direcciones_bp.route('/api/direcciones', methods=['POST'])
+def add_direccion():
+    try:
+        data = request.get_json()
+        nombre = data.get('nombre')
+        direccion = data.get('direccion')
+        categoria = data.get('categoria')
+        contacto = data.get('contacto', '')
+        comentarios = data.get('comentarios', '')
+
+        if not nombre or not direccion or not categoria:
+            return jsonify({"error": "Nombre, dirección y categoría son requeridos"}), 400
+
+        nueva_direccion = Direccion(
+            nombre=nombre,
+            direccion=direccion,
+            categoria=categoria,
+            contacto=contacto,
+            comentarios=comentarios
+        )
+        db.session.add(nueva_direccion)
+        db.session.commit()
+
+        return jsonify(nueva_direccion.serialize()), 201
+
+    except Exception as e:
+        print(f"Error en /api/direcciones: {e}")  # Esto imprimirá el error en la consola
+        return jsonify({"error": str(e)}), 500  # Muestra el error real en la respuesta
 # Contact
 @api.route('/api/contact', methods=['POST'])
 def submit_contact_form():
@@ -216,5 +249,4 @@ def submit_contact_form():
     except Exception as e:
         print(f"Error en /api/contact: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
-
 
