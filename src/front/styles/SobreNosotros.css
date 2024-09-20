@@ -1,0 +1,73 @@
+.hero-section2 {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1') no-repeat center center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+.h1-text {
+    font-size: calc(1.5rem + 1vw);
+    color: rgb(255, 255, 255);
+    margin-bottom: 20px;
+}
+
+.hero-text {
+    font-size: calc(1rem + 0.5vw);
+    color: rgb(255, 255, 255);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.logistics-image {
+    width: 600px;
+    height: 400px;
+    background: url('https://images.pexels.com/photos/2226458/pexels-photo-2226458.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    margin: 20px auto 0; /* This centers the image horizontally */
+    display: block; /* This ensures the margin auto works correctly */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.bg-light {
+    background-color: #f8f9fa;
+}
+
+.py-5 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.mb-5 {
+    margin-bottom: 3rem;
+}
+
+h1 {
+    margin-bottom: 1rem;
+}
+
+p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}

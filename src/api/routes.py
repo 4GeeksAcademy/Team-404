@@ -6,7 +6,8 @@ import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from api.models import Direccion, db, User
+from api.models import Direccion, db, User, ContactMessage
+
 
 api = Blueprint('api', __name__)
 CORS(api, support_credentials=True)
@@ -18,7 +19,7 @@ MAIL_SENDER = 'your-email@example.com'
 mail = Mail()
 serializer = URLSafeTimedSerializer(RESET_SECRET_KEY)
 
-@api.before_app_first_request
+# @api.before_app_first_request //ESTO QUEDA COMENTADAO HASTA SOLUCIONAR O CAMBIARLO DE MANERA QUE NO DE FALLO
 def configure_mail():
     current_app.config['MAIL_SERVER'] = 'smtp.example.com'  # Cambia esto por tu servidor SMTP
     current_app.config['MAIL_PORT'] = 587  # O 465 para SSL
@@ -188,7 +189,8 @@ def reset_password(token):
     except Exception as e:
         print(f"Error en /api/reset-password: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
-    
+
+   
 # Define el blueprint para las direcciones
 direcciones_bp = Blueprint('direcciones', __name__)
 
@@ -220,3 +222,31 @@ def add_direccion():
     except Exception as e:
         print(f"Error en /api/direcciones: {e}")  # Esto imprimirá el error en la consola
         return jsonify({"error": str(e)}), 500  # Muestra el error real en la respuesta
+# Contact
+@api.route('/api/contact', methods=['POST'])
+def submit_contact_form():
+    try:
+        data = request.get_json()
+        nombre = data.get('nombre')
+        email = data.get('email')
+        telefono = data.get('telefono')
+        mensaje = data.get('mensaje')
+
+        if not nombre or not email or not mensaje:
+            return jsonify({"error": "Nombre, email y mensaje son requeridos"}), 400
+
+        new_message = ContactMessage(
+            nombre=nombre,
+            email=email,
+            telefono=telefono,
+            mensaje=mensaje
+        )
+        db.session.add(new_message)
+        db.session.commit()
+
+        return jsonify({"message": "Mensaje de contacto recibido exitosamente"}), 201
+
+    except Exception as e:
+        print(f"Error en /api/contact: {e}")
+        return jsonify({"error": "Error interno del servidor"}), 500
+
