@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -31,4 +32,29 @@ class User(db.Model):
             'company': self.company,
             'location': self.location,
             'created_at': self.created_at
+        }
+class ContactMessage(db.Model):
+    __tablename__ = 'contact_messages'
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    telefono = db.Column(db.String(20))
+    mensaje = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def __init__(self, nombre, email, mensaje, telefono=None):
+        self.nombre = nombre
+        self.email = email
+        self.telefono = telefono
+        self.mensaje = mensaje
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "email": self.email,
+            "telefono": self.telefono,
+            "mensaje": self.mensaje,
+            "created_at": self.created_at
         }

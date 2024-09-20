@@ -1,10 +1,11 @@
-.hero-section {
+.hero-section2 {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
     text-align: center;
+    background: url('https://images.pexels.com/photos/93398/pexels-photo-93398.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1') no-repeat center center;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -34,6 +35,7 @@
 .logistics-image {
     width: 600px;
     height: 400px;
+    background: url('https://images.pexels.com/photos/2226458/pexels-photo-2226458.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
