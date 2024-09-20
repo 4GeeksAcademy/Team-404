@@ -14,21 +14,32 @@ export const Direcciones = () => {
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [warning, setWarning] = useState("");
-    const [direcciones, setDirecciones] = useState([]); // Nuevo estado para almacenar las direcciones
+    const [direcciones, setDirecciones] = useState([]);
+    const [currentAddressId, setCurrentAddressId] = useState(null); // ID de la dirección actual
     const mapRef = useRef(null);
     const [marker, setMarker] = useState(null);
     const openModal = () => setIsModalOpen(true);
     const [loading, setLoading] = useState(true);
     const closeModal = () => {
         setIsModalOpen(false);
-        window.location.reload(); // Recargar la página al cerrar modal
+        resetForm(); // Reiniciar el formulario al cerrar el modal
+    };
+
+    const resetForm = () => {
+        setName("");
+        setAddress("");
+        setPostalCode("");
+        setStreet("");
+        setCategory("");
+        setSelectedCountry(null);
+        setWarning("");
     };
 
     // Obtener direcciones al cargar el componente
     useEffect(() => {
         axios.get('https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones')
             .then(response => {
-                setDirecciones(response.data); // Guardar direcciones en el estado
+                setDirecciones(response.data);
             })
             .catch(error => {
                 console.error("Error al obtener las direcciones:", error);
@@ -119,15 +130,41 @@ export const Direcciones = () => {
                 setWarning("Error al crear la dirección.");
             });
     };
+
     const handleEdit = (direccion) => {
-        // Lógica para editar la dirección
-        // Aquí puedes abrir el modal con los datos prellenados de la dirección seleccionada
-        console.log("Editar dirección: ", direccion);
-        setIsModalOpen(true);
+        setCurrentAddressId(direccion.id); // Guardar el ID de la dirección
         setName(direccion.nombre);
         setAddress(direccion.direccion);
         setCategory(direccion.categoria);
-        // Completa con los campos que necesites
+        setSelectedCountry(""); // Ajusta según tu lógica de países
+        setIsModalOpen(true);
+    };
+
+    const handleSaveChanges = () => {
+        if (!currentAddressId) return; // Asegúrate de que haya una dirección para editar
+
+        const updatedAddress = {
+            nombre: name,
+            direccion: `${street}, ${address}, ${postalCode}`,
+            categoria: category,
+            contacto: "", // Añadir contacto si es necesario
+            comentarios: "", // Añadir comentarios si es necesario
+        };
+
+        axios.put(`https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones/${currentAddressId}`, updatedAddress)
+            .then(response => {
+                console.log("Dirección actualizada: ", response.data);
+                setDirecciones(prevDirecciones => 
+                    prevDirecciones.map(direccion => 
+                        direccion.id === currentAddressId ? response.data : direccion
+                    )
+                );
+                closeModal();
+            })
+            .catch(error => {
+                console.error("Error al actualizar la dirección: ", error);
+                setWarning("Error al actualizar la dirección.");
+            });
     };
 
     const handleDelete = (id) => {
@@ -185,7 +222,7 @@ export const Direcciones = () => {
                             <th>Categoría</th>
                             <th>Contacto</th>
                             <th>Comentarios</th>
-                            <th>Acciones</th> {/* Nueva columna para los botones */}
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -209,7 +246,7 @@ export const Direcciones = () => {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <button className="modal-close-btn" onClick={closeModal}>✖️</button>
-                        <h2>Crear Nueva Dirección</h2>
+                        <h2>{currentAddressId ? "Editar Dirección" : "Crear Nueva Dirección"}</h2>
                         <div className="modal-body">
                             <div className="form-detail-section">
                                 <div className="form-section">
@@ -312,7 +349,11 @@ export const Direcciones = () => {
                             )}
                             <div className="modal-buttons">
                                 <button type="button" className="cancel-btn" onClick={closeModal}>Cancelar</button>
-                                <button type="button" className="direccion-btn" onClick={handleCreateAddress}>Crear Dirección</button>
+                                {currentAddressId ? (
+                                    <button type="button" className="direccion-btn" onClick={handleSaveChanges}>Guardar Cambios</button>
+                                ) : (
+                                    <button type="button" className="direccion-btn" onClick={handleCreateAddress}>Crear Dirección</button>
+                                )}
                             </div>
                         </div>
                     </div>

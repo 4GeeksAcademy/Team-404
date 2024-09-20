@@ -191,14 +191,16 @@ def reset_password(token):
         return jsonify({"error": "Error interno del servidor"}), 500
 
 
-@api.route('/api/direcciones', methods=['GET'])
+# Define el blueprint para las direcciones
+direcciones_bp = Blueprint('direcciones', __name__)
+
+# Obtener todas las direcciones
+@direcciones_bp.route('/api/direcciones', methods=['GET'])
 def get_direcciones():
     direcciones = Direccion.query.all()
     return jsonify([direccion.serialize() for direccion in direcciones]), 200
 
-# Define el blueprint para las direcciones
-direcciones_bp = Blueprint('direcciones', __name__)
-
+# Añadir nueva dirección
 @direcciones_bp.route('/api/direcciones', methods=['POST'])
 def add_direccion():
     try:
@@ -227,10 +229,9 @@ def add_direccion():
     except Exception as e:
         print(f"Error en /api/direcciones: {e}")  # Esto imprimirá el error en la consola
         return jsonify({"error": str(e)}), 500  # Muestra el error real en la respuesta
-    
 
-#ELIMINAR DIRECCION
-@api.route('/api/direcciones/<int:id>', methods=['DELETE'])
+# Eliminar dirección
+@direcciones_bp.route('/api/direcciones/<int:id>', methods=['DELETE'])
 def delete_direccion(id):
     direccion = Direccion.query.get(id)
     if direccion:
@@ -239,6 +240,30 @@ def delete_direccion(id):
         return jsonify({'message': 'Dirección eliminada exitosamente.'}), 200
     return jsonify({'error': 'Dirección no encontrada.'}), 404
 
+# Editar dirección
+@direcciones_bp.route('/api/direcciones/<int:id>', methods=['PUT'])
+def edit_direccion(id):
+    direccion = Direccion.query.get(id)
+    if not direccion:
+        return jsonify({'error': 'Dirección no encontrada.'}), 404
+
+    data = request.get_json()
+    nombre = data.get('nombre', direccion.nombre)
+    direccion_texto = data.get('direccion', direccion.direccion)
+    categoria = data.get('categoria', direccion.categoria)
+    contacto = data.get('contacto', direccion.contacto)
+    comentarios = data.get('comentarios', direccion.comentarios)
+
+    # Actualiza los campos
+    direccion.nombre = nombre
+    direccion.direccion = direccion_texto
+    direccion.categoria = categoria
+    direccion.contacto = contacto
+    direccion.comentarios = comentarios
+
+    db.session.commit()
+
+    return jsonify(direccion.serialize()), 200
 
 
 # Contact
