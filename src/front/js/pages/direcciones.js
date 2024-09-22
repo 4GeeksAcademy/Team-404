@@ -28,7 +28,7 @@ export const Direcciones = () => {
     };
 
     // Asegúrate de obtener el user_id desde el contexto o estado adecuado
-    const currentUserId = 1; // Reemplaza con el valor real del user_id
+    const currentUserId = 2; // Reemplaza con el valor real del user_id
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => {
