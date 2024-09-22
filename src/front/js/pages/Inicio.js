@@ -19,7 +19,7 @@ export const Inicio = () => {
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false); // Nuevo estado
+    const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
     const [warningMessage, setWarningMessage] = useState('');
     const [loginWarningMessage, setLoginWarningMessage] = useState('');
     const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
@@ -43,13 +43,14 @@ export const Inicio = () => {
         setForgotPasswordEmail(e.target.value);
     };
 
+    // Actualizamos la función handleSubmit para guardar el usuario
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoginWarningMessage('');
 
         try {
             const response = await axios.post(
-                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/login',
+                'https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/login',
                 signupData,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -57,9 +58,11 @@ export const Inicio = () => {
             );
 
             if (response.status === 200) {
-                const { token } = response.data;
+                const { token, user } = response.data;  // Suponiendo que el backend devuelva los datos del usuario
                 localStorage.setItem('token', token);
-                navigate('/profile');
+                localStorage.setItem('user', JSON.stringify(user));  // Guardar los datos del usuario
+
+                navigate('/profile');  // Redirigir a la página de perfil
             }
         } catch (error) {
             if (error.response && error.response.status === 401) {
@@ -75,7 +78,7 @@ export const Inicio = () => {
 
         try {
             const response = await axios.post(
-                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/register',
+                'https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/register',
                 registerData,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -100,7 +103,7 @@ export const Inicio = () => {
 
         try {
             await axios.post(
-                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/forgot-password',
+                'https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/forgot-password',
                 { email: forgotPasswordEmail },
                 {
                     headers: { "Content-Type": "application/json" },

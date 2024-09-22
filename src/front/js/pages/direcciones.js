@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Loader } from '@googlemaps/js-api-loader';
-import "../../styles/direccion.css"; // Asegúrate de que la ruta al archivo CSS sea correcta
+import "../../styles/direccion.css";
+import { Context } from '../store/appContext'; 
 
 export const Direcciones = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,14 +15,57 @@ export const Direcciones = () => {
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
     const [warning, setWarning] = useState("");
+    const [direcciones, setDirecciones] = useState([]);
+    const [currentAddressId, setCurrentAddressId] = useState(null);
     const mapRef = useRef(null);
     const [marker, setMarker] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [filter, setFilter] = useState("");
+    const categoryColors = {
+        "ubicacion-propia": "lightblue",
+        "recogida-entrega": "lightgreen",
+        "cliente": "lightcoral",
+    };
+
+    // Asegúrate de obtener el user_id desde el contexto o estado adecuado
+    const currentUserId = 2; // Reemplaza con el valor real del user_id
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => {
         setIsModalOpen(false);
-        window.location.reload(); // Recargar la página al cerrar modal
+        resetForm();
+        window.location.reload(); // Recargar la página al cerrar el modal
     };
+
+    const resetForm = () => {
+        setName("");
+        setAddress("");
+        setPostalCode("");
+        setStreet("");
+        setCategory("");
+        setSelectedCountry(null);
+        setWarning("");
+    };
+
+    useEffect(() => {
+        axios.get(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones?user_id=${currentUserId}`)
+            .then(response => {
+                if (Array.isArray(response.data)) {
+                    setDirecciones(response.data);
+                } else {
+                    console.error("La respuesta no es un array:", response.data);
+                    setDirecciones([]); // Maneja el caso de error
+                }
+            })
+            .catch(error => {
+                console.error("Error al obtener las direcciones:", error);
+                setWarning("No se pudieron cargar las direcciones.");
+            });
+    }, []);
+
+    const filteredDirecciones = direcciones.filter(direccion => {
+        return !filter || direccion.categoria === filter; // Filtrado por categoría
+    });
 
     const initializeMap = () => {
         const loader = new Loader({
@@ -39,16 +83,6 @@ export const Direcciones = () => {
             console.error("Error al cargar la API de Google Maps: ", e);
         });
     };
-
-    useEffect(() => {
-        axios.get('https://restcountries.com/v3.1/all')
-            .then(response => {
-                setCountries(response.data);
-            })
-            .catch(error => {
-                console.error("Error al obtener la lista de países:", error);
-            });
-    }, []);
 
     const handleCountryChange = (event) => {
         const countryCode = event.target.value;
@@ -92,6 +126,22 @@ export const Direcciones = () => {
         });
     };
 
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/usuarios');
+            const user = response.data.find(u => u.id === currentUserId); // Asegúrate de que currentUserId esté definido
+            if (user) {
+                setCurrentUserId(user.id); // Establece el ID del usuario
+            }
+        } catch (error) {
+            console.error("Error al obtener el usuario: ", error);
+        }
+    };
+    
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
     const handleCreateAddress = () => {
         if (!name || !selectedCountry || !postalCode || !address || !street || !category) {
             setWarning("Por favor, rellena todos los campos obligatorios.");
@@ -102,20 +152,102 @@ export const Direcciones = () => {
             nombre: name,
             direccion: `${street}, ${address}, ${postalCode}`,
             categoria: category,
-            contacto: "", // Aquí puedes agregar contacto si lo deseas
-            comentarios: "", // Aquí puedes agregar comentarios si lo deseas
+            contacto: "",
+            comentarios: "",
+            user_id: currentUserId, // Incluye el user_id en la petición
         };
     
-        axios.post('https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones', newAddress)
+        axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones', newAddress)
             .then(response => {
                 console.log("Dirección creada: ", response.data);
-                closeModal();
+                setDirecciones(prevDirecciones => [...prevDirecciones, response.data]);
+                closeModal(); // Cerrar el modal
+                // No es necesario recargar la página; la dirección se actualiza en el estado
+                // window.location.reload();
             })
             .catch(error => {
                 console.error("Error al crear la dirección: ", error.response ? error.response.data : error.message);
                 setWarning("Error al crear la dirección.");
             });
     };
+
+    const handleEdit = (direccion) => {
+        setCurrentAddressId(direccion.id);
+        setName(direccion.nombre);
+
+        // Descomponer la dirección en sus partes
+        const [streetPart, addressPart, postalCodePart] = direccion.direccion.split(", ");
+        setStreet(streetPart || "");
+        setAddress(addressPart || "");
+        setPostalCode(postalCodePart || "");
+
+        setCategory(direccion.categoria);
+        setSelectedCountry(""); // Ajusta según tu lógica de países
+        setIsModalOpen(true);
+    };
+    const handleSaveChanges = () => {
+        if (!currentAddressId) return;
+
+        const updatedAddress = {
+            nombre: name,
+            direccion: `${street}, ${address}, ${postalCode}`,
+            categoria: category,
+            contacto: "",
+            comentarios: "",
+            user_id: currentUserId,
+        };
+
+        axios.put(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones/${currentAddressId}`, updatedAddress)
+            .then(response => {
+                console.log("Dirección actualizada: ", response.data);
+                setDirecciones(prevDirecciones =>
+                    prevDirecciones.map(direccion =>
+                        direccion.id === currentAddressId ? { ...direccion, ...response.data } : direccion
+                    )
+                );
+                closeModal();
+            })
+            .catch(error => {
+                console.error("Error al actualizar la dirección: ", error);
+                setWarning("Error al actualizar la dirección.");
+            });
+    };
+
+
+    const handleDelete = (id) => {
+        const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta dirección?");
+        if (confirmDelete) {
+            axios.delete(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones/${id}`, {
+                data: { user_id: currentUserId } // Asegúrate de que currentUserId esté definido
+            })
+                .then(() => {
+                    setDirecciones(prevDirecciones => prevDirecciones.filter(direccion => direccion.id !== id));
+                    console.log("Dirección eliminada");
+                })
+                .catch(error => {
+                    console.error("Error al eliminar la dirección: ", error);
+                    alert("Error al eliminar la dirección. Por favor, intenta de nuevo.");
+                });
+        }
+    };
+
+    const categoryIcons = {
+        "ubicacion-propia": "🏚️",
+        "recogida-entrega": "🔄",
+        "cliente": "🤵",
+    };
+
+    useEffect(() => {
+        axios.get('https://restcountries.com/v3.1/all')
+            .then(response => {
+                setCountries(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("Error al obtener la lista de países:", error);
+                setLoading(false);
+            });
+    }, []);
 
     useEffect(() => {
         if (isModalOpen && !map) {
@@ -125,16 +257,53 @@ export const Direcciones = () => {
 
     return (
         <div>
-            <div className="direcciones-header">
-                <h3>Mis Direcciones</h3>
-                <button className="direccion-btn" onClick={openModal}>Nueva dirección</button>
+            <div className="container mt-4">
+                <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
+                    <h3>Mis Direcciones</h3>
+                    <label>
+                        Filtrar por categoría:
+                        <select onChange={(e) => setFilter(e.target.value)}>
+                            <option value="">Todas</option>
+                            <option value="ubicacion-propia">🏚️  Ubicación propia</option>
+                            <option value="recogida-entrega">🔄  Recogida/Entrega</option>
+                            <option value="cliente">🤵  Cliente</option>
+                        </select>
+                    </label>
+                    <button className="btn btn-primary" onClick={openModal}>Nueva dirección</button>
+                </div>
+
+                <table className="table table-striped table-hover text-center">
+                    <thead className="thead-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Dirección</th>
+                            <th>Categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredDirecciones.map(direccion => (
+                            <tr key={direccion.id}>
+                                <td>{direccion.nombre}</td>
+                                <td>{direccion.direccion}</td>
+                                <td style={{ backgroundColor: categoryColors[direccion.categoria] || 'white' }}>
+                                    {categoryIcons[direccion.categoria] || ''} {/* Muestra el emoji basado en la categoría */}
+                                    {direccion.categoria}
+                                </td>
+                                <td>
+                                    <button onClick={() => handleEdit(direccion)} className="btn btn-warning">🔄​</button>
+                                    <button onClick={() => handleDelete(direccion.id)} className="btn btn-danger">🗑️​</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
 
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">
-                        <button className="modal-close-btn" onClick={closeModal}>✖️</button>
-                        <h2>Crear Nueva Dirección</h2>
+                        <h2>{currentAddressId ? "Editar Dirección" : "Crear Nueva Dirección"}</h2>
                         <div className="modal-body">
                             <div className="form-detail-section">
                                 <div className="form-section">
@@ -142,7 +311,7 @@ export const Direcciones = () => {
                                     <form>
                                         <label>
                                             País <span className="required">*</span>
-                                            <select name="pais" required onChange={handleCountryChange}>
+                                            <select name="pais" required onChange={handleCountryChange} value={selectedCountry || ""}>
                                                 <option value="">Seleccionar país</option>
                                                 {countries.map(country => (
                                                     <option key={country.cca2} value={country.cca2}>
@@ -237,7 +406,11 @@ export const Direcciones = () => {
                             )}
                             <div className="modal-buttons">
                                 <button type="button" className="cancel-btn" onClick={closeModal}>Cancelar</button>
-                                <button type="button" className="direccion-btn" onClick={handleCreateAddress}>Crear Dirección</button>
+                                {currentAddressId ? (
+                                    <button type="button" className="direccion-btn" onClick={handleSaveChanges}>Guardar Cambios</button>
+                                ) : (
+                                    <button type="button" className="direccion-btn" onClick={handleCreateAddress}>Crear Dirección</button>
+                                )}
                             </div>
                         </div>
                     </div>
