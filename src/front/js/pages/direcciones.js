@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Loader } from '@googlemaps/js-api-loader';
 import "../../styles/direccion.css";
+import { Context } from '../store/appContext'; 
 
 export const Direcciones = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -125,12 +126,28 @@ export const Direcciones = () => {
         });
     };
 
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/usuarios');
+            const user = response.data.find(u => u.id === currentUserId); // Asegúrate de que currentUserId esté definido
+            if (user) {
+                setCurrentUserId(user.id); // Establece el ID del usuario
+            }
+        } catch (error) {
+            console.error("Error al obtener el usuario: ", error);
+        }
+    };
+    
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
     const handleCreateAddress = () => {
         if (!name || !selectedCountry || !postalCode || !address || !street || !category) {
             setWarning("Por favor, rellena todos los campos obligatorios.");
             return;
         }
-
+    
         const newAddress = {
             nombre: name,
             direccion: `${street}, ${address}, ${postalCode}`,
@@ -139,13 +156,14 @@ export const Direcciones = () => {
             comentarios: "",
             user_id: currentUserId, // Incluye el user_id en la petición
         };
-
+    
         axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones', newAddress)
             .then(response => {
                 console.log("Dirección creada: ", response.data);
                 setDirecciones(prevDirecciones => [...prevDirecciones, response.data]);
                 closeModal(); // Cerrar el modal
-                window.location.reload(); // Recargar la página
+                // No es necesario recargar la página; la dirección se actualiza en el estado
+                // window.location.reload();
             })
             .catch(error => {
                 console.error("Error al crear la dirección: ", error.response ? error.response.data : error.message);

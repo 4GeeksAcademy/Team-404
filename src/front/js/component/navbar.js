@@ -5,7 +5,7 @@ export const Navbar = () => {
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div className="container-fluid">
-				<a className="navbar-brand" href="#">RutaTrack</a>
+				<a className="navbar-brand" href="https://refactored-space-couscous-69wrxv6769929wr-3000.app.github.dev/profile">🚚  RutaTrack</a>
 				<button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
 					<span className="navbar-toggler-icon"></span>
 				</button>
@@ -21,7 +21,7 @@ export const Navbar = () => {
 							<Link className="nav-link active" to="/sobreNosotros">Nosotros</Link>
 						</li>
 						<li className="nav-item dropdown">
-						<Link className="nav-link active" to="/Contacto">Contacto</Link>
+							<Link className="nav-link active" to="/Contacto">Contacto</Link>
 						</li>
 					</ul>
 				</div>
