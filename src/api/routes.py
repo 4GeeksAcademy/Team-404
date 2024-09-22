@@ -190,16 +190,22 @@ direcciones_bp = Blueprint('direcciones', __name__)
 @direcciones_bp.route('/api/direcciones', methods=['GET'])
 def get_direcciones():
     try:
-        # Obtener todas las direcciones
-        direcciones = Direccion.query.all()
-        
+        # Obtener el user_id de los parámetros de la consulta (query string)
+        user_id = request.args.get('user_id')
+
+        if not user_id:
+            return jsonify({"error": "Falta el parámetro 'user_id'"}), 400
+
+        # Filtrar las direcciones por el user_id
+        direcciones = Direccion.query.filter_by(user_id=user_id).all()
+
         # Serializar las direcciones
         return jsonify([direccion.serialize() for direccion in direcciones]), 200
 
     except Exception as e:
         print(f"Error en /api/direcciones: {e}")
         return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
-
+    
 #AÑADIR NUEVA DIRECCION
 @direcciones_bp.route('/api/direcciones', methods=['POST'])
 def add_direccion():
@@ -207,23 +213,33 @@ def add_direccion():
         data = request.get_json()
         print(f"Datos recibidos: {data}")  # Verifica qué datos estás recibiendo
 
+        # Obtener los campos del cuerpo de la solicitud
         nombre = data.get('nombre')
         direccion = data.get('direccion')
         categoria = data.get('categoria')
         contacto = data.get('contacto', '')
         comentarios = data.get('comentarios', '')
 
-        # Verificar que los campos obligatorios están presentes
-        if not nombre or not direccion or not categoria:
-            return jsonify({"error": "Nombre, dirección y categoría son requeridos"}), 400
+        # Obtener el user_id del cuerpo de la solicitud
+        user_id = data.get('user_id')
 
-        # Crear nueva instancia de Direccion
+        # Verificar que los campos obligatorios están presentes
+        if not nombre or not direccion or not categoria or not user_id:
+            return jsonify({"error": "Nombre, dirección, categoría y user_id son requeridos"}), 400
+
+        # Verificar si el usuario existe
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        # Crear nueva instancia de Direccion asociada al usuario
         nueva_direccion = Direccion(
             nombre=nombre,
             direccion=direccion,
             categoria=categoria,
             contacto=contacto,
-            comentarios=comentarios
+            comentarios=comentarios,
+            user_id=user_id  # Asociar con el usuario
         )
 
         # Añadir y confirmar la transacción en la base de datos
@@ -236,7 +252,6 @@ def add_direccion():
     except Exception as e:
         print(f"Error en /api/direcciones: {e}")  # Esto imprimirá el error en la consola
         return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
-    
 # EDITAR DIRECCION
 @direcciones_bp.route('/api/direcciones/<int:id>', methods=['PUT'])
 def update_direccion(id):
@@ -244,10 +259,20 @@ def update_direccion(id):
         data = request.get_json()
         print(f"Datos recibidos para actualizar: {data}")
 
+        # Obtener el user_id del cuerpo de la solicitud (esto debería venir de la autenticación o de los datos enviados)
+        user_id = data.get('user_id')
+
+        if not user_id:
+            return jsonify({"error": "El user_id es requerido para esta operación"}), 400
+
         # Buscar la dirección existente
         direccion = Direccion.query.get(id)
         if not direccion:
             return jsonify({"error": "Dirección no encontrada"}), 404
+
+        # Verificar que el user_id coincida con el de la dirección
+        if direccion.user_id != user_id:
+            return jsonify({"error": "No tienes permiso para editar esta dirección"}), 403
 
         # Actualizar los campos
         direccion.nombre = data.get('nombre', direccion.nombre)
@@ -270,10 +295,20 @@ def update_direccion(id):
 @direcciones_bp.route('/api/direcciones/<int:id>', methods=['DELETE'])
 def delete_direccion(id):
     try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+
+        if not user_id:
+            return jsonify({"error": "El user_id es requerido para esta operación"}), 400
+
         # Buscar la dirección existente
         direccion = Direccion.query.get(id)
         if not direccion:
             return jsonify({"error": "Dirección no encontrada"}), 404
+
+        # Verificar que el user_id coincida con el de la dirección
+        if direccion.user_id != user_id:
+            return jsonify({"error": "No tienes permiso para eliminar esta dirección"}), 403
 
         # Eliminar la dirección de la base de datos
         db.session.delete(direccion)

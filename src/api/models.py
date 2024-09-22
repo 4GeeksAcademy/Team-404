@@ -8,12 +8,15 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)  # Aumentado
-    name = db.Column(db.String(100), nullable=True)  # Aumentado
-    last_name = db.Column(db.String(100), nullable=True)  # Aumentado
-    company = db.Column(db.String(150), nullable=True)  # Aumentado
-    location = db.Column(db.String(150), nullable=True)  # Aumentado
+    password_hash = db.Column(db.String(256), nullable=False)
+    name = db.Column(db.String(100), nullable=True)
+    last_name = db.Column(db.String(100), nullable=True)
+    company = db.Column(db.String(150), nullable=True)
+    location = db.Column(db.String(150), nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    # Relación uno a muchos con Direccion
+    direcciones = db.relationship('Direccion', backref='user', lazy=True)
 
     def __init__(self, email, password_hash, name=None, last_name=None, company=None, location=None):
         self.email = email
@@ -31,7 +34,8 @@ class User(db.Model):
             'last_name': self.last_name,
             'company': self.company,
             'location': self.location,
-            'created_at': self.created_at
+            'created_at': self.created_at,
+            'direcciones': [direccion.serialize() for direccion in self.direcciones]
         }
 
 class Direccion(db.Model):
@@ -41,6 +45,7 @@ class Direccion(db.Model):
     categoria = db.Column(db.String(50), nullable=False)
     contacto = db.Column(db.String(100), nullable=True)
     comentarios = db.Column(db.Text, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Clave foránea
 
     def serialize(self):
         return {
@@ -49,7 +54,8 @@ class Direccion(db.Model):
             'direccion': self.direccion,
             'categoria': self.categoria,
             'contacto': self.contacto,
-            'comentarios': self.comentarios
+            'comentarios': self.comentarios,
+            'user_id': self.user_id
         }
 class ContactMessage(db.Model):
     __tablename__ = 'contact_messages'
