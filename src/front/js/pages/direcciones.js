@@ -15,16 +15,14 @@ export const Direcciones = () => {
     const [category, setCategory] = useState("");
     const [warning, setWarning] = useState("");
     const [direcciones, setDirecciones] = useState([]);
-    const [currentAddressId, setCurrentAddressId] = useState(null); // ID de la dirección actual
+    const [currentAddressId, setCurrentAddressId] = useState(null);
     const mapRef = useRef(null);
     const [marker, setMarker] = useState(null);
     const openModal = () => setIsModalOpen(true);
     const [loading, setLoading] = useState(true);
     const closeModal = () => {
         setIsModalOpen(false);
-        resetForm(); // Reiniciar el formulario al cerrar el modal
-        // Recargar la página
-        window.location.reload();
+        resetForm();
     };
 
     const resetForm = () => {
@@ -36,6 +34,7 @@ export const Direcciones = () => {
         setSelectedCountry(null);
         setWarning("");
     };
+
     const [filter, setFilter] = useState("");
     const categoryColors = {
         "ubicacion-propia": "lightblue",
@@ -43,16 +42,26 @@ export const Direcciones = () => {
         "cliente": "lightcoral",
     };
 
-    // Obtener direcciones al cargar el componente
     useEffect(() => {
-        axios.get('https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones')
+        axios.get('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones')
             .then(response => {
-                setDirecciones(response.data);
+                if (Array.isArray(response.data)) {
+                    setDirecciones(response.data);
+                } else {
+                    console.error("La respuesta no es un array:", response.data);
+                    setDirecciones([]); // O maneja el error de otra manera
+                }
             })
             .catch(error => {
                 console.error("Error al obtener las direcciones:", error);
+                setWarning("No se pudieron cargar las direcciones.");
             });
     }, []);
+
+    // Filtrar direcciones según el estado 'filter'
+    const filteredDirecciones = direcciones.filter(direccion => {
+        return !filter || direccion.categoria === filter; // Filtrado por categoría
+    });
 
     const initializeMap = () => {
         const loader = new Loader({
@@ -123,15 +132,15 @@ export const Direcciones = () => {
             nombre: name,
             direccion: `${street}, ${address}, ${postalCode}`,
             categoria: category,
-            contacto: "", // Aquí puedes agregar contacto si lo deseas
-            comentarios: "", // Aquí puedes agregar comentarios si lo deseas
+            contacto: "",
+            comentarios: "",
         };
 
-        axios.post('https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones', newAddress)
+        axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones', newAddress)
             .then(response => {
                 console.log("Dirección creada: ", response.data);
+                setDirecciones(prevDirecciones => [...prevDirecciones, response.data]); // Agregar dirección al estado
                 closeModal();
-                setDirecciones([...direcciones, response.data]); // Añadir nueva dirección a la lista
             })
             .catch(error => {
                 console.error("Error al crear la dirección: ", error.response ? error.response.data : error.message);
@@ -139,15 +148,14 @@ export const Direcciones = () => {
             });
     };
 
-
-
     const categoryIcons = {
         "ubicacion-propia": "🏚️",
         "recogida-entrega": "🔄",
         "cliente": "🤵",
     };
+
     const handleEdit = (direccion) => {
-        setCurrentAddressId(direccion.id); // Guardar el ID de la dirección
+        setCurrentAddressId(direccion.id);
         setName(direccion.nombre);
         setAddress(direccion.direccion);
         setCategory(direccion.categoria);
@@ -155,23 +163,18 @@ export const Direcciones = () => {
         setIsModalOpen(true);
     };
 
-    const reloadPage = () => {
-        // Recargar la página
-        window.location.reload();
-    };
     const handleSaveChanges = () => {
-        if (!currentAddressId) return; // Asegúrate de que haya una dirección para editar
+        if (!currentAddressId) return;
 
         const updatedAddress = {
             nombre: name,
             direccion: `${street}, ${address}, ${postalCode}`,
             categoria: category,
-            contacto: "", // Añadir contacto si es necesario
-            comentarios: "", // Añadir comentarios si es necesario
+            contacto: "",
+            comentarios: "",
         };
 
-
-        axios.put(`https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones/${currentAddressId}`, updatedAddress)
+        axios.put(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones/${currentAddressId}`, updatedAddress)
             .then(response => {
                 console.log("Dirección actualizada: ", response.data);
                 setDirecciones(prevDirecciones =>
@@ -187,12 +190,10 @@ export const Direcciones = () => {
             });
     };
 
-
-
     const handleDelete = (id) => {
         const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta dirección?");
         if (confirmDelete) {
-            axios.delete(`https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/direcciones/${id}`)
+            axios.delete(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones/${id}`)
                 .then(() => {
                     setDirecciones(prevDirecciones => prevDirecciones.filter(direccion => direccion.id !== id));
                     console.log("Dirección eliminada");
@@ -222,11 +223,8 @@ export const Direcciones = () => {
         }
     }, [isModalOpen]);
 
-
-
     return (
         <div>
-            {/* Tabla para mostrar las direcciones */}
             <div className="container mt-4">
                 <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
                     <h3>Mis Direcciones</h3>
@@ -248,143 +246,74 @@ export const Direcciones = () => {
                             <th>Nombre</th>
                             <th>Dirección</th>
                             <th>Categoría</th>
-                            <th>Contacto</th>
-                            <th>Comentarios</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {direcciones.filter(direccion => !filter || direccion.categoria === filter).map(direccion => (
+                        {filteredDirecciones.map(direccion => (
                             <tr key={direccion.id}>
                                 <td>{direccion.nombre}</td>
                                 <td>{direccion.direccion}</td>
-                                <td style={{ backgroundColor: categoryColors[direccion.categoria] }}>
-                                    {categoryIcons[direccion.categoria]} {direccion.categoria} {/* Emoticono + texto */}
-                                </td>
-                                <td>{direccion.contacto}</td>
-                                <td>{direccion.comentarios}</td>
+                                <td style={{ backgroundColor: categoryColors[direccion.categoria] || 'white' }}>{direccion.categoria}</td>
                                 <td>
-                                    <button className="btn btn-warning btn-sm button-spacing" onClick={() => handleEdit(direccion)}>✏️</button>
-                                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(direccion.id)}>❌​</button>
+                                    <button onClick={() => handleEdit(direccion)} className="btn btn-warning">Editar</button>
+                                    <button onClick={() => handleDelete(direccion.id)} className="btn btn-danger">Eliminar</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
             {isModalOpen && (
-                <div className="modal-overlay">
+                <div className="modal" style={{ display: "block" }}>
                     <div className="modal-content">
-                        <button className="modal-close-btn" onClick={closeModal}>✖️</button>
-                        <h2>{currentAddressId ? "Editar Dirección" : "Crear Nueva Dirección"}</h2>
-                        <div className="modal-body">
-                            <div className="form-detail-section">
-                                <div className="form-section">
-                                    <h3>Dirección</h3>
-                                    <form>
-                                        <label>
-                                            País <span className="required">*</span>
-                                            <select name="pais" required onChange={handleCountryChange}>
-                                                <option value="">Seleccionar país</option>
-                                                {countries.map(country => (
-                                                    <option key={country.cca2} value={country.cca2}>
-                                                        {country.name.common}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </label>
-                                        <label>
-                                            Código Postal <span className="required">*</span>
-                                            <input
-                                                type="text"
-                                                name="codigoPostal"
-                                                value={postalCode}
-                                                onChange={(e) => setPostalCode(e.target.value)}
-                                            />
-                                        </label>
-                                        <label>
-                                            Ciudad <span className="required">*</span>
-                                            <input
-                                                type="text"
-                                                name="ciudad"
-                                                value={address}
-                                                onChange={(e) => setAddress(e.target.value)}
-                                            />
-                                        </label>
-                                        <label>
-                                            Calle <span className="required">*</span>
-                                            <input
-                                                type="text"
-                                                name="calle"
-                                                value={street}
-                                                onChange={(e) => setStreet(e.target.value)}
-                                            />
-                                        </label>
-                                        <button type="button" className="search-btn" onClick={searchAddress}>Buscar</button>
-                                    </form>
-                                </div>
-                                <div className="detail-section">
-                                    <h3>Detalle</h3>
-                                    <form>
-                                        <label>
-                                            Nombre <span className="required">*</span>
-                                            <input
-                                                type="text"
-                                                name="nombre"
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
-                                                required
-                                            />
-                                        </label>
-                                        <label>
-                                            Categoría <span className="required">*</span>
-                                            <select
-                                                name="categoria"
-                                                value={category}
-                                                onChange={(e) => setCategory(e.target.value)}
-                                                required
-                                            >
-                                                <option value="">Seleccionar categoría</option>
-                                                <option value="ubicacion-propia">🏚️​​​  Ubicación propia</option>
-                                                <option value="recogida-entrega">🔄  Recogida/Entrega</option>
-                                                <option value="cliente">🤵  Cliente</option>
-                                            </select>
-                                        </label>
-                                        <label>
-                                            Email (opcional)
-                                            <input type="email" name="email" />
-                                        </label>
-                                        <label>
-                                            Persona de Contacto (opcional)
-                                            <input type="text" name="personaContacto" />
-                                        </label>
-                                        <label>
-                                            Número de Teléfono (opcional)
-                                            <input type="text" name="telefono" />
-                                        </label>
-                                        <label>
-                                            Comentarios (opcional)
-                                            <textarea name="comentarios"></textarea>
-                                        </label>
-                                    </form>
-                                </div>
-                            </div>
-                            <div className="map-section" ref={mapRef}></div>
+                        <span className="close" onClick={closeModal}>&times;</span>
+                        <h4>{currentAddressId ? "Editar Dirección" : "Crear Dirección"}</h4>
+                        {warning && <div className="alert alert-warning">{warning}</div>}
+                        <div className="form-group">
+                            <label>Nombre <span style={{ color: "red" }}>*</span></label>
+                            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="form-control" />
                         </div>
+                        <div className="form-group">
+                            <label>Dirección <span style={{ color: "red" }}>*</span></label>
+                            <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} className="form-control" />
+                        </div>
+                        <div className="form-group">
+                            <label>Código Postal <span style={{ color: "red" }}>*</span></label>
+                            <input type="text" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} className="form-control" />
+                        </div>
+                        <div className="form-group">
+                            <label>Calle <span style={{ color: "red" }}>*</span></label>
+                            <input type="text" value={street} onChange={(e) => setStreet(e.target.value)} className="form-control" />
+                        </div>
+                        <div className="form-group">
+                            <label>Categoría <span style={{ color: "red" }}>*</span></label>
+                            <select value={category} onChange={(e) => setCategory(e.target.value)} className="form-control">
+                                <option value="">Selecciona una categoría</option>
+                                <option value="ubicacion-propia">🏚️  Ubicación propia</option>
+                                <option value="recogida-entrega">🔄  Recogida/Entrega</option>
+                                <option value="cliente">🤵  Cliente</option>
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>Selecciona un país</label>
+                            <select value={selectedCountry} onChange={handleCountryChange} className="form-control">
+                                <option value="">Selecciona un país</option>
+                                {countries.map(country => (
+                                    <option key={country.cca2} value={country.cca2}>{country.name.common}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <button onClick={searchAddress} className="btn btn-info">Buscar dirección</button>
+                        </div>
+                        <div ref={mapRef} style={{ width: "100%", height: "300px" }}></div>
                         <div className="modal-footer">
-                            {warning && (
-                                <div className="warning-message">
-                                    {warning}
-                                </div>
-                            )}
-                            <div className="modal-buttons">
-                                <button type="button" className="cancel-btn" onClick={closeModal}>Cancelar</button>
-                                {currentAddressId ? (
-                                    <button type="button" className="direccion-btn" onClick={handleSaveChanges}>Guardar Cambios</button>
-                                ) : (
-                                    <button type="button" className="direccion-btn" onClick={handleCreateAddress}>Crear Dirección</button>
-                                )}
-                            </div>
+                            <button className="btn btn-secondary" onClick={closeModal}>Cancelar</button>
+                            <button className="btn btn-primary" onClick={currentAddressId ? handleSaveChanges : handleCreateAddress}>
+                                {currentAddressId ? "Guardar Cambios" : "Crear Dirección"}
+                            </button>
                         </div>
                     </div>
                 </div>

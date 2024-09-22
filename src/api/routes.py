@@ -186,19 +186,38 @@ def reset_password(token):
 # Define el blueprint para las direcciones
 direcciones_bp = Blueprint('direcciones', __name__)
 
+#OBTENER TODAS LAS DIRECCIONES DEL USUARIO
+@direcciones_bp.route('/api/direcciones', methods=['GET'])
+def get_direcciones():
+    try:
+        # Obtener todas las direcciones
+        direcciones = Direccion.query.all()
+        
+        # Serializar las direcciones
+        return jsonify([direccion.serialize() for direccion in direcciones]), 200
+
+    except Exception as e:
+        print(f"Error en /api/direcciones: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+
+#AÑADIR NUEVA DIRECCION
 @direcciones_bp.route('/api/direcciones', methods=['POST'])
 def add_direccion():
     try:
         data = request.get_json()
+        print(f"Datos recibidos: {data}")  # Verifica qué datos estás recibiendo
+
         nombre = data.get('nombre')
         direccion = data.get('direccion')
         categoria = data.get('categoria')
         contacto = data.get('contacto', '')
         comentarios = data.get('comentarios', '')
 
+        # Verificar que los campos obligatorios están presentes
         if not nombre or not direccion or not categoria:
             return jsonify({"error": "Nombre, dirección y categoría son requeridos"}), 400
 
+        # Crear nueva instancia de Direccion
         nueva_direccion = Direccion(
             nombre=nombre,
             direccion=direccion,
@@ -206,14 +225,67 @@ def add_direccion():
             contacto=contacto,
             comentarios=comentarios
         )
+
+        # Añadir y confirmar la transacción en la base de datos
         db.session.add(nueva_direccion)
         db.session.commit()
 
+        # Retornar la nueva dirección con el método serialize()
         return jsonify(nueva_direccion.serialize()), 201
 
     except Exception as e:
         print(f"Error en /api/direcciones: {e}")  # Esto imprimirá el error en la consola
-        return jsonify({"error": str(e)}), 500  # Muestra el error real en la respuesta
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+    
+# EDITAR DIRECCION
+@direcciones_bp.route('/api/direcciones/<int:id>', methods=['PUT'])
+def update_direccion(id):
+    try:
+        data = request.get_json()
+        print(f"Datos recibidos para actualizar: {data}")
+
+        # Buscar la dirección existente
+        direccion = Direccion.query.get(id)
+        if not direccion:
+            return jsonify({"error": "Dirección no encontrada"}), 404
+
+        # Actualizar los campos
+        direccion.nombre = data.get('nombre', direccion.nombre)
+        direccion.direccion = data.get('direccion', direccion.direccion)
+        direccion.categoria = data.get('categoria', direccion.categoria)
+        direccion.contacto = data.get('contacto', direccion.contacto)
+        direccion.comentarios = data.get('comentarios', direccion.comentarios)
+
+        # Confirmar la transacción en la base de datos
+        db.session.commit()
+
+        # Retornar la dirección actualizada
+        return jsonify(direccion.serialize()), 200
+
+    except Exception as e:
+        print(f"Error en /api/direcciones/{id}: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+    
+#ELIMINAR DIRECCION
+@direcciones_bp.route('/api/direcciones/<int:id>', methods=['DELETE'])
+def delete_direccion(id):
+    try:
+        # Buscar la dirección existente
+        direccion = Direccion.query.get(id)
+        if not direccion:
+            return jsonify({"error": "Dirección no encontrada"}), 404
+
+        # Eliminar la dirección de la base de datos
+        db.session.delete(direccion)
+        db.session.commit()
+
+        # Retornar un mensaje de éxito
+        return jsonify({"message": "Dirección eliminada con éxito"}), 200
+
+    except Exception as e:
+        print(f"Error en /api/direcciones/{id}: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+
 # Contact
 @api.route('/api/contact', methods=['POST'])
 def submit_contact_form():

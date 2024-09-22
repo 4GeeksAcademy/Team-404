@@ -35,14 +35,12 @@ class User(db.Model):
         }
 
 class Direccion(db.Model):
-    __tablename__ = 'direcciones'
-
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String, nullable=False)
-    direccion = db.Column(db.String, nullable=False)
-    categoria = db.Column(db.String, nullable=False)
-    contacto = db.Column(db.String, nullable=True)
-    comentarios = db.Column(db.String, nullable=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    direccion = db.Column(db.String(200), nullable=False)
+    categoria = db.Column(db.String(50), nullable=False)
+    contacto = db.Column(db.String(100), nullable=True)
+    comentarios = db.Column(db.Text, nullable=True)
 
     def serialize(self):
         return {
@@ -51,9 +49,8 @@ class Direccion(db.Model):
             'direccion': self.direccion,
             'categoria': self.categoria,
             'contacto': self.contacto,
-            'comentarios': self.comentarios,
+            'comentarios': self.comentarios
         }
-
 class ContactMessage(db.Model):
     __tablename__ = 'contact_messages'
 
