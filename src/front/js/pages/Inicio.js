@@ -19,7 +19,7 @@ export const Inicio = () => {
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false); // Nuevo estado
+    const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
     const [warningMessage, setWarningMessage] = useState('');
     const [loginWarningMessage, setLoginWarningMessage] = useState('');
     const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
@@ -43,6 +43,7 @@ export const Inicio = () => {
         setForgotPasswordEmail(e.target.value);
     };
 
+    // Actualizamos la función handleSubmit para guardar el usuario
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoginWarningMessage('');
@@ -57,9 +58,11 @@ export const Inicio = () => {
             );
 
             if (response.status === 200) {
-                const { token } = response.data;
+                const { token, user } = response.data;  // Suponiendo que el backend devuelva los datos del usuario
                 localStorage.setItem('token', token);
-                navigate('/profile');
+                localStorage.setItem('user', JSON.stringify(user));  // Guardar los datos del usuario
+
+                navigate('/profile');  // Redirigir a la página de perfil
             }
         } catch (error) {
             if (error.response && error.response.status === 401) {
