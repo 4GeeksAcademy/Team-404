@@ -19,15 +19,6 @@ MAIL_SENDER = 'your-email@example.com'
 mail = Mail()
 serializer = URLSafeTimedSerializer(RESET_SECRET_KEY)
 
-# @api.before_app_first_request //ESTO QUEDA COMENTADAO HASTA SOLUCIONAR O CAMBIARLO DE MANERA QUE NO DE FALLO
-def configure_mail():
-    current_app.config['MAIL_SERVER'] = 'smtp.example.com'  # Cambia esto por tu servidor SMTP
-    current_app.config['MAIL_PORT'] = 587  # O 465 para SSL
-    current_app.config['MAIL_USERNAME'] = 'your-email@example.com'
-    current_app.config['MAIL_PASSWORD'] = 'your-password'
-    current_app.config['MAIL_USE_TLS'] = True  # O False si usas SSL
-    current_app.config['MAIL_USE_SSL'] = False  # O True si usas SSL
-    mail.init_app(current_app)
 
 # Endpoint para decir hola
 @api.route('/api/hello', methods=['POST', 'GET'])
@@ -52,6 +43,7 @@ def get_all_users():
 def create_user():
     try:
         data = request.get_json()
+        print(data)
         email = data.get('email')
         password = data.get('password')
         name = data.get('name')
@@ -81,7 +73,7 @@ def create_user():
 
     except Exception as e:
         print(f"Error en /api/register: {e}")
-        return jsonify({"error": "Error interno del servidor"}), 500
+        return jsonify({"error": str(e)}), 500
 
 # Iniciar sesión (sin cambios)
 @api.route('/api/login', methods=['POST'])
@@ -106,7 +98,7 @@ def login_user():
 
     except Exception as e:
         print(f"Error en /api/login: {e}")
-        return jsonify({"error": "Error interno del servidor"}), 500
+        return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
 # Obtener datos del usuario autenticado (con JWT)
 @api.route('/api/user', methods=['GET'])
@@ -190,17 +182,10 @@ def reset_password(token):
         print(f"Error en /api/reset-password: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
 
-
+   
 # Define el blueprint para las direcciones
 direcciones_bp = Blueprint('direcciones', __name__)
 
-# Obtener todas las direcciones
-@direcciones_bp.route('/api/direcciones', methods=['GET'])
-def get_direcciones():
-    direcciones = Direccion.query.all()
-    return jsonify([direccion.serialize() for direccion in direcciones]), 200
-
-# Añadir nueva dirección
 @direcciones_bp.route('/api/direcciones', methods=['POST'])
 def add_direccion():
     try:
@@ -229,43 +214,6 @@ def add_direccion():
     except Exception as e:
         print(f"Error en /api/direcciones: {e}")  # Esto imprimirá el error en la consola
         return jsonify({"error": str(e)}), 500  # Muestra el error real en la respuesta
-
-# Eliminar dirección
-@direcciones_bp.route('/api/direcciones/<int:id>', methods=['DELETE'])
-def delete_direccion(id):
-    direccion = Direccion.query.get(id)
-    if direccion:
-        db.session.delete(direccion)
-        db.session.commit()
-        return jsonify({'message': 'Dirección eliminada exitosamente.'}), 200
-    return jsonify({'error': 'Dirección no encontrada.'}), 404
-
-# Editar dirección
-@direcciones_bp.route('/api/direcciones/<int:id>', methods=['PUT'])
-def edit_direccion(id):
-    direccion = Direccion.query.get(id)
-    if not direccion:
-        return jsonify({'error': 'Dirección no encontrada.'}), 404
-
-    data = request.get_json()
-    nombre = data.get('nombre', direccion.nombre)
-    direccion_texto = data.get('direccion', direccion.direccion)
-    categoria = data.get('categoria', direccion.categoria)
-    contacto = data.get('contacto', direccion.contacto)
-    comentarios = data.get('comentarios', direccion.comentarios)
-
-    # Actualiza los campos
-    direccion.nombre = nombre
-    direccion.direccion = direccion_texto
-    direccion.categoria = categoria
-    direccion.contacto = contacto
-    direccion.comentarios = comentarios
-
-    db.session.commit()
-
-    return jsonify(direccion.serialize()), 200
-
-
 # Contact
 @api.route('/api/contact', methods=['POST'])
 def submit_contact_form():
@@ -293,4 +241,3 @@ def submit_contact_form():
     except Exception as e:
         print(f"Error en /api/contact: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
-
