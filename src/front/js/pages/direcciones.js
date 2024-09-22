@@ -23,7 +23,9 @@ export const Direcciones = () => {
     const closeModal = () => {
         setIsModalOpen(false);
         resetForm();
+        window.location.reload(); // Recargar la página al cerrar el modal
     };
+
 
     const resetForm = () => {
         setName("");
@@ -140,7 +142,8 @@ export const Direcciones = () => {
             .then(response => {
                 console.log("Dirección creada: ", response.data);
                 setDirecciones(prevDirecciones => [...prevDirecciones, response.data]); // Agregar dirección al estado
-                closeModal();
+                closeModal(); // Cerrar el modal
+                window.location.reload(); // Recargar la página
             })
             .catch(error => {
                 console.error("Error al crear la dirección: ", error.response ? error.response.data : error.message);
@@ -205,6 +208,7 @@ export const Direcciones = () => {
         }
     };
 
+
     useEffect(() => {
         axios.get('https://restcountries.com/v3.1/all')
             .then(response => {
@@ -254,10 +258,13 @@ export const Direcciones = () => {
                             <tr key={direccion.id}>
                                 <td>{direccion.nombre}</td>
                                 <td>{direccion.direccion}</td>
-                                <td style={{ backgroundColor: categoryColors[direccion.categoria] || 'white' }}>{direccion.categoria}</td>
+                                <td style={{ backgroundColor: categoryColors[direccion.categoria] || 'white' }}>
+                                    {categoryIcons[direccion.categoria] || ''} {/* Muestra el emoji basado en la categoría */}
+                                    {direccion.categoria}
+                                </td>
                                 <td>
-                                    <button onClick={() => handleEdit(direccion)} className="btn btn-warning">Editar</button>
-                                    <button onClick={() => handleDelete(direccion.id)} className="btn btn-danger">Eliminar</button>
+                                    <button onClick={() => handleEdit(direccion)} className="btn btn-warning">🔄​</button>
+                                    <button onClick={() => handleDelete(direccion.id)} className="btn btn-danger">🗑️​</button>
                                 </td>
                             </tr>
                         ))}
@@ -266,54 +273,113 @@ export const Direcciones = () => {
             </div>
 
             {isModalOpen && (
-                <div className="modal" style={{ display: "block" }}>
+                <div className="modal-overlay">
                     <div className="modal-content">
-                        <span className="close" onClick={closeModal}>&times;</span>
-                        <h4>{currentAddressId ? "Editar Dirección" : "Crear Dirección"}</h4>
-                        {warning && <div className="alert alert-warning">{warning}</div>}
-                        <div className="form-group">
-                            <label>Nombre <span style={{ color: "red" }}>*</span></label>
-                            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="form-control" />
+                        <h2>Crear Nueva Dirección</h2>
+                        <div className="modal-body">
+                            <div className="form-detail-section">
+                                <div className="form-section">
+                                    <h3>Dirección</h3>
+                                    <form>
+                                        <label>
+                                            País <span className="required">*</span>
+                                            <select name="pais" required onChange={handleCountryChange}>
+                                                <option value="">Seleccionar país</option>
+                                                {countries.map(country => (
+                                                    <option key={country.cca2} value={country.cca2}>
+                                                        {country.name.common}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </label>
+                                        <label>
+                                            Código Postal <span className="required">*</span>
+                                            <input
+                                                type="text"
+                                                name="codigoPostal"
+                                                value={postalCode}
+                                                onChange={(e) => setPostalCode(e.target.value)}
+                                            />
+                                        </label>
+                                        <label>
+                                            Ciudad <span className="required">*</span>
+                                            <input
+                                                type="text"
+                                                name="ciudad"
+                                                value={address}
+                                                onChange={(e) => setAddress(e.target.value)}
+                                            />
+                                        </label>
+                                        <label>
+                                            Calle <span className="required">*</span>
+                                            <input
+                                                type="text"
+                                                name="calle"
+                                                value={street}
+                                                onChange={(e) => setStreet(e.target.value)}
+                                            />
+                                        </label>
+                                        <button type="button" className="search-btn" onClick={searchAddress}>Buscar</button>
+                                    </form>
+                                </div>
+                                <div className="detail-section">
+                                    <h3>Detalle</h3>
+                                    <form>
+                                        <label>
+                                            Nombre <span className="required">*</span>
+                                            <input
+                                                type="text"
+                                                name="nombre"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                required
+                                            />
+                                        </label>
+                                        <label>
+                                            Categoría <span className="required">*</span>
+                                            <select
+                                                name="categoria"
+                                                value={category}
+                                                onChange={(e) => setCategory(e.target.value)}
+                                                required
+                                            >
+                                                <option value="">Seleccionar categoría</option>
+                                                <option value="ubicacion-propia">🏚️​​​  Ubicación propia</option>
+                                                <option value="recogida-entrega">🔄  Recogida/Entrega</option>
+                                                <option value="cliente">🤵  Cliente</option>
+                                            </select>
+                                        </label>
+                                        <label>
+                                            Email (opcional)
+                                            <input type="email" name="email" />
+                                        </label>
+                                        <label>
+                                            Persona de Contacto (opcional)
+                                            <input type="text" name="personaContacto" />
+                                        </label>
+                                        <label>
+                                            Número de Teléfono (opcional)
+                                            <input type="text" name="telefono" />
+                                        </label>
+                                        <label>
+                                            Comentarios (opcional)
+                                            <textarea name="comentarios"></textarea>
+                                        </label>
+                                    </form>
+                                </div>
+                            </div>
+                            <div className="map-section" ref={mapRef}></div>
                         </div>
-                        <div className="form-group">
-                            <label>Dirección <span style={{ color: "red" }}>*</span></label>
-                            <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} className="form-control" />
-                        </div>
-                        <div className="form-group">
-                            <label>Código Postal <span style={{ color: "red" }}>*</span></label>
-                            <input type="text" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} className="form-control" />
-                        </div>
-                        <div className="form-group">
-                            <label>Calle <span style={{ color: "red" }}>*</span></label>
-                            <input type="text" value={street} onChange={(e) => setStreet(e.target.value)} className="form-control" />
-                        </div>
-                        <div className="form-group">
-                            <label>Categoría <span style={{ color: "red" }}>*</span></label>
-                            <select value={category} onChange={(e) => setCategory(e.target.value)} className="form-control">
-                                <option value="">Selecciona una categoría</option>
-                                <option value="ubicacion-propia">🏚️  Ubicación propia</option>
-                                <option value="recogida-entrega">🔄  Recogida/Entrega</option>
-                                <option value="cliente">🤵  Cliente</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label>Selecciona un país</label>
-                            <select value={selectedCountry} onChange={handleCountryChange} className="form-control">
-                                <option value="">Selecciona un país</option>
-                                {countries.map(country => (
-                                    <option key={country.cca2} value={country.cca2}>{country.name.common}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <button onClick={searchAddress} className="btn btn-info">Buscar dirección</button>
-                        </div>
-                        <div ref={mapRef} style={{ width: "100%", height: "300px" }}></div>
                         <div className="modal-footer">
-                            <button className="btn btn-secondary" onClick={closeModal}>Cancelar</button>
-                            <button className="btn btn-primary" onClick={currentAddressId ? handleSaveChanges : handleCreateAddress}>
-                                {currentAddressId ? "Guardar Cambios" : "Crear Dirección"}
-                            </button>
+                            {warning && (
+                                <div className="warning-message">
+                                    {warning}
+                                </div>
+                            )}
+                            <div className="modal-buttons">
+                                <button type="button" className="cancel-btn" onClick={closeModal}>Cancelar</button>
+                                <button type="button" className="direccion-btn" onClick={handleCreateAddress}>Crear Dirección</button>
+                            </div>
                         </div>
                     </div>
                 </div>
