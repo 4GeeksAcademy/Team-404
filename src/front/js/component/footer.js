@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 
 export const Footer = () => {
 	return (
-		<footer className="bg-dark text-white text-center">
-			<div className="row mx-2">
+		<footer className="d-flex align-items-end bg-dark text-white text-center">
+			<div className="row w-100 mx-2">
 
 				{/* Columna 1: Información de la Empresa */}
 				<div className="col-4 pt-2">
@@ -17,7 +17,7 @@ export const Footer = () => {
 				</div>
 
 				{/* Columna 2: Enlaces de Aviso Legal */}
-				<div className="col-5 m-0 px-0">
+				<div className="col-4 m-0 px-0">
 					<div className="row align-items-center h-50 m-0">
 						<div className="col-4 px-1">
 							<Link className="foot-link text-white text-decoration-none text-center" to="/condicionesUso">Condiciones de Uso</Link>
@@ -44,7 +44,7 @@ export const Footer = () => {
 				</div>
 
 				{/* Columna 3: Redes Sociales */}
-				<div className="col-3 d-flex flex-column px-0">
+				<div className="col-4 d-flex flex-column px-0">
 					<div className="d-flex align-items-center justify-content-center m-0 py-1 h-50">
 						<strong>Síguenos:</strong>
 						<a href="#" className="text-white mx-2">
