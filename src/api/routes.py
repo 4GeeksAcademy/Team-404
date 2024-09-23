@@ -6,11 +6,12 @@ import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from api.models import db, User
-from .models import db, User, ContactMessage
+from api.models import db, User,ContactMessage
 
+
+# Habilita CORS para todas las rutas y orígenes
 api = Blueprint('api', __name__)
-CORS(api, support_credentials=True)
+CORS(api)
 
 SECRET_KEY = 'tu_clave_secreta'  # Cambia esto a una clave secreta más segura
 RESET_SECRET_KEY = 'tu_clave_secreta_reset'  # Otra clave secreta para la recuperación
@@ -189,6 +190,7 @@ def reset_password(token):
     except Exception as e:
         print(f"Error en /api/reset-password: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
+
 # Contact
 @api.route('/api/contact', methods=['POST'])
 def submit_contact_form():
@@ -214,7 +216,6 @@ def submit_contact_form():
         return jsonify({"message": "Mensaje de contacto recibido exitosamente"}), 201
 
     except Exception as e:
-        print(f"Error en /api/contact: {e}")
+        print(f"Error en /api/contact: {e}")  # Imprime el error completo
         return jsonify({"error": "Error interno del servidor"}), 500
-
 

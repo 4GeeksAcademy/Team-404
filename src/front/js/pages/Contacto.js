@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaUser, FaEnvelope, FaPhoneAlt, FaPaperPlane } from 'react-icons/fa';
 
 const Contacto = () => {
@@ -17,7 +17,7 @@ const Contacto = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('/api/contact', {
+            const response = await fetch(process.env.BACKEND_URL + "contact", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,11 +29,20 @@ const Contacto = () => {
                 setFormData({ nombre: '', email: '', telefono: '', mensaje: '' });
             } else {
                 setStatus('Error al enviar el mensaje');
+
             }
         } catch (error) {
             setStatus('Error de conexión');
         }
     };
+    const fetchHello = () => {
+        fetch(process.env.BACKEND_URL + "hello")
+            .then(response => response.json())
+            .then(data => console.log(data))
+    };
+    useEffect(() => {
+        fetchHello()
+    }, [])
 
     return (
         <div className="container my-5">
@@ -44,11 +53,10 @@ const Contacto = () => {
                             <h2 className="card-title text-center mb-4">Contáctanos</h2>
                             {status && <div className="alert alert-info">{status}</div>}
                             <form onSubmit={handleSubmit}>
-
                                 <div className="mb-3">
                                     <label htmlFor="nombre" className="form-label">Nombre *</label>
                                     <div className="input-group">
-                                        <input type="text" className="form-control" id="nombre" placeholder="Tu nombre completo" required />
+                                        <input type="text" onChange={handleChange} value={formData.nombre} className="form-control" id="nombre" placeholder="Tu nombre completo" required />
                                         <span className="input-group-text bg-transparent border-start-0">
                                             <FaUser />
                                         </span>
@@ -57,7 +65,7 @@ const Contacto = () => {
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Correo electrónico *</label>
                                     <div className="input-group">
-                                        <input type="email" className="form-control" id="email" placeholder="Tu dirección de correo electrónico" required />
+                                        <input type="email" onChange={handleChange} value={formData.email} className="form-control" id="email" placeholder="Tu dirección de correo electrónico" required />
                                         <span className="input-group-text bg-transparent border-start-0">
                                             <FaEnvelope />
                                         </span>
@@ -66,7 +74,7 @@ const Contacto = () => {
                                 <div className="mb-3">
                                     <label htmlFor="telefono" className="form-label">Teléfono (opcional)</label>
                                     <div className="input-group">
-                                        <input type="tel" className="form-control" id="telefono" placeholder="Tu número de teléfono" />
+                                        <input type="tel" onChange={handleChange} value={formData.telefono} className="form-control" id="telefono" placeholder="Tu número de teléfono" />
                                         <span className="input-group-text bg-transparent border-start-0">
                                             <FaPhoneAlt />
                                         </span>
@@ -74,7 +82,7 @@ const Contacto = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="mensaje" className="form-label">Mensaje</label>
-                                    <textarea className="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje aquí"></textarea>
+                                    <textarea onChange={handleChange} value={formData.mensaje} className="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje aquí"></textarea>
                                 </div>
                                 <div className="text-center">
                                     <button type="submit" className="btn btn-warning px-4 py-2">
