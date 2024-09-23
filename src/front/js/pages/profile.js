@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { Loader } from '@googlemaps/js-api-loader';
 import '../../styles/Profile.css'; // Archivo CSS actualizado
+import { Context } from '../store/appContext';
+
 
 const Profile = () => {
     const [user, setUser] = useState(null);
@@ -12,22 +14,9 @@ const Profile = () => {
     const [error, setError] = useState(null);
     const [map, setMap] = useState(null);
     const mapRef = useRef(null);
+    const { store, actions } = useContext(Context);
 
-    const fetchUserData = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            const response = await axios.get("https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/user", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            setUser(response.data);
-        } catch (err) {
-            setError("No se pudieron cargar los datos del usuario.");
-        } finally {
-            setLoading(false);
-        }
-    };
+
 
     const initializeMap = () => {
         const loader = new Loader({
@@ -68,8 +57,31 @@ const Profile = () => {
     };
 
     useEffect(() => {
-        fetchUserData();
-    }, []);
+        const fetchData = async () => {
+            try {
+                // Iniciar el estado de carga
+                setLoading(true);
+                
+                // Llamar a la función de Flux para obtener los datos del usuario
+                await actions.fetchUserData();
+                
+                // Actualizar el estado 'user' cuando los datos se obtienen
+                if (store.userData) {
+                    setUser(store.userData);
+                    console.log(store.userData)
+                }
+            } catch (error) {
+                // Manejar el error
+                console.error("Error al obtener los datos del usuario:", error);
+                setError(error);  // Opcionalmente, puedes usar setError para manejar los errores
+            } finally {
+                // Detener el estado de carga al finalizar
+                setLoading(false);
+            }
+        };
+    
+        fetchData();
+    }, []); // El array vacío asegura que solo se ejecute una vez al montar el componente
 
     useEffect(() => {
         initializeMap();
@@ -90,7 +102,7 @@ const Profile = () => {
                         <Link
                             to="/Mapa"
                             onClick={() => {
-                                window.location.href = "/Mapa"; 
+                                window.location.href = "/Mapa";
                             }}
                         >
                             <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)

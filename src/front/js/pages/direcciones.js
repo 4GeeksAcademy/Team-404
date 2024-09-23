@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
 import { Loader } from '@googlemaps/js-api-loader';
 import "../../styles/direccion.css";
-import { Context } from '../store/appContext'; 
+import { Context } from '../store/appContext';
 
 export const Direcciones = () => {
+    const { store, actions } = useContext(Context);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [map, setMap] = useState(null);
     const [countries, setCountries] = useState([]);
@@ -27,8 +28,10 @@ export const Direcciones = () => {
         "cliente": "lightcoral",
     };
 
-    // Asegúrate de obtener el user_id desde el contexto o estado adecuado
-    const currentUserId = 2; // Reemplaza con el valor real del user_id
+
+    const currentUserId = store.userData.id;
+    console.log(currentUserId, "ID del usuario");
+
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => {
@@ -137,7 +140,7 @@ export const Direcciones = () => {
             console.error("Error al obtener el usuario: ", error);
         }
     };
-    
+
     useEffect(() => {
         fetchUser();
     }, []);
@@ -147,7 +150,7 @@ export const Direcciones = () => {
             setWarning("Por favor, rellena todos los campos obligatorios.");
             return;
         }
-    
+
         const newAddress = {
             nombre: name,
             direccion: `${street}, ${address}, ${postalCode}`,
@@ -156,7 +159,7 @@ export const Direcciones = () => {
             comentarios: "",
             user_id: currentUserId, // Incluye el user_id en la petición
         };
-    
+
         axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones', newAddress)
             .then(response => {
                 console.log("Dirección creada: ", response.data);
