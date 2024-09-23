@@ -36,7 +36,7 @@ const Contacto = () => {
         }
     };
     const fetchHello = () => {
-        fetch(process.env.BACKEND_URL + "hello")
+        fetch("https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/hello")
             .then(response => response.json())
             .then(data => console.log(data))
     };
