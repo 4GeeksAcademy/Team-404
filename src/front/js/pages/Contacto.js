@@ -17,7 +17,7 @@ const Contacto = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(process.env.BACKEND_URL + "contact", {
+            const response = await fetch(`${process.env.BACKEND_URL}/contact`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,20 +29,26 @@ const Contacto = () => {
                 setFormData({ nombre: '', email: '', telefono: '', mensaje: '' });
             } else {
                 setStatus('Error al enviar el mensaje');
-
             }
         } catch (error) {
             setStatus('Error de conexión');
+            console.error(error);
         }
     };
-    const fetchHello = () => {
-        fetch("https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/hello")
-            .then(response => response.json())
-            .then(data => console.log(data))
+
+    const fetchHello = async () => {
+        try {
+            const response = await fetch('https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/hello');
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        }
     };
+
     useEffect(() => {
-        fetchHello()
-    }, [])
+        fetchHello();
+    }, []);
 
     return (
         <div className="container my-5">
