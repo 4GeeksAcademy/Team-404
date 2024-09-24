@@ -1,12 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "../../styles/flota.css";
 import { Modal, Button, Tab, Nav } from 'react-bootstrap';
 import DatePicker from '../component/DatePicker'; // Asegúrate de la ruta correcta
+import axios from 'axios';
 
 export const Flota = () => {
     const [activeTab, setActiveTab] = useState('vehiculos');
     const [showModal, setShowModal] = useState(false);
     const [fechaNacimiento, setFechaNacimiento] = useState(new Date());
+    const [vehiculoData, setVehiculoData] = useState({
+        nombre: '',
+        placa: '',
+        remolque: '',
+        costoKm: '',
+        costoHora: '',
+        ejes: '',
+        peso: '',
+        combustible: '',
+        emision: ''
+    });
+
+    const [conductorData, setConductorData] = useState({
+        nombre: '',
+        apellidos: '',
+        fechaNacimiento: new Date(),
+        poblacion: '',
+        ciudad: '',
+        sueldo: ''
+    });
+
+    const [vehiculos, setVehiculos] = useState([]); // Estado para almacenar vehículos
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -20,6 +43,57 @@ export const Flota = () => {
         setShowModal(false);
     };
 
+    const handleVehiculoChange = (e) => {
+        setVehiculoData({
+            ...vehiculoData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleConductorChange = (e) => {
+        setConductorData({
+            ...conductorData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSave = async () => {
+        if (activeTab === 'vehiculos') {
+            try {
+                // Enviar datos del vehículo al backend
+                const response = await axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/vehiculos', vehiculoData);
+                console.log('Vehículo guardado', response.data);
+                fetchVehiculos(); // Actualiza la lista de vehículos
+            } catch (error) {
+                console.error('Error al guardar vehículo:', error);
+            }
+        } else {
+            try {
+                // Enviar datos del conductor al backend
+                const response = await axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/conductores', conductorData);
+                console.log('Conductor guardado', response.data);
+            } catch (error) {
+                console.error('Error al guardar conductor:', error);
+            }
+        }
+        handleClose(); // Cierra el modal después de guardar
+    };
+
+    // Función para obtener la lista de vehículos
+    const fetchVehiculos = async () => {
+        try {
+            const response = await axios.get('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/vehiculos');
+            setVehiculos(response.data); // Almacena los vehículos en el estado
+        } catch (error) {
+            console.error('Error al obtener vehículos:', error);
+        }
+    };
+
+    // Llama a fetchVehiculos al montar el componente
+    useEffect(() => {
+        fetchVehiculos();
+    }, []);
+
     return (
         <div>
             <div className="container mt-4">
@@ -29,6 +103,38 @@ export const Flota = () => {
                         {activeTab === 'vehiculos' ? 'Añadir Vehículos' : 'Añadir Conductores'}
                     </button>
                 </div>
+                
+                {/* Tabla de Vehículos */}
+                {activeTab === 'vehiculos' && (
+                    <div className="mb-4">
+                        <h5>Lista de Vehículos</h5>
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Placa</th>
+                                    <th>Remolque</th>
+                                    <th>Costo por KM</th>
+                                    <th>Costo por Hora</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {vehiculos.map((vehiculo) => (
+                                    <tr key={vehiculo.id}>
+                                        <td>{vehiculo.id}</td>
+                                        <td>{vehiculo.nombre}</td>
+                                        <td>{vehiculo.placa}</td>
+                                        <td>{vehiculo.remolque}</td>
+                                        <td>{vehiculo.costo_km}</td>
+                                        <td>{vehiculo.costo_hora}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
                 <ul className="nav nav-tabs custom-tabs">
                     <li className="nav-item">
                         <a
@@ -82,15 +188,36 @@ export const Flota = () => {
                                             <form>
                                                 <div className="mb-3">
                                                     <label className="form-label">Nombre</label>
-                                                    <input type="text" className="form-control" placeholder="Ingrese el nombre del vehículo" />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Ingrese el nombre del vehículo"
+                                                        name="nombre"
+                                                        value={vehiculoData.nombre}
+                                                        onChange={handleVehiculoChange}
+                                                    />
                                                 </div>
                                                 <div className="mb-3">
                                                     <label className="form-label">Placa</label>
-                                                    <input type="text" className="form-control" placeholder="Ingrese la placa del vehículo" />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Ingrese la placa del vehículo"
+                                                        name="placa"
+                                                        value={vehiculoData.placa}
+                                                        onChange={handleVehiculoChange}
+                                                    />
                                                 </div>
                                                 <div className="mb-3">
                                                     <label className="form-label">Remolque (opcional)</label>
-                                                    <input type="text" className="form-control" placeholder="Ingrese el remolque, si aplica" />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Ingrese el remolque, si aplica"
+                                                        name="remolque"
+                                                        value={vehiculoData.remolque}
+                                                        onChange={handleVehiculoChange}
+                                                    />
                                                 </div>
                                             </form>
                                         </div>
@@ -100,11 +227,25 @@ export const Flota = () => {
                                             <form>
                                                 <div className="mb-3">
                                                     <label className="form-label">Nombre</label>
-                                                    <input type="text" className="form-control" placeholder="Ingrese el nombre del conductor" />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Ingrese el nombre del conductor"
+                                                        name="nombre"
+                                                        value={conductorData.nombre}
+                                                        onChange={handleConductorChange}
+                                                    />
                                                 </div>
                                                 <div className="mb-3">
                                                     <label className="form-label">Apellidos</label>
-                                                    <input type="text" className="form-control" placeholder="Ingrese los apellidos" />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Ingrese los apellidos"
+                                                        name="apellidos"
+                                                        value={conductorData.apellidos}
+                                                        onChange={handleConductorChange}
+                                                    />
                                                 </div>
                                                 <div className="mb-3">
                                                     <label className="form-label">Fecha de Nacimiento</label>
@@ -113,96 +254,102 @@ export const Flota = () => {
                                                         setSelectedDate={setFechaNacimiento}
                                                     />
                                                 </div>
-                                                <div className="mb-3">
-                                                    <label className="form-label">Población</label>
-                                                    <input type="text" className="form-control" placeholder="Ingrese la población" />
-                                                </div>
-                                                <div className="mb-3">
-                                                    <label className="form-label">Ciudad</label>
-                                                    <input type="text" className="form-control" placeholder="Ingrese la ciudad" />
-                                                </div>
-                                                <div className="mb-3">
-                                                    <label className="form-label">Sueldo</label>
-                                                    <input type="number" className="form-control" placeholder="Ingrese el sueldo €" />
-                                                </div>
                                             </form>
                                         </div>
                                     )}
                                 </Tab.Pane>
                                 {activeTab === 'vehiculos' && (
-                                    <>
-                                        <Tab.Pane eventKey="costo">
-                                            <div className="form-content">
-                                                <h5>Costo del Vehículo</h5>
-                                                <form>
-                                                    <div className="mb-3">
-                                                        <label className="form-label">Euros por Kilómetro</label>
-                                                        <input type="number" className="form-control" placeholder="Ingrese el costo por kilómetro" />
-                                                    </div>
-                                                    <div className="mb-3">
-                                                        <label className="form-label">Euros por Hora</label>
-                                                        <input type="number" className="form-control" placeholder="Ingrese el costo por hora" />
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </Tab.Pane>
-                                        <Tab.Pane eventKey="peajes">
-                                            <div className="form-content">
-                                                <h5>Peajes del Vehículo</h5>
-                                                <form>
-                                                    <div className="mb-3">
-                                                        <label className="form-label">Recuento de Ejes</label>
-                                                        <select className="form-select">
-                                                            <option>Seleccionar</option>
-                                                            <option>2 ejes</option>
-                                                            <option>3 ejes</option>
-                                                            <option>4 ejes</option>
-                                                            <option>Más de 4 ejes</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="mb-3">
-                                                        <label className="form-label">Peso Bruto del Vehículo</label>
-                                                        <select className="form-select">
-                                                            <option>Seleccionar</option>
-                                                            <option>Menos de 3,5t</option>
-                                                            <option>De 3,5t a 7,5t</option>
-                                                            <option>Más de 7,5t</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="mb-3">
-                                                        <label className="form-label">Tipo de Combustible</label>
-                                                        <select className="form-select">
-                                                            <option>Seleccionar</option>
-                                                            <option>Gasolina</option>
-                                                            <option>Diésel</option>
-                                                            <option>Eléctrico</option>
-                                                        </select>
-                                                    </div>
-                                                    <div className="mb-3">
-                                                        <label className="form-label">Clase de Emisión</label>
-                                                        <select className="form-select">
-                                                            <option>Seleccionar</option>
-                                                            <option>Euro 1</option>
-                                                            <option>Euro 2</option>
-                                                            <option>Euro 3</option>
-                                                            <option>Euro 4</option>
-                                                            <option>Euro 5</option>
-                                                            <option>Euro 6</option>
-                                                        </select>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </Tab.Pane>
-                                    </>
+                                    <Tab.Pane eventKey="costo">
+                                        <div className="form-content">
+                                            <h5>Costo del Vehículo</h5>
+                                            <form>
+                                                <div className="mb-3">
+                                                    <label className="form-label">Costo por KM</label>
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        placeholder="Ingrese el costo por KM"
+                                                        name="costoKm"
+                                                        value={vehiculoData.costoKm}
+                                                        onChange={handleVehiculoChange}
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label className="form-label">Costo por Hora</label>
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        placeholder="Ingrese el costo por hora"
+                                                        name="costoHora"
+                                                        value={vehiculoData.costoHora}
+                                                        onChange={handleVehiculoChange}
+                                                    />
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </Tab.Pane>
+                                )}
+                                {activeTab === 'vehiculos' && (
+                                    <Tab.Pane eventKey="peajes">
+                                        <div className="form-content">
+                                            <h5>Detalles de Peaje</h5>
+                                            <form>
+                                                <div className="mb-3">
+                                                    <label className="form-label">Ejes</label>
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        placeholder="Ingrese el número de ejes"
+                                                        name="ejes"
+                                                        value={vehiculoData.ejes}
+                                                        onChange={handleVehiculoChange}
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label className="form-label">Peso</label>
+                                                    <input
+                                                        type="number"
+                                                        className="form-control"
+                                                        placeholder="Ingrese el peso"
+                                                        name="peso"
+                                                        value={vehiculoData.peso}
+                                                        onChange={handleVehiculoChange}
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label className="form-label">Combustible</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Ingrese tipo de combustible"
+                                                        name="combustible"
+                                                        value={vehiculoData.combustible}
+                                                        onChange={handleVehiculoChange}
+                                                    />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label className="form-label">Emisión</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        placeholder="Ingrese tipo de emisión"
+                                                        name="emision"
+                                                        value={vehiculoData.emision}
+                                                        onChange={handleVehiculoChange}
+                                                    />
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </Tab.Pane>
                                 )}
                             </Tab.Content>
                         </Tab.Container>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>
-                            Cancelar
+                            Cerrar
                         </Button>
-                        <Button variant="primary" onClick={handleClose}>
+                        <Button variant="primary" onClick={handleSave}>
                             Guardar
                         </Button>
                     </Modal.Footer>
@@ -211,3 +358,5 @@ export const Flota = () => {
         </div>
     );
 };
+
+export default Flota;

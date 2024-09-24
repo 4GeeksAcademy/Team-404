@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -83,3 +84,35 @@ class ContactMessage(db.Model):
             "created_at": self.created_at
         }
 
+class Vehiculo(db.Model):
+    __tablename__ = 'vehiculos'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    placa = db.Column(db.String(50), unique=True, nullable=False)
+    remolque = db.Column(db.String(100), nullable=True)
+    costo_km = db.Column(db.Float, nullable=True)  # Este es el nombre correcto en el modelo
+    costo_hora = db.Column(db.Float, nullable=True)  # Nombre correcto en el modelo
+    ejes = db.Column(db.Integer, nullable=True)
+    peso = db.Column(db.Float, nullable=True)
+    combustible = db.Column(db.String(50), nullable=True)
+    emision = db.Column(db.String(50), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Vehiculo {self.nombre} - {self.placa}>'
+
+class Conductor(db.Model):
+    __tablename__ = 'conductores'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    apellidos = db.Column(db.String(100), nullable=False)
+    fecha_nacimiento = db.Column(db.Date, nullable=False)
+    poblacion = db.Column(db.String(100), nullable=True)
+    ciudad = db.Column(db.String(100), nullable=True)
+    sueldo = db.Column(db.Float, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Conductor {self.nombre} {self.apellidos}>'
