@@ -4,17 +4,20 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db, User
-from api.routes import api
+from api.routes import api, direcciones_bp
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_cors import CORS
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
+
 app = Flask(__name__)
 
-# Configure CORS
-CORS(app)
+# Configura CORS para permitir solicitudes desde los frontends especificados
+CORS(app, resources={r"/api/*": {"origins": [
+    "https://refactored-space-couscous-69wrxv6769929wr-3000.app.github.dev"
+]}})
 
 app.url_map.strict_slashes = False
 
@@ -29,14 +32,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
 
-# Add the admin
-setup_admin(app)
-
-# Add commands
-setup_commands(app)
-
-# Add all endpoints from the API with a "api" prefix
+# Añade el blueprint de la API
 app.register_blueprint(api)
+# Registra el blueprint de direcciones
+app.register_blueprint(direcciones_bp)
+
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { Loader } from '@googlemaps/js-api-loader';
 import '../../styles/Profile.css'; // Archivo CSS actualizado
 
@@ -13,11 +13,10 @@ const Profile = () => {
     const [map, setMap] = useState(null);
     const mapRef = useRef(null);
 
-    // Función para obtener los datos del usuario autenticado
     const fetchUserData = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/user", {
+            const response = await axios.get("https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/user", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -30,10 +29,9 @@ const Profile = () => {
         }
     };
 
-    // Función para inicializar el mapa
     const initializeMap = () => {
         const loader = new Loader({
-            apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Usa la clave API desde el archivo .env
+            apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
             version: 'weekly',
         });
         loader.load().then(() => {
@@ -47,7 +45,10 @@ const Profile = () => {
         });
     };
 
-    // Función para buscar la ubicación en el mapa
+    const handleLogout = () => {
+        window.location.href = "https://refactored-space-couscous-69wrxv6769929wr-3000.app.github.dev/";
+    };
+
     const searchLocation = async (location) => {
         if (!map || !location) return;
 
@@ -82,12 +83,16 @@ const Profile = () => {
 
     return (
         <div className="profile-page-container">
-            {/* Panel de control */}
             <div className="profile-control-panel">
                 <h1>Panel de Control</h1>
                 <ul>
                     <li>
-                        <Link to="/planner">
+                        <Link
+                            to="/Mapa"
+                            onClick={() => {
+                                window.location.href = "/Mapa"; 
+                            }}
+                        >
                             <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
                         </Link>
                     </li>
@@ -97,7 +102,7 @@ const Profile = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/vehiculos-conductores">
+                        <Link to="/flota">
                             <FontAwesomeIcon icon={faTruck} /> Vehículos y Conductores
                         </Link>
                     </li>
@@ -112,9 +117,11 @@ const Profile = () => {
                         </Link>
                     </li>
                 </ul>
+                <button onClick={handleLogout} className="logout-button">
+                    <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
+                </button>
             </div>
 
-            {/* Perfil de usuario */}
             <div className="profile-section">
                 <h1>Perfil del Usuario</h1>
                 {loading ? (
@@ -145,12 +152,8 @@ const Profile = () => {
                 )}
             </div>
 
-            {/* Sección del mapa */}
             <div className="profile-map-section">
-                <div
-                    ref={mapRef}
-                    className="map-container"
-                ></div>
+                <div ref={mapRef} className="map-container"></div>
             </div>
         </div>
     );

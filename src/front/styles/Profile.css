@@ -1,15 +1,20 @@
+html, body {
+    height: 100%; /* Asegura que html y body ocupen el 100% de la altura */
+    margin: 0; /* Elimina márgenes por defecto */
+}
+
 .profile-page-container {
-    display: grid;
-    grid-template-columns: 15% 50% 35%; /* Distribución 15% Panel de Control, 50% Perfil del Usuario, 35% Mapa */
-    gap: 20px;
-    padding: 20px;
+    display: flex; /* Flexbox para disposición horizontal */
+    height: 100vh; /* Altura completa de la ventana */
 }
 
 .profile-control-panel {
+    flex: 0 0 15%; /* Control Panel ocupa el 15% del ancho */
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Desplazamiento vertical si es necesario */
 }
 
 .profile-control-panel h1 {
@@ -44,18 +49,35 @@
 }
 
 .profile-section {
+    position: relative; /* Necesario para el pseudo-elemento */
+    flex: 0 0 50%; /* Usuario ocupa el 50% del ancho */
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centrar el contenido horizontalmente */
-    background: linear-gradient(135deg, #f0f4f8, #e0e7ff); /* Gradiente de fondo sutil */
-    /* background: url('path-to-your-background-image.jpg') no-repeat center center; */
-    /* background-size: cover; */
+    align-items: center;
+    background: url('https://images.unsplash.com/photo-1532201633958-497feb474315?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center;
+    background-size: cover; /* Asegura que la imagen cubra todo el fondo */
 }
 
+.profile-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Color negro con 50% de opacidad */
+    border-radius: 15px; /* Asegúrate de que coincida con el border-radius de .profile-section */
+    z-index: 1; /* Para que esté detrás del contenido */
+}
+
+.profile-section > * {
+    position: relative; /* Para que el contenido esté encima del pseudo-elemento */
+    z-index: 2; /* Asegúrate de que el contenido esté por encima */
+}
 .profile-section h1 {
     font-size: 2rem;
     font-weight: bold;
@@ -70,21 +92,21 @@
     padding: 20px;
     display: flex;
     align-items: center;
-    gap: 30px; /* Espacio entre la imagen y la información */
-    text-align: center; /* Centrar texto dentro del card */
-    flex-direction: column; /* Colocar imagen y texto en columna */
+    gap: 30px;
+    text-align: center;
+    flex-direction: column;
 }
 
 .profile-avatar {
-    width: 150px; /* Tamaño de la imagen */
-    height: 150px; /* Tamaño de la imagen */
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 20px; /* Espacio debajo de la imagen */
+    margin-bottom: 20px;
 }
 
 .profile-info {
-    width: 100%; /* Asegurarse de que el texto ocupe todo el ancho del contenedor */
+    width: 100%;
 }
 
 .profile-info h2 {
@@ -129,11 +151,25 @@
 }
 
 .profile-map-section {
-    height: 80vh;
-    grid-column: 3;
+    flex: 0 0 35%; /* Mapa ocupa el 35% del ancho */
+    height: 100%; /* Ajustar la altura para ocupar el espacio restante */
 }
 
 .map-container {
     width: 100%;
-    height: 100%;
+    height: 100%; /* Ocupa el 100% del alto del contenedor */
+}
+
+.logout-button {
+    background-color: rgb(11, 11, 175); /* Cambia el color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    padding: 10px 15px; /* Espaciado */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cursor de puntero */
+    transition: background-color 0.3s; /* Transición suave */
+}
+
+.logout-button:hover {
+    background-color: rgb(201, 11, 11); /* Color al pasar el mouse */
 }

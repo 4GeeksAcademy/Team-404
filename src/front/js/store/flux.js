@@ -24,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
-					const resp = await fetch("https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/hello")
+					const resp = await fetch("https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/hello")
 					const data = await resp.json()
 					setStore({ message: data.message })
 					// don't forget to return something, that is how the async resolves
