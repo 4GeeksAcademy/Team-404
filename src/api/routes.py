@@ -6,7 +6,7 @@ import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from api.models import db, User
+from api.models import Direccion, db, User, ContactMessage
 
 api = Blueprint('api', __name__)
 CORS(api, support_credentials=True)
@@ -18,15 +18,6 @@ MAIL_SENDER = 'your-email@example.com'
 mail = Mail()
 serializer = URLSafeTimedSerializer(RESET_SECRET_KEY)
 
-@api.before_app_first_request
-def configure_mail():
-    current_app.config['MAIL_SERVER'] = 'smtp.example.com'  # Cambia esto por tu servidor SMTP
-    current_app.config['MAIL_PORT'] = 587  # O 465 para SSL
-    current_app.config['MAIL_USERNAME'] = 'your-email@example.com'
-    current_app.config['MAIL_PASSWORD'] = 'your-password'
-    current_app.config['MAIL_USE_TLS'] = True  # O False si usas SSL
-    current_app.config['MAIL_USE_SSL'] = False  # O True si usas SSL
-    mail.init_app(current_app)
 
 # Endpoint para decir hola
 @api.route('/api/hello', methods=['POST', 'GET'])
@@ -80,7 +71,7 @@ def create_user():
 
     except Exception as e:
         print(f"Error en /api/register: {e}")
-        return jsonify({"error": "Error interno del servidor"}), 500
+        return jsonify({"error": str(e)}), 500
 
 # Iniciar sesión (sin cambios)
 @api.route('/api/login', methods=['POST'])
@@ -105,7 +96,7 @@ def login_user():
 
     except Exception as e:
         print(f"Error en /api/login: {e}")
-        return jsonify({"error": "Error interno del servidor"}), 500
+        return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
 # Obtener datos del usuario autenticado (con JWT)
 @api.route('/api/user', methods=['GET'])
@@ -188,3 +179,208 @@ def reset_password(token):
     except Exception as e:
         print(f"Error en /api/reset-password: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
+    
+# Define el blueprint para las direcciones
+direcciones_bp = Blueprint('direcciones', __name__)
+
+#OBTENER TODAS LAS DIRECCIONES DEL USUARIO
+@direcciones_bp.route('/api/direcciones', methods=['GET'])
+def get_direcciones():
+    try:
+        # Obtener el user_id de los parámetros de la consulta (query string)
+        user_id = request.args.get('user_id')
+
+        if not user_id:
+            return jsonify({"error": "Falta el parámetro 'user_id'"}), 400
+
+        # Filtrar las direcciones por el user_id
+        direcciones = Direccion.query.filter_by(user_id=user_id).all()
+
+        # Serializar las direcciones
+        return jsonify([direccion.serialize() for direccion in direcciones]), 200
+
+    except Exception as e:
+        print(f"Error en /api/direcciones: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+    
+#AÑADIR NUEVA DIRECCION
+@direcciones_bp.route('/api/direcciones', methods=['POST'])
+def add_direccion():
+    try:
+        data = request.get_json()
+        print(f"Datos recibidos: {data}")  # Verifica qué datos estás recibiendo
+
+        # Obtener los campos del cuerpo de la solicitud
+        nombre = data.get('nombre')
+        direccion = data.get('direccion')
+        categoria = data.get('categoria')
+        contacto = data.get('contacto', '')
+        comentarios = data.get('comentarios', '')
+
+        # Obtener el user_id del cuerpo de la solicitud
+        user_id = data.get('user_id')
+
+        # Verificar que los campos obligatorios están presentes
+        if not nombre or not direccion or not categoria or not user_id:
+            return jsonify({"error": "Nombre, dirección, categoría y user_id son requeridos"}), 400
+
+        # Verificar si el usuario existe
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        # Crear nueva instancia de Direccion asociada al usuario
+        nueva_direccion = Direccion(
+            nombre=nombre,
+            direccion=direccion,
+            categoria=categoria,
+            contacto=contacto,
+            comentarios=comentarios,
+            user_id=user_id  # Asociar con el usuario
+        )
+
+        # Añadir y confirmar la transacción en la base de datos
+        db.session.add(nueva_direccion)
+        db.session.commit()
+
+        # Retornar la nueva dirección con el método serialize()
+        return jsonify(nueva_direccion.serialize()), 201
+
+    except Exception as e:
+        print(f"Error en /api/direcciones: {e}")  # Esto imprimirá el error en la consola
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+# EDITAR DIRECCION
+@direcciones_bp.route('/api/direcciones/<int:id>', methods=['PUT'])
+def update_direccion(id):
+    try:
+        data = request.get_json()
+        print(f"Datos recibidos para actualizar: {data}")
+
+        # Obtener el user_id del cuerpo de la solicitud (esto debería venir de la autenticación o de los datos enviados)
+        user_id = data.get('user_id')
+
+        if not user_id:
+            return jsonify({"error": "El user_id es requerido para esta operación"}), 400
+
+        # Buscar la dirección existente
+        direccion = Direccion.query.get(id)
+        if not direccion:
+            return jsonify({"error": "Dirección no encontrada"}), 404
+
+        # Verificar que el user_id coincida con el de la dirección
+        if direccion.user_id != user_id:
+            return jsonify({"error": "No tienes permiso para editar esta dirección"}), 403
+
+        # Actualizar los campos
+        direccion.nombre = data.get('nombre', direccion.nombre)
+        direccion.direccion = data.get('direccion', direccion.direccion)
+        direccion.categoria = data.get('categoria', direccion.categoria)
+        direccion.contacto = data.get('contacto', direccion.contacto)
+        direccion.comentarios = data.get('comentarios', direccion.comentarios)
+
+        # Confirmar la transacción en la base de datos
+        db.session.commit()
+
+        # Retornar la dirección actualizada
+        return jsonify(direccion.serialize()), 200
+
+    except Exception as e:
+        print(f"Error en /api/direcciones/{id}: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+    
+#ELIMINAR DIRECCION
+@direcciones_bp.route('/api/direcciones/<int:id>', methods=['DELETE'])
+def delete_direccion(id):
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+
+        if not user_id:
+            return jsonify({"error": "El user_id es requerido para esta operación"}), 400
+
+        # Buscar la dirección existente
+        direccion = Direccion.query.get(id)
+        if not direccion:
+            return jsonify({"error": "Dirección no encontrada"}), 404
+
+        # Verificar que el user_id coincida con el de la dirección
+        if direccion.user_id != user_id:
+            return jsonify({"error": "No tienes permiso para eliminar esta dirección"}), 403
+
+        # Eliminar la dirección de la base de datos
+        db.session.delete(direccion)
+        db.session.commit()
+
+        # Retornar un mensaje de éxito
+        return jsonify({"message": "Dirección eliminada con éxito"}), 200
+
+    except Exception as e:
+        print(f"Error en /api/direcciones/{id}: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+
+# Contact
+@api.route('/api/contact', methods=['POST'])
+def submit_contact_form():
+    try:
+        data = request.get_json()
+        nombre = data.get('nombre')
+        email = data.get('email')
+        telefono = data.get('telefono')
+        mensaje = data.get('mensaje')
+
+        if not nombre or not email or not mensaje:
+            return jsonify({"error": "Nombre, email y mensaje son requeridos"}), 400
+
+        new_message = ContactMessage(
+            nombre=nombre,
+            email=email,
+            telefono=telefono,
+            mensaje=mensaje
+        )
+        db.session.add(new_message)
+        db.session.commit()
+
+        return jsonify({"message": "Mensaje de contacto recibido exitosamente"}), 201
+
+    except Exception as e:
+        print(f"Error en /api/contact: {e}")
+        return jsonify({"error": "Error interno del servidor"}), 500
+
+# Define el blueprint para las direcciones
+socios_bp = Blueprint('socios', __name__)
+
+
+
+# Ruta para agregar un nuevo socio
+@socios_bp.route('/api/socios', methods=['POST'])
+def agregar_socio():
+    # Obtener datos del cuerpo de la petición (request body)
+    data = request.get_json()
+
+    # Validar si se enviaron todos los campos necesarios
+    nombre = data.get('nombre')
+    email = data.get('email')
+    tipo_precio = data.get('tipo_precio')
+    precio = data.get('precio')
+    periodos_espera = data.get('periodos_espera')
+    incluir_peajes = data.get('incluir_peajes')
+
+    if not nombre or not email or not tipo_precio:
+        return jsonify({'error': 'Faltan datos'}), 400
+
+    # Crear un nuevo socio
+    nuevo_socio = {
+        'nombre': nombre,
+        'email': email,
+        'tipo_precio': tipo_precio,
+        'precio': precio,
+        'periodos_espera': periodos_espera,
+        'incluir_peajes': incluir_peajes
+    }
+
+    # Agregar el socio a la lista
+    socios.append(nuevo_socio)
+
+    # Devolver respuesta
+    return jsonify({'mensaje': 'Socio agregado exitosamente', 'socio': nuevo_socio}), 201
+

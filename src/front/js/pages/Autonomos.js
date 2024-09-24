@@ -136,7 +136,7 @@ const App = () => {
                           placeholder="€/h"
                         />
                       </div>
-                      <div className="d-flex align-items-end col-6 mt-3">
+                      <div className="d-flex align-items-end col-6 mt-3 mb-1">
                         <div className="form-check">
                           <input
                             className="form-check-input"
@@ -193,4 +193,3 @@ const App = () => {
 };
 
 export default App;
-
