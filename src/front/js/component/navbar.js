@@ -13,13 +13,13 @@ export const Navbar = () => {
                 'Authorization': `Bearer ${token}`
             }
         })
-        .then(response => {
-            console.log(response.data); // Verifica la estructura de la respuesta
-            setUsuarios(Array.isArray(response.data) ? response.data : []); // Asegúrate de que sea un arreglo
-        })
-        .catch(error => {
-            console.error("Error al cargar usuarios:", error);
-        });
+            .then(response => {
+                console.log(response.data); // Verifica la estructura de la respuesta
+                setUsuarios(Array.isArray(response.data) ? response.data : []); // Asegúrate de que sea un arreglo
+            })
+            .catch(error => {
+                console.error("Error al cargar usuarios:", error);
+            });
     }, []);
 
     return (
