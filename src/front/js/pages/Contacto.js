@@ -35,21 +35,6 @@ const Contacto = () => {
             console.error(error);
         }
     };
-
-    const fetchHello = async () => {
-        try {
-            const response = await fetch('https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/hello');
-            const data = await response.json();
-            console.log(data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    useEffect(() => {
-        fetchHello();
-    }, []);
-
     return (
         <div className="container my-5">
             <div className="row justify-content-center">
@@ -60,7 +45,7 @@ const Contacto = () => {
                             {status && <div className="alert alert-info">{status}</div>}
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-3">
-                                    <label htmlFor="nombre" className="form-label">Nombre *</label>
+                                    <label htmlFor="nombre" className="form-label">Nombre</label>
                                     <div className="input-group">
                                         <input type="text" onChange={handleChange} value={formData.nombre} className="form-control" id="nombre" placeholder="Tu nombre completo" required />
                                         <span className="input-group-text bg-transparent border-start-0">
@@ -69,7 +54,7 @@ const Contacto = () => {
                                     </div>
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="email" className="form-label">Correo electrónico *</label>
+                                    <label htmlFor="email" className="form-label">Correo electrónico</label>
                                     <div className="input-group">
                                         <input type="email" onChange={handleChange} value={formData.email} className="form-control" id="email" placeholder="Tu dirección de correo electrónico" required />
                                         <span className="input-group-text bg-transparent border-start-0">
