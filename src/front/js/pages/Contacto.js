@@ -17,7 +17,7 @@ const Contacto = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('/api/contact', {
+            const response = await fetch(`${process.env.BACKEND_URL}contact`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const Contacto = () => {
                                 <div className="mb-3">
                                     <label htmlFor="nombre" className="form-label">Nombre *</label>
                                     <div className="input-group">
-                                        <input type="text" className="form-control" id="nombre" placeholder="Tu nombre completo" required />
+                                        <input type="text" value={formData.nombre} onChange={handleChange} className="form-control" id="nombre" placeholder="Tu nombre completo" required />
                                         <span className="input-group-text bg-transparent border-start-0">
                                             <FaUser />
                                         </span>
@@ -57,7 +57,7 @@ const Contacto = () => {
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Correo electrónico *</label>
                                     <div className="input-group">
-                                        <input type="email" className="form-control" id="email" placeholder="Tu dirección de correo electrónico" required />
+                                        <input type="email" className="form-control" value={formData.email} onChange={handleChange} id="email" placeholder="Tu dirección de correo electrónico" required />
                                         <span className="input-group-text bg-transparent border-start-0">
                                             <FaEnvelope />
                                         </span>
@@ -66,7 +66,7 @@ const Contacto = () => {
                                 <div className="mb-3">
                                     <label htmlFor="telefono" className="form-label">Teléfono (opcional)</label>
                                     <div className="input-group">
-                                        <input type="tel" className="form-control" id="telefono" placeholder="Tu número de teléfono" />
+                                        <input type="tel" className="form-control" value={formData.telefono} onChange={handleChange} id="telefono" placeholder="Tu número de teléfono" />
                                         <span className="input-group-text bg-transparent border-start-0">
                                             <FaPhoneAlt />
                                         </span>
@@ -74,7 +74,7 @@ const Contacto = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="mensaje" className="form-label">Mensaje</label>
-                                    <textarea className="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje aquí"></textarea>
+                                    <textarea className="form-control" id="mensaje" value={formData.mensaje} onChange={handleChange} rows="4" placeholder="Escribe tu mensaje aquí"></textarea>
                                 </div>
                                 <div className="text-center">
                                     <button type="submit" className="btn btn-warning px-4 py-2">

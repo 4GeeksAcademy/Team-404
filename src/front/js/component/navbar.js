@@ -35,9 +35,6 @@ export const Navbar = () => {
                             <Link className="nav-link active" to="/" aria-current="page">Inicio</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link active" to="/Mapa" aria-current="page">Planner</Link>
-                        </li>
-                        <li className="nav-item">
                             <Link className="nav-link active" to="/sobreNosotros">Nosotros</Link>
                         </li>
                         <li className="nav-item dropdown">
