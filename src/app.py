@@ -1,5 +1,6 @@
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
@@ -15,9 +16,12 @@ static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../
 app = Flask(__name__)
 
 # Configura CORS para permitir solicitudes desde los frontends especificados
-CORS(app, resources={r"/api/*": {"origins": [
-    "https://refactored-space-couscous-69wrxv6769929wr-3000.app.github.dev"
-]}})
+if ENV == "development":
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
+else:
+    CORS(app, resources={r"/api/*": {"origins": [
+        "https://improved-space-bassoon-pjgr44q75v47h59r-3000.app.github.dev"
+    ]}})
 
 app.url_map.strict_slashes = False
 

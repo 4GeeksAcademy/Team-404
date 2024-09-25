@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const App = () => {
+const Autonomos = () => {
   // Estado para almacenar los colaboradores
   const [colaboradores, setColaboradores] = useState([]);
 
@@ -23,25 +23,54 @@ const App = () => {
     });
   };
 
-  // Función para agregar un nuevo colaborador
-  const agregarColaborador = () => {
-    // Agregar los datos del nuevo colaborador a la lista
-    setColaboradores([...colaboradores, formData]);
+  // Función para agregar un nuevo colaborador (y enviar datos a la API)
+  const agregarColaborador = async () => {
+    try {
+      // Enviar datos del nuevo colaborador a la API de Flask
+      const response = await fetch('https://improved-space-bassoon-pjgr44q75v47h59r-3001.app.github.dev/api/socios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: 1, // Aquí deberías pasar el user_id correcto
+          nombre: formData.nombre,
+          email: formData.email,
+          tipo_precio: formData.tipoPrecio,
+          precio: formData.precio,
+          periodos_espera: formData.periodosEspera,
+          incluir_peajes: formData.incluirPeajes
+        })
+      });
 
-    // Limpiar el formulario
-    setFormData({
-      nombre: '',
-      email: '',
-      tipoPrecio: '',
-      precio: '',
-      periodosEspera: '',
-      incluirPeajes: false
-    });
+      if (!response.ok) {
+        throw new Error('Error al agregar colaborador');
+      }
 
-    // Cerrar el modal manualmente
-    const modalElement = document.getElementById('modalAgregarSocio');
-    const modal = window.bootstrap.Modal.getInstance(modalElement);
-    modal.hide();
+      // Obtener la respuesta JSON
+      const nuevoSocio = await response.json();
+
+      // Agregar el nuevo socio a la lista de colaboradores
+      setColaboradores([...colaboradores, nuevoSocio.socio]);
+
+      // Limpiar el formulario
+      setFormData({
+        nombre: '',
+        email: '',
+        tipoPrecio: '',
+        precio: '',
+        periodosEspera: '',
+        incluirPeajes: false
+      });
+
+      // Cerrar el modal manualmente
+      const modalElement = document.getElementById('modalAgregarSocio');
+      const modal = window.bootstrap.Modal.getInstance(modalElement);
+      modal.hide();
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -180,7 +209,7 @@ const App = () => {
             <div className="row text-start pt-2 mx-0" key={index}>
               <div className="col-3">{colaborador.nombre}</div>
               <div className="col-3">{colaborador.email}</div>
-              <div className="col-3">{colaborador.tipoPrecio}</div>
+              <div className="col-3">{colaborador.tipo_precio}</div>
               <div className="col-3">
                 <button className="btn btn-danger btn-sm">Eliminar</button>
               </div>
@@ -192,4 +221,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Autonomos;
