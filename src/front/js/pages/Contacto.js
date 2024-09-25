@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaUser, FaEnvelope, FaPhoneAlt, FaPaperPlane } from 'react-icons/fa';
 
 const Contacto = () => {
@@ -32,8 +32,23 @@ const Contacto = () => {
             }
         } catch (error) {
             setStatus('Error de conexión');
+            console.error(error);
         }
     };
+
+    const fetchHello = async () => {
+        try {
+            const response = await fetch('https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/hello');
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchHello();
+    }, []);
 
     return (
         <div className="container my-5">
@@ -44,11 +59,10 @@ const Contacto = () => {
                             <h2 className="card-title text-center mb-4">Contáctanos</h2>
                             {status && <div className="alert alert-info">{status}</div>}
                             <form onSubmit={handleSubmit}>
-
                                 <div className="mb-3">
                                     <label htmlFor="nombre" className="form-label">Nombre *</label>
                                     <div className="input-group">
-                                        <input type="text" value={formData.nombre} onChange={handleChange} className="form-control" id="nombre" placeholder="Tu nombre completo" required />
+                                        <input type="text" onChange={handleChange} value={formData.nombre} className="form-control" id="nombre" placeholder="Tu nombre completo" required />
                                         <span className="input-group-text bg-transparent border-start-0">
                                             <FaUser />
                                         </span>
@@ -57,7 +71,7 @@ const Contacto = () => {
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Correo electrónico *</label>
                                     <div className="input-group">
-                                        <input type="email" className="form-control" value={formData.email} onChange={handleChange} id="email" placeholder="Tu dirección de correo electrónico" required />
+                                        <input type="email" onChange={handleChange} value={formData.email} className="form-control" id="email" placeholder="Tu dirección de correo electrónico" required />
                                         <span className="input-group-text bg-transparent border-start-0">
                                             <FaEnvelope />
                                         </span>
@@ -66,7 +80,7 @@ const Contacto = () => {
                                 <div className="mb-3">
                                     <label htmlFor="telefono" className="form-label">Teléfono (opcional)</label>
                                     <div className="input-group">
-                                        <input type="tel" className="form-control" value={formData.telefono} onChange={handleChange} id="telefono" placeholder="Tu número de teléfono" />
+                                        <input type="tel" onChange={handleChange} value={formData.telefono} className="form-control" id="telefono" placeholder="Tu número de teléfono" />
                                         <span className="input-group-text bg-transparent border-start-0">
                                             <FaPhoneAlt />
                                         </span>
@@ -74,7 +88,7 @@ const Contacto = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="mensaje" className="form-label">Mensaje</label>
-                                    <textarea className="form-control" id="mensaje" value={formData.mensaje} onChange={handleChange} rows="4" placeholder="Escribe tu mensaje aquí"></textarea>
+                                    <textarea onChange={handleChange} value={formData.mensaje} className="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje aquí"></textarea>
                                 </div>
                                 <div className="text-center">
                                     <button type="submit" className="btn btn-warning px-4 py-2">
