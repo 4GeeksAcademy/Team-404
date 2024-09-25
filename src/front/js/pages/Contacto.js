@@ -17,7 +17,7 @@ const Contacto = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`${process.env.BACKEND_URL}/contact`, {
+            const response = await fetch(`${process.env.BACKEND_URL}contact`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
