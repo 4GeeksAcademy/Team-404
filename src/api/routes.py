@@ -6,7 +6,7 @@ import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from api.models import Direccion, db, User, ContactMessage
+from api.models import Direccion, db, User, ContactMessage , Vehiculo
 
 
 
@@ -348,6 +348,49 @@ def submit_contact_form():
         return jsonify({"message": "Mensaje de contacto recibido exitosamente"}), 201
 
     except Exception as e:
+
         print(f"Error en /api/contact: {e}")  # Imprime el error completo
         return jsonify({"error": "Error interno del servidor"}), 500
+
+
+# Parte "VEHICULOS"
+# Metodo "GET"
+@api.route('/api/vehiculos', methods=['GET'])
+def obtener_vehiculos():
+    vehiculos = Vehiculo.query.all()  # Obtiene todos los vehículos de la base de datos
+    return jsonify([{
+        'id': vehiculo.id,
+        'nombre': vehiculo.nombre,
+        'placa': vehiculo.placa,
+        'remolque': vehiculo.remolque,
+        'costo_km': vehiculo.costo_km,
+        'costo_hora': vehiculo.costo_hora,
+        'ejes': vehiculo.ejes,
+        'peso': vehiculo.peso,
+        'combustible': vehiculo.combustible,
+        'emision': vehiculo.emision,
+        'created_at': vehiculo.created_at.isoformat()  # Formatea la fecha
+    } for vehiculo in vehiculos]), 200
+
+# Metodo "POST"
+@api.route('/api/vehiculos', methods=['POST'])
+def crear_vehiculo():
+    data = request.json
+    
+    nuevo_vehiculo = Vehiculo(
+        nombre=data.get('nombre'),
+        placa=data.get('placa'),
+        remolque=data.get('remolque'),
+        costo_km=data.get('costo_km'),  # Asegúrate de que el nombre coincide
+        costo_hora=data.get('costo_hora'),  # Asegúrate de que el nombre coincide
+        ejes=data.get('ejes'),
+        peso=data.get('peso'),
+        combustible=data.get('combustible'),
+        emision=data.get('emision')
+    )
+    
+    db.session.add(nuevo_vehiculo)
+    db.session.commit()
+    
+    return {"message": "Vehículo creado exitosamente"}, 201
 
