@@ -18,6 +18,7 @@ const Contacto = () => {
         e.preventDefault();
         try {
             const response = await fetch('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/contact', {
+
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

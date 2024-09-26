@@ -21,7 +21,7 @@
 
 .h1-text {
     font-size: calc(1.5rem + 1vw);
-    color: rgb(233, 210, 0);
+    color: #ffc107;
     margin-bottom: 20px;
 }
 
@@ -65,7 +65,7 @@
 
 h1 {
     margin-bottom: 1rem;
-    color: rgb(189, 173, 28);
+    color:#ffc107;
 }
 
 p {

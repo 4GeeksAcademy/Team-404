@@ -9,7 +9,7 @@ html, body {
 }
 
 .profile-control-panel {
-    flex: 0 0 15%; /* Control Panel ocupa el 15% del ancho */
+    flex: 0 0 18%; /* Control Panel ocupa el 15% del ancho */
     background-color: #f9f9f9;
     padding: 20px;
     border-radius: 10px;
@@ -19,7 +19,7 @@ html, body {
 
 .profile-control-panel h1 {
     font-size: 1.8rem;
-    color: #007BFF;
+    color: #ffc107;
     margin-bottom: 20px;
 }
 
@@ -50,9 +50,9 @@ html, body {
 
 .profile-section {
     position: relative; /* Necesario para el pseudo-elemento */
-    flex: 0 0 50%; /* Usuario ocupa el 50% del ancho */
+    flex: 0 0 45%; /* Usuario ocupa el 50% del ancho */
     padding: 30px;
-    border-radius: 15px;
+    
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
     display: flex;
@@ -81,15 +81,15 @@ html, body {
 .profile-section h1 {
     font-size: 2rem;
     font-weight: bold;
-    color: #007BFF;
+    color: #ffc107;
     margin-bottom: 25px;
 }
 
 .profile-card {
-    background-color: #fff;
+    background-color: #000000;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    padding: 60px;
     display: flex;
     align-items: center;
     gap: 30px;
@@ -98,8 +98,8 @@ html, body {
 }
 
 .profile-avatar {
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 20px;
@@ -111,18 +111,18 @@ html, body {
 
 .profile-info h2 {
     font-size: 1.8rem;
-    color: #333;
+    color: #ffffff;
     margin-bottom: 10px;
 }
 
 .profile-info p {
     font-size: 1.2rem;
-    color: #666;
+    color: #ffffff;
     margin: 5px 0;
 }
 
 .profile-info p strong {
-    color: #333;
+    color: #ffc107;
 }
 
 .profile-loading .loading-circle {
@@ -151,17 +151,18 @@ html, body {
 }
 
 .profile-map-section {
-    flex: 0 0 35%; /* Mapa ocupa el 35% del ancho */
+    flex: 0 0 37%; /* Mapa ocupa el 35% del ancho */
     height: 100%; /* Ajustar la altura para ocupar el espacio restante */
 }
 
 .map-container {
     width: 100%;
     height: 100%; /* Ocupa el 100% del alto del contenedor */
+    border-style:solid;
 }
 
 .logout-button {
-    background-color: rgb(11, 11, 175); /* Cambia el color de fondo */
+    background-color: #ffc107; /* Cambia el color de fondo */
     color: white; /* Color del texto */
     border: none; /* Sin borde */
     padding: 10px 15px; /* Espaciado */
@@ -171,5 +172,5 @@ html, body {
 }
 
 .logout-button:hover {
-    background-color: rgb(201, 11, 11); /* Color al pasar el mouse */
+    background-color:#007BFF; /* Color al pasar el mouse */
 }
