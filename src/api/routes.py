@@ -357,40 +357,49 @@ def submit_contact_form():
 # Metodo "GET"
 @api.route('/api/vehiculos', methods=['GET'])
 def obtener_vehiculos():
-    vehiculos = Vehiculo.query.all()  # Obtiene todos los vehículos de la base de datos
-    return jsonify([{
-        'id': vehiculo.id,
-        'nombre': vehiculo.nombre,
-        'placa': vehiculo.placa,
-        'remolque': vehiculo.remolque,
-        'costo_km': vehiculo.costo_km,
-        'costo_hora': vehiculo.costo_hora,
-        'ejes': vehiculo.ejes,
-        'peso': vehiculo.peso,
-        'combustible': vehiculo.combustible,
-        'emision': vehiculo.emision,
-        'created_at': vehiculo.created_at.isoformat()  # Formatea la fecha
-    } for vehiculo in vehiculos]), 200
+    try:
+        vehiculos = Vehiculo.query.all()  # Obtiene todos los vehículos de la base de datos
+        return jsonify([{
+            'id': vehiculo.id,
+            'nombre': vehiculo.nombre,
+            'placa': vehiculo.placa,
+            'remolque': vehiculo.remolque,
+            'costo_km': vehiculo.costo_km,
+            'costo_hora': vehiculo.costo_hora,
+            'ejes': vehiculo.ejes,
+            'peso': vehiculo.peso,
+            'combustible': vehiculo.combustible,
+            'emision': vehiculo.emision,
+            'created_at': vehiculo.created_at.isoformat()  # Formatea la fecha
+        } for vehiculo in vehiculos]), 200
+    except Exception as e:
+        return {"error": str(e)}, 500  # Devuelve un error si ocurre un problema
 
 # Metodo "POST"
 @api.route('/api/vehiculos', methods=['POST'])
 def crear_vehiculo():
     data = request.json
     
+    # Validación básica de datos
+    if not all(key in data for key in ['nombre', 'placa', 'remolque', 'costo_km', 'costo_hora', 'ejes', 'peso', 'combustible', 'emision']):
+        return {"error": "Faltan campos requeridos"}, 400  # Bad Request
+    
     nuevo_vehiculo = Vehiculo(
-        nombre=data.get('nombre'),
-        placa=data.get('placa'),
-        remolque=data.get('remolque'),
-        costo_km=data.get('costo_km'),  # Asegúrate de que el nombre coincide
-        costo_hora=data.get('costo_hora'),  # Asegúrate de que el nombre coincide
-        ejes=data.get('ejes'),
-        peso=data.get('peso'),
-        combustible=data.get('combustible'),
-        emision=data.get('emision')
+        nombre=data['nombre'],
+        placa=data['placa'],
+        remolque=data['remolque'],
+        costo_km=data['costo_km'],
+        costo_hora=data['costo_hora'],
+        ejes=data['ejes'],
+        peso=data['peso'],
+        combustible=data['combustible'],
+        emision=data['emision']
     )
     
-    db.session.add(nuevo_vehiculo)
-    db.session.commit()
-    
-    return {"message": "Vehículo creado exitosamente"}, 201
-
+    try:
+        db.session.add(nuevo_vehiculo)
+        db.session.commit()
+        return {"message": "Vehículo creado exitosamente"}, 201
+    except Exception as e:
+        db.session.rollback()  # Revierte cualquier cambio en caso de error
+        return {"error": str(e)}, 500  # Devuelve un error si ocurre un problema

@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import "../../styles/flota.css";
-import { Modal, Button, Tab, Nav } from 'react-bootstrap';
+import { Modal, Button, Tab, Nav, Table } from 'react-bootstrap';
 import DatePicker from '../component/DatePicker'; // Asegúrate de la ruta correcta
 import axios from 'axios';
 
 export const Flota = () => {
     const [activeTab, setActiveTab] = useState('vehiculos');
     const [showModal, setShowModal] = useState(false);
-    const [fechaNacimiento, setFechaNacimiento] = useState(new Date());
     const [vehiculoData, setVehiculoData] = useState({
         nombre: '',
         placa: '',
         remolque: '',
-        costoKm: '',
-        costoHora: '',
+        costo_km: '',
+        costo_hora: '',
         ejes: '',
         peso: '',
         combustible: '',
@@ -41,6 +40,29 @@ export const Flota = () => {
 
     const handleClose = () => {
         setShowModal(false);
+        // Reiniciar datos al cerrar el modal
+        if (activeTab === 'vehiculos') {
+            setVehiculoData({
+                nombre: '',
+                placa: '',
+                remolque: '',
+                costo_km: '',
+                costo_hora: '',
+                ejes: '',
+                peso: '',
+                combustible: '',
+                emision: ''
+            });
+        } else {
+            setConductorData({
+                nombre: '',
+                apellidos: '',
+                fechaNacimiento: new Date(),
+                poblacion: '',
+                ciudad: '',
+                sueldo: ''
+            });
+        }
     };
 
     const handleVehiculoChange = (e) => {
