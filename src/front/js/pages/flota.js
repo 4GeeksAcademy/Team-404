@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Context } from '../store/appContext';
 import "../../styles/flota.css";
 import { Modal, Button, Tab, Nav, Table } from 'react-bootstrap';
 import DatePicker from '../component/DatePicker'; // Asegúrate de la ruta correcta
 import axios from 'axios';
 
 export const Flota = () => {
+    const { actions } = useContext(Context); // Usa el contexto para acceder a las acciones
     const [activeTab, setActiveTab] = useState('vehiculos');
     const [showModal, setShowModal] = useState(false);
     const [vehiculoData, setVehiculoData] = useState({
@@ -114,7 +116,8 @@ export const Flota = () => {
     // Llama a fetchVehiculos al montar el componente
     useEffect(() => {
         fetchVehiculos();
-    }, []);
+        actions.fetchUserData(); // Llama a la función fetchUserData aquí
+    }, []); // Agrega actions a las dependencias
 
     return (
         <div>
