@@ -9,8 +9,10 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from api.models import Direccion, db, User, ContactMessage , Vehiculo
 
 
+
+# Habilita CORS para todas las rutas y orígenes
 api = Blueprint('api', __name__)
-CORS(api, support_credentials=True)
+CORS(api)
 
 SECRET_KEY = 'tu_clave_secreta'  # Cambia esto a una clave secreta más segura
 RESET_SECRET_KEY = 'tu_clave_secreta_reset'  # Otra clave secreta para la recuperación
@@ -346,9 +348,10 @@ def submit_contact_form():
         return jsonify({"message": "Mensaje de contacto recibido exitosamente"}), 201
 
     except Exception as e:
-        print(f"Error en /api/contact: {e}")
+
+        print(f"Error en /api/contact: {e}")  # Imprime el error completo
         return jsonify({"error": "Error interno del servidor"}), 500
-    
+
 
 # Parte "VEHICULOS"
 # Metodo "GET"
@@ -390,3 +393,4 @@ def crear_vehiculo():
     db.session.commit()
     
     return {"message": "Vehículo creado exitosamente"}, 201
+

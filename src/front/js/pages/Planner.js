@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import CalculateDistance from '../component/calculateDistance';
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { Link } from 'react-router-dom';
 
 const Mapa = () => {
     const apiOptions = { apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY };
@@ -48,13 +50,31 @@ const Mapa = () => {
         setRouteInfo(null);
     };
 
+    const iconStyle = {
+        fontSize: '2rem',
+        color: '#ffc107',
+        transition: 'color 0.3s ease',
+    };
+
     return (
         <div className="container-fluid">
             <div className="row g-4">
                 <div className="col-lg-4">
                     <div className="card h-100">
                         <div className="card-body">
-                            <h1 className="card-title mb-4">Planner</h1>
+                            <div className="d-flex flex-column align-items-start mb-4">
+                                <Link 
+                                    to="/profile" 
+                                    style={{ textDecoration: 'none', marginBottom: '0.5rem' }}
+                                >
+                                    <IoMdArrowRoundBack 
+                                        style={iconStyle}
+                                        onMouseEnter={(e) => e.target.style.color = '#ffc107'}
+                                        onMouseLeave={(e) => e.target.style.color = '#000000'}
+                                    />
+                                </Link>
+                                <h1 className="card-title">Planner</h1>
+                            </div>
                             <CalculateDistance
                                 map={map}
                                 onRouteCalculated={handleRouteCalculated}
