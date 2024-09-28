@@ -6,7 +6,7 @@ import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from api.models import Direccion, db, User, ContactMessage , Vehiculo
+from api.models import Direccion, db, User, ContactMessage , Vehiculo, Conductor
 
 
 
@@ -448,4 +448,31 @@ def delete_vehiculo(id):
         return jsonify({'message': 'Vehículo eliminado exitosamente.'}), 200
     else:
         return jsonify({'error': 'Vehículo no encontrado.'}), 404
+
+
+# METODO POST // PARTE CONDUCTORES
+@api.route('/api/conductores', methods=['POST'])
+def add_conductor():
+    data = request.get_json()
+
+    # Validar que los datos requeridos estén presentes
+    if not all(k in data for k in ("nombre", "apellidos", "fechaNacimiento", "poblacion", "ciudad", "sueldo")):
+        return jsonify({"error": "Faltan datos requeridos"}), 400
+
+    nuevo_conductor = Conductor(
+        nombre=data['nombre'],
+        apellidos=data['apellidos'],
+        fecha_nacimiento=data['fechaNacimiento'],  # Asegúrate de que este dato sea una fecha válida
+        poblacion=data['poblacion'],
+        ciudad=data['ciudad'],
+        sueldo=data['sueldo']
+    )
+
+    try:
+        db.session.add(nuevo_conductor)
+        db.session.commit()
+        return jsonify({"mensaje": "Conductor añadido con éxito", "id": nuevo_conductor.id}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
