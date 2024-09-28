@@ -413,3 +413,39 @@ def crear_vehiculo():
     except Exception as e:
         db.session.rollback()
         return {"error": str(e)}, 500
+
+#METODO PUT
+@api.route('/api/vehiculos/<int:id>', methods=['PUT'])
+def editar_vehiculo(id):
+    vehiculo = Vehiculo.query.get(id)
+    
+    if not vehiculo:
+        return jsonify({"message": "Vehículo no encontrado"}), 404
+
+    data = request.get_json()
+
+    vehiculo.nombre = data.get('nombre', vehiculo.nombre)
+    vehiculo.placa = data.get('placa', vehiculo.placa)
+    vehiculo.remolque = data.get('remolque', vehiculo.remolque)
+    vehiculo.costo_km = data.get('costo_km', vehiculo.costo_km)
+    vehiculo.costo_hora = data.get('costo_hora', vehiculo.costo_hora)
+    vehiculo.ejes = data.get('ejes', vehiculo.ejes)
+    vehiculo.peso = data.get('peso', vehiculo.peso)
+    vehiculo.combustible = data.get('combustible', vehiculo.combustible)
+    vehiculo.emision = data.get('emision', vehiculo.emision)
+
+    db.session.commit()
+    
+    return jsonify({"message": "Vehículo actualizado exitosamente"}), 200
+
+#METODO DELETE
+@api.route('/api/vehiculos/<int:id>', methods=['DELETE'])
+def delete_vehiculo(id):
+    vehiculo = Vehiculo.query.get(id)
+    if vehiculo:
+        db.session.delete(vehiculo)
+        db.session.commit()
+        return jsonify({'message': 'Vehículo eliminado exitosamente.'}), 200
+    else:
+        return jsonify({'error': 'Vehículo no encontrado.'}), 404
+
