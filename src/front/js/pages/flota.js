@@ -84,12 +84,26 @@ export const Flota = () => {
     const handleSave = async () => {
         if (activeTab === 'vehiculos') {
             try {
-                // Enviar datos del vehículo al backend
-                const response = await axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/vehiculos', vehiculoData);
+                // Validar y convertir campos numéricos
+                const updatedVehiculoData = {
+                    ...vehiculoData,
+                    user_id: actions.getUserId(),
+                    costo_km: vehiculoData.costo_km !== '' ? parseFloat(vehiculoData.costo_km) : null,
+                    costo_hora: vehiculoData.costo_hora !== '' ? parseFloat(vehiculoData.costo_hora) : null,
+                    ejes: vehiculoData.ejes !== '' ? parseInt(vehiculoData.ejes, 10) : null,
+                    peso: vehiculoData.peso !== '' ? parseFloat(vehiculoData.peso) : null,
+                };
+    
+                console.log("Datos del vehículo a guardar:", updatedVehiculoData);
+    
+                const response = await axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/vehiculos', updatedVehiculoData);
                 console.log('Vehículo guardado', response.data);
-                fetchVehiculos(); // Actualiza la lista de vehículos
+                fetchVehiculos();
             } catch (error) {
                 console.error('Error al guardar vehículo:', error);
+                if (error.response) {
+                    console.log("Detalles del error:", error.response.data);
+                }
             }
         } else {
             try {

@@ -379,21 +379,31 @@ def obtener_vehiculos():
 @api.route('/api/vehiculos', methods=['POST'])
 def crear_vehiculo():
     data = request.json
-    
+
     # Validación básica de datos
     if not all(key in data for key in ['nombre', 'placa', 'remolque', 'costo_km', 'costo_hora', 'ejes', 'peso', 'combustible', 'emision']):
         return {"error": "Faltan campos requeridos"}, 400  # Bad Request
-    
+
+    # Validación de campos numéricos
+    try:
+        costo_km = float(data['costo_km']) if data['costo_km'] else None
+        costo_hora = float(data['costo_hora']) if data['costo_hora'] else None
+        ejes = int(data['ejes']) if data['ejes'] else None
+        peso = float(data['peso']) if data['peso'] else None
+    except ValueError:
+        return {"error": "Los valores de costo_km, costo_hora, ejes y peso deben ser numéricos."}, 400
+
     nuevo_vehiculo = Vehiculo(
         nombre=data['nombre'],
         placa=data['placa'],
         remolque=data['remolque'],
-        costo_km=data['costo_km'],
-        costo_hora=data['costo_hora'],
-        ejes=data['ejes'],
-        peso=data['peso'],
+        costo_km=costo_km,
+        costo_hora=costo_hora,
+        ejes=ejes,
+        peso=peso,
         combustible=data['combustible'],
-        emision=data['emision']
+        emision=data['emision'],
+        user_id=data['user_id']
     )
     
     try:
@@ -401,5 +411,5 @@ def crear_vehiculo():
         db.session.commit()
         return {"message": "Vehículo creado exitosamente"}, 201
     except Exception as e:
-        db.session.rollback()  # Revierte cualquier cambio en caso de error
-        return {"error": str(e)}, 500  # Devuelve un error si ocurre un problema
+        db.session.rollback()
+        return {"error": str(e)}, 500
