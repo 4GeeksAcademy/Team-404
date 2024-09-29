@@ -86,6 +86,14 @@ class ContactMessage(db.Model):
             "created_at": self.created_at
         }
 
+
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+=======
 class Vehiculo(db.Model):
     __tablename__ = 'vehiculos'
     
@@ -144,9 +152,16 @@ class Conductor(db.Model):
     def __repr__(self):
         return f'<Conductor {self.nombre} {self.apellidos}>'
 
+
     def to_dict(self):
         return {
             'id': self.id,
+
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'phone': self.phone,
+            'email': self.email
+=======
             'nombre': self.nombre,
             'apellidos': self.apellidos,
             'fecha_nacimiento': self.fecha_nacimiento.strftime('%Y-%m-%d'),
@@ -155,4 +170,5 @@ class Conductor(db.Model):
             'sueldo': self.sueldo,
             'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             'user_id': self.user_id,  # Incluir user_id en la representación del dict
+
         }

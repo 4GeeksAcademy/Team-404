@@ -1,12 +1,18 @@
 import os
-from flask import Blueprint, jsonify, request, current_app
+from sqlite3 import IntegrityError
+from flask import Blueprint, abort, jsonify, request, current_app
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+
+from api.models import Direccion, db, User, ContactMessage
+from api.models import Client
+=======
 from api.models import Direccion, db, User, ContactMessage , Vehiculo
+
 
 
 
@@ -351,6 +357,62 @@ def submit_contact_form():
 
         print(f"Error en /api/contact: {e}")  # Imprime el error completo
         return jsonify({"error": "Error interno del servidor"}), 500
+    
+# Ruta GET para obtener la lista de todos los clientes
+@api.route('/api/clients', methods=['GET'])
+def get_clients():
+    clients = Client.query.all()
+    return jsonify([client.to_dict() for client in clients])
+# Ruta POST para agregar un nuevo cliente
+@api.route('/api/clients', methods=['POST'])
+def add_client():
+    data = request.get_json()
+# Verificación básica de datos
+    if not all(key in data for key in ('first_name', 'last_name', 'phone', 'email')):
+        abort(400, 'Missing required data')
+# Crear el nuevo cliente
+    new_client = Client(
+        first_name=data['first_name'],
+        last_name=data['last_name'],
+        phone=data['phone'],
+        email=data['email']
+    )
+    
+    db.session.add(new_client)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        abort(400, 'Email already exists')
+    
+    return jsonify(new_client.to_dict()), 201
+# Ruta PUT para actualizar un cliente existente
+@api.route('/api/clients/<int:id>', methods=['PUT'])
+def update_client(id):
+    client = Client.query.get_or_404(id)
+    data = request.get_json()
+
+    client.first_name = data.get('first_name', client.first_name)
+    client.last_name = data.get('last_name', client.last_name)
+    client.phone = data.get('phone', client.phone)
+    client.email = data.get('email', client.email)
+
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        abort(400, 'Email already exists')
+
+    return jsonify(client.to_dict())
+# Ruta DELETE para eliminar un cliente por ID
+@api.route('/api/clients/<int:id>', methods=['DELETE'])
+def delete_client(id):
+    client = Client.query.get_or_404(id)
+    db.session.delete(client)
+    db.session.commit()
+    
+    return '', 204
+
 
 
 # Parte "VEHICULOS"
