@@ -28,10 +28,8 @@ export const Direcciones = () => {
         "cliente": "lightcoral",
     };
 
-
     const currentUserId = store.userData.id;
     console.log(currentUserId, "ID del usuario");
-
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => {

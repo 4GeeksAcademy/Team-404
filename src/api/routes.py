@@ -357,40 +357,95 @@ def submit_contact_form():
 # Metodo "GET"
 @api.route('/api/vehiculos', methods=['GET'])
 def obtener_vehiculos():
-    vehiculos = Vehiculo.query.all()  # Obtiene todos los vehículos de la base de datos
-    return jsonify([{
-        'id': vehiculo.id,
-        'nombre': vehiculo.nombre,
-        'placa': vehiculo.placa,
-        'remolque': vehiculo.remolque,
-        'costo_km': vehiculo.costo_km,
-        'costo_hora': vehiculo.costo_hora,
-        'ejes': vehiculo.ejes,
-        'peso': vehiculo.peso,
-        'combustible': vehiculo.combustible,
-        'emision': vehiculo.emision,
-        'created_at': vehiculo.created_at.isoformat()  # Formatea la fecha
-    } for vehiculo in vehiculos]), 200
+    try:
+        vehiculos = Vehiculo.query.all()  # Obtiene todos los vehículos de la base de datos
+        return jsonify([{
+            'id': vehiculo.id,
+            'nombre': vehiculo.nombre,
+            'placa': vehiculo.placa,
+            'remolque': vehiculo.remolque,
+            'costo_km': vehiculo.costo_km,
+            'costo_hora': vehiculo.costo_hora,
+            'ejes': vehiculo.ejes,
+            'peso': vehiculo.peso,
+            'combustible': vehiculo.combustible,
+            'emision': vehiculo.emision,
+            'created_at': vehiculo.created_at.isoformat()  # Formatea la fecha
+        } for vehiculo in vehiculos]), 200
+    except Exception as e:
+        return {"error": str(e)}, 500  # Devuelve un error si ocurre un problema
 
 # Metodo "POST"
 @api.route('/api/vehiculos', methods=['POST'])
 def crear_vehiculo():
     data = request.json
-    
+
+    # Validación básica de datos
+    if not all(key in data for key in ['nombre', 'placa', 'remolque', 'costo_km', 'costo_hora', 'ejes', 'peso', 'combustible', 'emision']):
+        return {"error": "Faltan campos requeridos"}, 400  # Bad Request
+
+    # Validación de campos numéricos
+    try:
+        costo_km = float(data['costo_km']) if data['costo_km'] else None
+        costo_hora = float(data['costo_hora']) if data['costo_hora'] else None
+        ejes = int(data['ejes']) if data['ejes'] else None
+        peso = float(data['peso']) if data['peso'] else None
+    except ValueError:
+        return {"error": "Los valores de costo_km, costo_hora, ejes y peso deben ser numéricos."}, 400
+
     nuevo_vehiculo = Vehiculo(
-        nombre=data.get('nombre'),
-        placa=data.get('placa'),
-        remolque=data.get('remolque'),
-        costo_km=data.get('costo_km'),  # Asegúrate de que el nombre coincide
-        costo_hora=data.get('costo_hora'),  # Asegúrate de que el nombre coincide
-        ejes=data.get('ejes'),
-        peso=data.get('peso'),
-        combustible=data.get('combustible'),
-        emision=data.get('emision')
+        nombre=data['nombre'],
+        placa=data['placa'],
+        remolque=data['remolque'],
+        costo_km=costo_km,
+        costo_hora=costo_hora,
+        ejes=ejes,
+        peso=peso,
+        combustible=data['combustible'],
+        emision=data['emision'],
+        user_id=data['user_id']
     )
     
-    db.session.add(nuevo_vehiculo)
+    try:
+        db.session.add(nuevo_vehiculo)
+        db.session.commit()
+        return {"message": "Vehículo creado exitosamente"}, 201
+    except Exception as e:
+        db.session.rollback()
+        return {"error": str(e)}, 500
+
+#METODO PUT
+@api.route('/api/vehiculos/<int:id>', methods=['PUT'])
+def editar_vehiculo(id):
+    vehiculo = Vehiculo.query.get(id)
+    
+    if not vehiculo:
+        return jsonify({"message": "Vehículo no encontrado"}), 404
+
+    data = request.get_json()
+
+    vehiculo.nombre = data.get('nombre', vehiculo.nombre)
+    vehiculo.placa = data.get('placa', vehiculo.placa)
+    vehiculo.remolque = data.get('remolque', vehiculo.remolque)
+    vehiculo.costo_km = data.get('costo_km', vehiculo.costo_km)
+    vehiculo.costo_hora = data.get('costo_hora', vehiculo.costo_hora)
+    vehiculo.ejes = data.get('ejes', vehiculo.ejes)
+    vehiculo.peso = data.get('peso', vehiculo.peso)
+    vehiculo.combustible = data.get('combustible', vehiculo.combustible)
+    vehiculo.emision = data.get('emision', vehiculo.emision)
+
     db.session.commit()
     
-    return {"message": "Vehículo creado exitosamente"}, 201
+    return jsonify({"message": "Vehículo actualizado exitosamente"}), 200
+
+#METODO DELETE
+@api.route('/api/vehiculos/<int:id>', methods=['DELETE'])
+def delete_vehiculo(id):
+    vehiculo = Vehiculo.query.get(id)
+    if vehiculo:
+        db.session.delete(vehiculo)
+        db.session.commit()
+        return jsonify({'message': 'Vehículo eliminado exitosamente.'}), 200
+    else:
+        return jsonify({'error': 'Vehículo no encontrado.'}), 404
 
