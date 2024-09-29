@@ -109,13 +109,6 @@ export const Flota = () => {
                     console.log("Detalles del error:", error.response.data);
                 }
             }
-        } else {
-            try {
-                const response = await axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/conductores', conductorData);
-                console.log('Conductor guardado', response.data);
-            } catch (error) {
-                console.error('Error al guardar conductor:', error);
-            }
         }
         handleClose();
     };
@@ -155,32 +148,11 @@ export const Flota = () => {
         <div>
             <div className="container mt-4">
                 <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
-                    <h3>Vehículos y conductores</h3>
+                    <h3>Vehículos</h3>
                     <button className="btn btn-primary" onClick={handleShowModal}>
                         {activeTab === 'vehiculos' ? 'Añadir Vehículos' : 'Añadir Conductores'}
                     </button>
                 </div>
-                <ul className="nav nav-tabs custom-tabs">
-                    <li className="nav-item">
-                        <a
-                            className={`nav-link custom-tab-link ${activeTab === 'vehiculos' ? 'active' : ''}`}
-                            href="#"
-                            onClick={() => handleTabClick('vehiculos')}
-                        >
-                            Vehículos
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a
-                            className={`nav-link custom-tab-link ${activeTab === 'conductores' ? 'active' : ''}`}
-                            href="#"
-                            onClick={() => handleTabClick('conductores')}
-                        >
-                            Conductores
-                        </a>
-                    </li>
-                </ul>
-                
                 {/* Tabla de Vehículos */}
                 {activeTab === 'vehiculos' && (
                     <div className="mb-4">
@@ -320,82 +292,6 @@ export const Flota = () => {
                                             className="form-control"
                                             value={vehiculoData.emision}
                                             onChange={handleVehiculoChange}
-                                        />
-                                    </div>
-                                </form>
-                            </div>
-                        )}
-                        
-                        {activeTab === 'conductores' && (
-                            <div>
-                                <form>
-                                    <div className="form-group">
-                                        <label>Nombre</label>
-                                        <input
-                                            type="text"
-                                            name="nombre"
-                                            className="form-control"
-                                            value={conductorData.nombre}
-                                            onChange={handleConductorChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Apellidos</label>
-                                        <input
-                                            type="text"
-                                            name="apellidos"
-                                            className="form-control"
-                                            value={conductorData.apellidos}
-                                            onChange={handleConductorChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Fecha de Nacimiento (DD-MM-YYYY)</label>
-                                        <input
-                                            type="text"
-                                            name="fechaNacimiento"
-                                            className="form-control"
-                                            value={conductorData.fechaNacimiento}
-                                            onChange={handleConductorChange}
-                                            placeholder="DD-MM-YYYY"
-                                            pattern="\d{2}-\d{2}-\d{4}" // Regex pattern for validation
-                                            required
-                                        />
-                                        <small className="form-text text-muted">Formato: DD-MM-YYYY</small>
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Población</label>
-                                        <input
-                                            type="text"
-                                            name="poblacion"
-                                            className="form-control"
-                                            value={conductorData.poblacion}
-                                            onChange={handleConductorChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Ciudad</label>
-                                        <input
-                                            type="text"
-                                            name="ciudad"
-                                            className="form-control"
-                                            value={conductorData.ciudad}
-                                            onChange={handleConductorChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Sueldo</label>
-                                        <input
-                                            type="number"
-                                            name="sueldo"
-                                            className="form-control"
-                                            value={conductorData.sueldo}
-                                            onChange={handleConductorChange}
-                                            required
                                         />
                                     </div>
                                 </form>
