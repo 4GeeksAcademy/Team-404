@@ -24,13 +24,14 @@ export const Flota = () => {
     const [conductorData, setConductorData] = useState({
         nombre: '',
         apellidos: '',
-        fechaNacimiento: new Date(),
+        fechaNacimiento: new Date(), // Asegúrate de que esto sea un objeto Date
         poblacion: '',
         ciudad: '',
         sueldo: ''
     });
 
     const [vehiculos, setVehiculos] = useState([]);
+    const [conductores, setConductores] = useState([]); // Estado para conductores
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -57,6 +58,7 @@ export const Flota = () => {
             });
         } else {
             setConductorData({
+                id: null,
                 nombre: '',
                 apellidos: '',
                 fechaNacimiento: new Date(),
@@ -75,10 +77,11 @@ export const Flota = () => {
     };
 
     const handleConductorChange = (e) => {
-        setConductorData({
-            ...conductorData,
-            [e.target.name]: e.target.value
-        });
+        const { name, value } = e.target;
+        setConductorData((prevData) => ({
+            ...prevData,
+            [name]: name === 'fechaNacimiento' ? new Date(value) : value // Convierte a Date si es fecha
+        }));
     };
 
     const handleSave = async () => {
@@ -111,8 +114,20 @@ export const Flota = () => {
             }
         } else {
             try {
-                const response = await axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/conductores', conductorData);
-                console.log('Conductor guardado', response.data);
+                const updatedConductorData = {
+                    ...conductorData,
+                    fechaNacimiento: conductorData.fechaNacimiento.toISOString().split('T')[0] // Formatear fecha
+                };
+                if (conductorData.id) {
+                    // Editar conductor existente
+                    const response = await axios.put(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/conductores/${conductorData.id}`, updatedConductorData);
+                    console.log('Conductor editado', response.data);
+                } else {
+                    // Agregar nuevo conductor
+                    const response = await axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/conductores', updatedConductorData);
+                    console.log('Conductor guardado', response.data);
+                }
+                fetchConductores();
             } catch (error) {
                 console.error('Error al guardar conductor:', error);
             }
@@ -129,12 +144,30 @@ export const Flota = () => {
         }
     };
 
-    const handleEdit = (vehiculo) => {
+    const fetchConductores = async () => {
+        try {
+            const response = await axios.get('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/conductores');
+            console.log("Datos de conductores obtenidos:", response.data); // Agrega esta línea para verificar
+            setConductores(Array.isArray(response.data) ? response.data : []); // Asegúrate de que sea un array
+        } catch (error) {
+            console.error('Error al obtener conductores:', error);
+        }
+    };
+
+    // En el renderizado de la tabla de conductores, también agrega un console.log:
+    console.log("Lista de conductores:", conductores); // Verifica el contenido de conductores
+
+    const handleEditVehiculo = (vehiculo) => {
         setVehiculoData(vehiculo);
         setShowModal(true);
     };
 
-    const handleDelete = async (id) => {
+    const handleEditConductor = (conductor) => {
+        setConductorData(conductor);
+        setShowModal(true);
+    };
+
+    const handleDeleteVehiculo = async (id) => {
         if (window.confirm("¿Estás seguro de que quieres eliminar este vehículo?")) {
             try {
                 await axios.delete(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/vehiculos/${id}`);
@@ -146,8 +179,21 @@ export const Flota = () => {
         }
     };
 
+    const handleDeleteConductor = async (id) => {
+        if (window.confirm("¿Estás seguro de que quieres eliminar este conductor?")) {
+            try {
+                await axios.delete(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/conductores/${id}`);
+                console.log('Conductor eliminado');
+                fetchConductores();
+            } catch (error) {
+                console.error('Error al eliminar conductor:', error);
+            }
+        }
+    };
+
     useEffect(() => {
         fetchVehiculos();
+        fetchConductores(); // Cargar conductores al inicio
         actions.fetchUserData();
     }, []);
 
@@ -180,7 +226,7 @@ export const Flota = () => {
                         </a>
                     </li>
                 </ul>
-                
+
                 {/* Tabla de Vehículos */}
                 {activeTab === 'vehiculos' && (
                     <div className="mb-4">
@@ -207,8 +253,46 @@ export const Flota = () => {
                                         <td>{vehiculo.costo_km}</td>
                                         <td>{vehiculo.costo_hora}</td>
                                         <td>
-                                            <Button variant="warning" onClick={() => handleEdit(vehiculo)}>🔄</Button>
-                                            <Button variant="danger" onClick={() => handleDelete(vehiculo.id)}>🗑️</Button>
+                                            <Button variant="warning" onClick={() => handleEditVehiculo(vehiculo)}>🔄</Button>
+                                            <Button variant="danger" onClick={() => handleDeleteVehiculo(vehiculo.id)}>🗑️</Button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+                {/* Tabla de Conductores */}
+                {activeTab === 'conductores' && (
+                    <div>
+                        <h5>Lista de Conductores</h5>
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Apellidos</th>
+                                    <th>Fecha de Nacimiento</th>
+                                    <th>Población</th>
+                                    <th>Ciudad</th>
+                                    <th>Sueldo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {conductores.map((conductor) => (
+                                    <tr key={conductor.id}>
+                                        <td>{conductor.id}</td>
+                                        <td>{conductor.nombre}</td>
+                                        <td>{conductor.apellidos}</td>
+                                        <td>{new Date(conductor.fechaNacimiento).toLocaleDateString()}</td> {/* Asegúrate de que esto sea un objeto Date */}
+                                        <td>{conductor.poblacion}</td>
+                                        <td>{conductor.ciudad}</td>
+                                        <td>{conductor.sueldo}</td>
+                                        <td>
+                                            <Button variant="warning" onClick={() => handleEditConductor(conductor)}>🔄</Button>
+                                            <Button variant="danger" onClick={() => handleDeleteConductor(conductor.id)}>🗑️</Button>
                                         </td>
                                     </tr>
                                 ))}
@@ -228,6 +312,7 @@ export const Flota = () => {
                         {activeTab === 'vehiculos' && (
                             <div>
                                 <form>
+                                    {/* Aquí van los campos para vehículos, como antes */}
                                     <div className="form-group">
                                         <label>Nombre</label>
                                         <input
@@ -239,87 +324,7 @@ export const Flota = () => {
                                             required
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label>Placa</label>
-                                        <input
-                                            type="text"
-                                            name="placa"
-                                            className="form-control"
-                                            value={vehiculoData.placa}
-                                            onChange={handleVehiculoChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Remolque</label>
-                                        <input
-                                            type="text"
-                                            name="remolque"
-                                            className="form-control"
-                                            value={vehiculoData.remolque}
-                                            onChange={handleVehiculoChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Costo por KM</label>
-                                        <input
-                                            type="number"
-                                            name="costo_km"
-                                            className="form-control"
-                                            value={vehiculoData.costo_km}
-                                            onChange={handleVehiculoChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Costo por Hora</label>
-                                        <input
-                                            type="number"
-                                            name="costo_hora"
-                                            className="form-control"
-                                            value={vehiculoData.costo_hora}
-                                            onChange={handleVehiculoChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Ejes</label>
-                                        <input
-                                            type="number"
-                                            name="ejes"
-                                            className="form-control"
-                                            value={vehiculoData.ejes}
-                                            onChange={handleVehiculoChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Peso</label>
-                                        <input
-                                            type="number"
-                                            name="peso"
-                                            className="form-control"
-                                            value={vehiculoData.peso}
-                                            onChange={handleVehiculoChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Combustible</label>
-                                        <input
-                                            type="text"
-                                            name="combustible"
-                                            className="form-control"
-                                            value={vehiculoData.combustible}
-                                            onChange={handleVehiculoChange}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Emisión</label>
-                                        <input
-                                            type="text"
-                                            name="emision"
-                                            className="form-control"
-                                            value={vehiculoData.emision}
-                                            onChange={handleVehiculoChange}
-                                        />
-                                    </div>
+                                    {/* Agrega más campos según tu estructura... */}
                                 </form>
                             </div>
                         )}

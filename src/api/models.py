@@ -37,7 +37,7 @@ class User(db.Model):
             'location': self.location,
             'created_at': self.created_at,
             'direcciones': [direccion.serialize() for direccion in self.direcciones],
-            'vehiculos': [vehiculo.serialize() for vehiculo in self.vehiculos]  # Agrega esta línea
+            'vehiculos': [vehiculo.serialize() for vehiculo in self.vehiculos]
         }
 
 class Direccion(db.Model):
