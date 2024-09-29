@@ -1,27 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import axios from "axios";
-import { Link } from "react-router-dom";
+import React, { useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom"; // Cambia useHistory por useNavigate
+import { Context } from '../store/appContext';
 
 export const Navbar = () => {
-    const [usuarios, setUsuarios] = useState([]);
-    const navbarHeight = '56px'; // Altura estimada del navbar
+    const { store, actions } = useContext(Context); // Accediendo al contexto
+    const navigate = useNavigate(); // Usando useNavigate para manejar la navegación
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-
-        axios.get('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/user', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then(response => {
-                console.log(response.data);
-                setUsuarios(Array.isArray(response.data) ? response.data : []);
-            })
-            .catch(error => {
-                console.error("Error al cargar usuarios:", error);
-            });
+        actions.fetchUserData(); // Cargar datos del usuario al montar el componente
     }, []);
+
+    const handleProfileClick = () => {
+        navigate('/profile'); // Navegar a la ruta de perfil
+        window.location.reload(); // Recargar la página
+    };
 
     return (
         <>
@@ -33,16 +25,27 @@ export const Navbar = () => {
                     left: 0,
                     right: 0,
                     zIndex: 1000,
-                    height: navbarHeight
+                    height: '56px'
                 }}>
                 <div className="container-fluid">
-                    <Link className="navbar-brand d-flex align-items-center" to="/profile" style={{ color: '#ffc107', fontSize: '1.2rem' }}>
+                    <Link 
+                        className="navbar-brand d-flex align-items-center" 
+                        to="#" // Cambia el 'to' a '#'
+                        style={{ 
+                            color: '#000', // Cambiar el color del texto a negro
+                            fontSize: '1.2rem', // Aumentar el tamaño de la fuente
+                            backgroundColor: '#ffc107', // Fondo amarillo
+                            padding: '0.5rem 1rem', // Espaciado interno
+                            borderRadius: '5px', // Bordes redondeados
+                            fontWeight: 'bold', // Negrita
+                            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)', // Sombra
+                            transition: 'all 0.3s', // Transición suave
+                        }}
+                        onClick={handleProfileClick} // Llamar a la función al hacer clic
+                    >
                         RutaTrack
                         <span className="ms-2">🚚</span>
                     </Link>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
                     <div className="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02">
                         <ul className="navbar-nav mb-2 mb-lg-0">
                             <li className="nav-item">
@@ -54,25 +57,28 @@ export const Navbar = () => {
                             <li className="nav-item">
                                 <Link className="nav-link" to="/Contacto" style={{ color: '#ffc107', fontSize: '0.9rem' }}>Contacto</Link>
                             </li>
-                            <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style={{ color: '#ffc107', fontSize: '0.9rem' }}>
-                                    Usuarios
-                                </a>
-                                <ul className="dropdown-menu">
-                                    {usuarios.map((usuario) => (
-                                        <li key={usuario.id}>
-                                            <a className="dropdown-item" href="#" style={{ fontSize: '0.8rem' }}>
-                                                {usuario.name} {usuario.last_name} - {usuario.company} ({usuario.location})
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
+                            <li className="nav-item">
+                                <span 
+                                    className="nav-link" 
+                                    style={{ 
+                                        color: '#000', // Cambiar el color del texto a negro
+                                        fontSize: '0.9rem',
+                                        backgroundColor: '#ffc107', // Fondo amarillo
+                                        padding: '0.5rem 1rem', // Espaciado interno
+                                        borderRadius: '5px', // Bordes redondeados
+                                        fontWeight: 'bold', // Negrita
+                                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)', // Sombra
+                                        transition: 'all 0.3s', // Transición suave
+                                    }}
+                                >
+                                    ¡BIENVENIDO {store.userData && store.userData.name ? store.userData.name : 'Invitado'}!
+                                </span>
                             </li>
                         </ul>
                     </div>
                 </div>
             </nav>
-            <div style={{ height: navbarHeight }}></div>
+            <div style={{ height: '56px' }}></div>
         </>
     );
 };
