@@ -5,7 +5,7 @@ import "../../styles/direccion.css";
 import { Context } from '../store/appContext';
 
 export const Direcciones = () => {
-    const { store, actions } = useContext(Context);
+    const { store } = useContext(Context);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [map, setMap] = useState(null);
     const [countries, setCountries] = useState([]);
@@ -31,11 +31,14 @@ export const Direcciones = () => {
     const currentUserId = store.userData.id;
     console.log(currentUserId, "ID del usuario");
 
-    const openModal = () => setIsModalOpen(true);
+    const openModal = () => {
+        resetForm();
+        setIsModalOpen(true);
+    };
+
     const closeModal = () => {
         setIsModalOpen(false);
         resetForm();
-        window.location.reload(); // Recargar la página al cerrar el modal
     };
 
     const resetForm = () => {
@@ -49,20 +52,22 @@ export const Direcciones = () => {
     };
 
     useEffect(() => {
-        axios.get(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones?user_id=${currentUserId}`)
-            .then(response => {
-                if (Array.isArray(response.data)) {
-                    setDirecciones(response.data);
-                } else {
-                    console.error("La respuesta no es un array:", response.data);
-                    setDirecciones([]); // Maneja el caso de error
-                }
-            })
-            .catch(error => {
-                console.error("Error al obtener las direcciones:", error);
-                setWarning("No se pudieron cargar las direcciones.");
-            });
-    }, []);
+        if (currentUserId) {
+            axios.get(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones?user_id=${currentUserId}`)
+                .then(response => {
+                    if (Array.isArray(response.data)) {
+                        setDirecciones(response.data);
+                    } else {
+                        console.error("La respuesta no es un array:", response.data);
+                        setDirecciones([]); // Maneja el caso de error
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener las direcciones:", error);
+                    setWarning("No se pudieron cargar las direcciones.");
+                });
+        }
+    }, [currentUserId]);
 
     const filteredDirecciones = direcciones.filter(direccion => {
         return !filter || direccion.categoria === filter; // Filtrado por categoría
@@ -127,23 +132,9 @@ export const Direcciones = () => {
         });
     };
 
-    const fetchUser = async () => {
-        try {
-            const response = await axios.get('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/usuarios');
-            const user = response.data.find(u => u.id === currentUserId); // Asegúrate de que currentUserId esté definido
-            if (user) {
-                setCurrentUserId(user.id); // Establece el ID del usuario
-            }
-        } catch (error) {
-            console.error("Error al obtener el usuario: ", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchUser();
-    }, []);
-
     const handleCreateAddress = () => {
+        console.log("Creando dirección:", { name, selectedCountry, postalCode, address, street, category });
+
         if (!name || !selectedCountry || !postalCode || !address || !street || !category) {
             setWarning("Por favor, rellena todos los campos obligatorios.");
             return;
@@ -155,16 +146,14 @@ export const Direcciones = () => {
             categoria: category,
             contacto: "",
             comentarios: "",
-            user_id: currentUserId, // Incluye el user_id en la petición
+            user_id: currentUserId,
         };
 
         axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones', newAddress)
             .then(response => {
                 console.log("Dirección creada: ", response.data);
                 setDirecciones(prevDirecciones => [...prevDirecciones, response.data]);
-                closeModal(); // Cerrar el modal
-                // No es necesario recargar la página; la dirección se actualiza en el estado
-                // window.location.reload();
+                closeModal();
             })
             .catch(error => {
                 console.error("Error al crear la dirección: ", error.response ? error.response.data : error.message);
@@ -186,6 +175,7 @@ export const Direcciones = () => {
         setSelectedCountry(""); // Ajusta según tu lógica de países
         setIsModalOpen(true);
     };
+
     const handleSaveChanges = () => {
         if (!currentAddressId) return;
 
@@ -214,6 +204,11 @@ export const Direcciones = () => {
             });
     };
 
+    const categoryIcons = {
+        "ubicacion-propia": "🏚️",
+        "recogida-entrega": "🔄",
+        "cliente": "🤵",
+    };
 
     const handleDelete = (id) => {
         const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta dirección?");
@@ -230,12 +225,6 @@ export const Direcciones = () => {
                     alert("Error al eliminar la dirección. Por favor, intenta de nuevo.");
                 });
         }
-    };
-
-    const categoryIcons = {
-        "ubicacion-propia": "🏚️",
-        "recogida-entrega": "🔄",
-        "cliente": "🤵",
     };
 
     useEffect(() => {
