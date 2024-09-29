@@ -83,3 +83,18 @@ class ContactMessage(db.Model):
             "created_at": self.created_at
         }
 
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'phone': self.phone,
+            'email': self.email
+        }

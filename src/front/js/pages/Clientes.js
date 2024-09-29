@@ -10,7 +10,6 @@ const ClientListTable = () => {
 
     // Estado para almacenar el nuevo cliente o cliente editado
     const [newClient, setNewClient] = useState({
-        name: '',
         firstName: '',
         lastName: '',
         phone: '',
@@ -21,13 +20,11 @@ const ClientListTable = () => {
     const [clients, setClients] = useState([
         {
             name: 'prueba prueba',
-            contact: 'prueba prueba prueba',
             email: 'prueba@gmail.com',
             phone: '56486489489'
         },
         {
             name: 'Por ejemplo, ibarho GmbH',
-            contact: 'Max Doe',
             email: 'm.mustermann@email.com',
             phone: '1-541-754-3010'
         }
@@ -103,7 +100,7 @@ const ClientListTable = () => {
                 <thead className="table-light">
                     <tr>
                         <th>Nombre</th>
-                        <th>Persona de contacto</th>
+                        <th>Correo electrónico</th>
                         <th>Teléfono</th>
                         <th>Acciones</th>
                     </tr>
