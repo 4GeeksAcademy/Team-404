@@ -10,7 +10,6 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 
 from api.models import Direccion, db, User, ContactMessage
 from api.models import Client
-=======
 from api.models import Direccion, db, User, ContactMessage , Vehiculo
 
 

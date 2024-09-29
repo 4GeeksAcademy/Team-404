@@ -93,7 +93,6 @@ class Client(db.Model):
     last_name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-=======
 class Vehiculo(db.Model):
     __tablename__ = 'vehiculos'
     
@@ -160,8 +159,7 @@ class Conductor(db.Model):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'phone': self.phone,
-            'email': self.email
-=======
+            'email': self.email,
             'nombre': self.nombre,
             'apellidos': self.apellidos,
             'fecha_nacimiento': self.fecha_nacimiento.strftime('%Y-%m-%d'),
