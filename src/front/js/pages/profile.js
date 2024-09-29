@@ -115,7 +115,7 @@ const Profile = () => {
                     </li>
                     <li>
                         <Link to="/flota">
-                            <FontAwesomeIcon icon={faTruck} /> Vehículos y Conductores
+                            <FontAwesomeIcon icon={faTruck} /> Vehículos
                         </Link>
                     </li>
                     <li>

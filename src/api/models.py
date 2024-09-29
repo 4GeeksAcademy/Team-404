@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -35,7 +36,9 @@ class User(db.Model):
             'company': self.company,
             'location': self.location,
             'created_at': self.created_at,
-            'direcciones': [direccion.serialize() for direccion in self.direcciones]
+            'direcciones': [direccion.serialize() for direccion in self.direcciones],
+            'vehiculos': [vehiculo.serialize() for vehiculo in self.vehiculos],
+            'conductores': [conductor.to_dict() for conductor in self.conductores]
         }
 
 class Direccion(db.Model):
@@ -83,18 +86,89 @@ class ContactMessage(db.Model):
             "created_at": self.created_at
         }
 
+
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
+=======
+class Vehiculo(db.Model):
+    __tablename__ = 'vehiculos'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    placa = db.Column(db.String(50), unique=True, nullable=False)
+    remolque = db.Column(db.String(100), nullable=True)
+    costo_km = db.Column(db.Float, nullable=True)
+    costo_hora = db.Column(db.Float, nullable=True)
+    ejes = db.Column(db.Integer, nullable=True)
+    peso = db.Column(db.Float, nullable=True)
+    combustible = db.Column(db.String(50), nullable=True)
+    emision = db.Column(db.String(50), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relación con el modelo User
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    usuario = db.relationship('User', backref='vehiculos')
+
+    def __repr__(self):
+        return f'<Vehiculo {self.nombre} - {self.placa}>'
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'nombre': self.nombre,
+            'placa': self.placa,
+            'remolque': self.remolque,
+            'costo_km': self.costo_km,
+            'costo_hora': self.costo_hora,
+            'ejes': self.ejes,
+            'peso': self.peso,
+            'combustible': self.combustible,
+            'emision': self.emision,
+            'created_at': self.created_at.isoformat(),  # Formato ISO
+            'user_id': self.user_id
+        }
+
+
+class Conductor(db.Model):
+    __tablename__ = 'conductores'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    apellidos = db.Column(db.String(100), nullable=False)
+    fecha_nacimiento = db.Column(db.Date, nullable=False)
+    poblacion = db.Column(db.String(100), nullable=True)
+    ciudad = db.Column(db.String(100), nullable=True)
+    sueldo = db.Column(db.Float, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Clave foránea que establece la relación con User
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Opcionalmente puedes hacer que no sea nulo si cada conductor debe tener un usuario
+    user = db.relationship('User', backref='conductores')  # Relación inversa para acceder a los conductores desde el usuario
+
+    def __repr__(self):
+        return f'<Conductor {self.nombre} {self.apellidos}>'
+
 
     def to_dict(self):
         return {
             'id': self.id,
+
             'first_name': self.first_name,
             'last_name': self.last_name,
             'phone': self.phone,
             'email': self.email
+=======
+            'nombre': self.nombre,
+            'apellidos': self.apellidos,
+            'fecha_nacimiento': self.fecha_nacimiento.strftime('%Y-%m-%d'),
+            'poblacion': self.poblacion,
+            'ciudad': self.ciudad,
+            'sueldo': self.sueldo,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'user_id': self.user_id,  # Incluir user_id en la representación del dict
+
         }
