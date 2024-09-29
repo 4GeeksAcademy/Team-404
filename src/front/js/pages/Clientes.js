@@ -1,91 +1,99 @@
-import React, { useState } from 'react';
-import { FaTrash } from "react-icons/fa";
-import { LuPenSquare } from "react-icons/lu";
-import { MdGroups } from "react-icons/md";
-import '../../styles/Clientes.css';
+import React, { useState, useEffect } from 'react'; // Importa React y los hooks useState y useEffect.
+import axios from 'axios'; // Importa axios para hacer peticiones HTTP.
+import { FaTrash } from "react-icons/fa"; // Importa el icono de un bote de basura (para eliminar clientes).
+import { LuPenSquare } from "react-icons/lu"; // Importa el icono de un lápiz para editar clientes.
+import { MdGroups } from "react-icons/md"; // Importa el icono de un grupo para la cabecera del modal.
+import '../../styles/Clientes.css'; // Importa los estilos CSS específicos para esta componente.
+
 
 const ClientListTable = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingClientIndex, setEditingClientIndex] = useState(null); // Almacenar el índice del cliente que se está editando
-
-    // Estado para almacenar el nuevo cliente o cliente editado
+    const [isModalOpen, setIsModalOpen] = useState(false); // Controla si el modal está abierto o cerrado.
+    const [editingClientIndex, setEditingClientIndex] = useState(null); // Guarda el índice del cliente que está siendo editado.
     const [newClient, setNewClient] = useState({
         firstName: '',
         lastName: '',
         phone: '',
         email: '',
-    });
+    }); // Estado para manejar la información del cliente que se está creando o editando.
+    const [clients, setClients] = useState([]); // Almacena la lista de clientes que se obtienen del backend.
 
-    // Estado para la lista de clientes
-    const [clients, setClients] = useState([
-        {
-            name: 'prueba prueba',
-            email: 'prueba@gmail.com',
-            phone: '56486489489'
-        },
-        {
-            name: 'Por ejemplo, ibarho GmbH',
-            email: 'm.mustermann@email.com',
-            phone: '1-541-754-3010'
-        }
-    ]);
 
-    // Función para manejar los cambios de los inputs del modal
+    useEffect(() => {
+        axios.get('https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients') // Hace una petición GET para obtener la lista de clientes.
+            .then(response => {
+                setClients(response.data); // Almacena la lista de clientes en el estado 'clients'.
+            })
+            .catch(error => {
+                console.error('Error fetching clients:', error); // Maneja errores en la petición.
+            });
+    }, []); // Este `useEffect` se ejecuta una sola vez cuando el componente se monta.
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setNewClient(prev => ({ ...prev, [name]: value }));
+        setNewClient(prev => ({ ...prev, [name]: value })); // Actualiza el estado de 'newClient' a medida que el usuario cambia los valores en los inputs.
     };
 
-    // Función para manejar la adición o actualización del cliente
-    const handleSubmit = (e) => {
-        e.preventDefault();
 
-        const clientToAddOrEdit = {
-            name: newClient.firstName + ' ' + newClient.lastName,
-            contact: newClient.firstName + ' ' + newClient.lastName,
+    // Add or update client (POST/PUT)
+    const handleSubmit = (e) => {
+        e.preventDefault(); // Evita que el formulario recargue la página.
+        const clientData = {
+            first_name: newClient.firstName,
+            last_name: newClient.lastName,
             email: newClient.email,
             phone: newClient.phone
-        };
+        }; // Crea un objeto con los datos del cliente a partir del estado 'newClient'.
 
-        if (editingClientIndex !== null) {
-            // Actualizar el cliente existente
-            const updatedClients = [...clients];
-            updatedClients[editingClientIndex] = clientToAddOrEdit;
-            setClients(updatedClients);
-        } else {
-            // Agregar nuevo cliente
-            setClients(prevClients => [...prevClients, clientToAddOrEdit]);
+        if (editingClientIndex !== null) { // Si se está editando un cliente (es decir, 'editingClientIndex' no es null):
+            const clientId = clients[editingClientIndex].id; // Obtiene el ID del cliente que se está editando.
+            axios.put(`https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients/${clientId}`, clientData) // Hace una petición PUT para actualizar al cliente.
+                .then(response => {
+                    const updatedClients = [...clients];
+                    updatedClients[editingClientIndex] = response.data; // Actualiza la lista de clientes en el estado.
+                    setClients(updatedClients); // Guarda los clientes actualizados en el estado.
+                })
+                .catch(error => {
+                    console.error('Error updating client:', error); // Maneja errores en la actualización.
+                });
+        } else { // Si se está creando un nuevo cliente:
+            axios.post('https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients', clientData, {
+                timeout: 5000 // por ejemplo, 5 segundos
+            }) // Hace una petición POST para agregar un nuevo cliente.
+                .then(response => {
+                    setClients(prevClients => [...prevClients, response.data]); // Añade el nuevo cliente a la lista de clientes.
+                })
+                .catch(error => {
+                    console.error('Error adding client:', error); // Maneja errores en la creación.
+                });
         }
 
-        // Cerrar el modal y reiniciar los campos del formulario
-        setIsModalOpen(false);
-        setEditingClientIndex(null);
-        setNewClient({
-            name: '',
-            firstName: '',
-            lastName: '',
-            phone: '',
-            email: '',
-        });
+        setIsModalOpen(false); // Cierra el modal después de enviar el formulario.
+        setEditingClientIndex(null); // Resetea el índice de edición a null.
+        setNewClient({ firstName: '', lastName: '', phone: '', email: '' }); // Limpia los valores de 'newClient'.
     };
 
-    // Función para eliminar cliente por índice
+    // Delete client (DELETE request)
     const handleDeleteClient = (indexToDelete) => {
-        setClients(prevClients => prevClients.filter((_, index) => index !== indexToDelete));
+        const clientId = clients[indexToDelete].id; // Obtiene el ID del cliente a eliminar.
+        axios.delete(`https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients/${clientId}`) // Hace una petición DELETE para eliminar el cliente.
+            .then(() => {
+                setClients(prevClients => prevClients.filter((_, index) => index !== indexToDelete)); // Elimina el cliente de la lista local.
+            })
+            .catch(error => {
+                console.error('Error deleting client:', error); // Maneja errores en la eliminación.
+            });
     };
 
-    // Función para abrir el modal en modo de edición con datos precargados
     const handleEditClient = (indexToEdit) => {
-        const client = clients[indexToEdit];
-        const [firstName, lastName] = client.name.split(' '); // Dividir el nombre completo en primer nombre y apellido
+        const client = clients[indexToEdit]; // Obtiene el cliente que se va a editar.
         setNewClient({
-            firstName,
-            lastName,
+            firstName: client.first_name,
+            lastName: client.last_name,
             phone: client.phone,
             email: client.email,
-        });
-        setEditingClientIndex(indexToEdit); // Almacenar el índice del cliente que estamos editando
-        setIsModalOpen(true); // Abrir el modal
+        }); // Llena el formulario con los datos del cliente seleccionado.
+        setEditingClientIndex(indexToEdit); // Guarda el índice del cliente que se está editando.
+        setIsModalOpen(true); // Abre el modal para editar al cliente.
     };
 
     return (
@@ -108,23 +116,22 @@ const ClientListTable = () => {
                 <tbody>
                     {clients.map((client, index) => (
                         <tr key={index}>
-                            <td>{client.name}</td>
+                            <td>{client.first_name} {client.last_name}</td>
                             <td>
-                                {client.contact}<br />
-                                <span className="text-secondary">{client.email}</span>
+                                {client.email}
                             </td>
                             <td>{client.phone}</td>
                             <td>
                                 <div className="d-flex justify-content-around">
                                     <button
                                         className="btn btn-light btn-sm"
-                                        onClick={() => handleEditClient(index)} // Abrir modal en modo edición
+                                        onClick={() => handleEditClient(index)}
                                     >
                                         <LuPenSquare />
                                     </button>
                                     <button
                                         className="btn btn-light btn-sm text-danger"
-                                        onClick={() => handleDeleteClient(index)} // Llamada a la función de eliminación
+                                        onClick={() => handleDeleteClient(index)}
                                     >
                                         <FaTrash />
                                     </button>
@@ -135,10 +142,10 @@ const ClientListTable = () => {
                 </tbody>
             </table>
 
-            {/* Modal para agregar o editar cliente */}
+            {/* Modal para agregar o editar clientes */}
             {isModalOpen && (
                 <>
-                    <div className="modal-backdrop-custom"></div> {/* Fondo gris claro personalizado */}
+                    <div className="modal-backdrop-custom"></div>
                     <div className="modal show d-block" tabIndex="-1">
                         <div className="modal-dialog">
                             <div className="modal-content">
