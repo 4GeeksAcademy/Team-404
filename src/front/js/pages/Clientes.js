@@ -1,99 +1,118 @@
-import React, { useState, useEffect } from 'react'; // Importa React y los hooks useState y useEffect.
-import axios from 'axios'; // Importa axios para hacer peticiones HTTP.
-import { FaTrash } from "react-icons/fa"; // Importa el icono de un bote de basura (para eliminar clientes).
-import { LuPenSquare } from "react-icons/lu"; // Importa el icono de un lápiz para editar clientes.
-import { MdGroups } from "react-icons/md"; // Importa el icono de un grupo para la cabecera del modal.
-import '../../styles/Clientes.css'; // Importa los estilos CSS específicos para esta componente.
-
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FaTrash } from "react-icons/fa";
+import { LuPenSquare } from "react-icons/lu";
+import { MdGroups } from "react-icons/md";
+import '../../styles/Clientes.css';
 
 const ClientListTable = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false); // Controla si el modal está abierto o cerrado.
-    const [editingClientIndex, setEditingClientIndex] = useState(null); // Guarda el índice del cliente que está siendo editado.
+    // Estados para manejar la interfaz de usuario y los datos
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingClientIndex, setEditingClientIndex] = useState(null);
     const [newClient, setNewClient] = useState({
         firstName: '',
         lastName: '',
         phone: '',
         email: '',
-    }); // Estado para manejar la información del cliente que se está creando o editando.
-    const [clients, setClients] = useState([]); // Almacena la lista de clientes que se obtienen del backend.
+    });
+    const [clients, setClients] = useState([]);
+    const [error, setError] = useState(null); // Nuevo estado para manejar errores
 
-
+    // Efecto para cargar los clientes al montar el componente
     useEffect(() => {
-        axios.get('https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients') // Hace una petición GET para obtener la lista de clientes.
+        axios.get('https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients')
             .then(response => {
-                setClients(response.data); // Almacena la lista de clientes en el estado 'clients'.
+                setClients(response.data);
             })
             .catch(error => {
-                console.error('Error fetching clients:', error); // Maneja errores en la petición.
+                console.error('Error fetching clients:', error);
+                setError('Hubo un error al cargar los clientes. Por favor, recargue la página.');
             });
-    }, []); // Este `useEffect` se ejecuta una sola vez cuando el componente se monta.
+    }, []);
 
+    // Manejador para cambios en los inputs del formulario
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setNewClient(prev => ({ ...prev, [name]: value })); // Actualiza el estado de 'newClient' a medida que el usuario cambia los valores en los inputs.
+        setNewClient(prev => ({ ...prev, [name]: value }));
     };
 
+    // Función para cerrar el modal y limpiar los campos
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingClientIndex(null);
+        setNewClient({ firstName: '', lastName: '', phone: '', email: '' });
+        setError(null); // Limpiar cualquier error al cerrar el modal
+    };
 
-    // Add or update client (POST/PUT)
+    // Manejador para enviar el formulario (crear o actualizar cliente)
     const handleSubmit = (e) => {
-        e.preventDefault(); // Evita que el formulario recargue la página.
+        e.preventDefault();
+        setError(null); // Limpiar errores previos
+
+        // Verificar si el email ya existe (para nuevos clientes)
+        if (editingClientIndex === null && clients.some(client => client.email === newClient.email)) {
+            setError('Este correo electrónico ya está en uso. Por favor, use uno diferente.');
+            return;
+        }
+
         const clientData = {
             first_name: newClient.firstName,
             last_name: newClient.lastName,
             email: newClient.email,
             phone: newClient.phone
-        }; // Crea un objeto con los datos del cliente a partir del estado 'newClient'.
+        };
 
-        if (editingClientIndex !== null) { // Si se está editando un cliente (es decir, 'editingClientIndex' no es null):
-            const clientId = clients[editingClientIndex].id; // Obtiene el ID del cliente que se está editando.
-            axios.put(`https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients/${clientId}`, clientData) // Hace una petición PUT para actualizar al cliente.
-                .then(response => {
+        const url = editingClientIndex !== null
+            ? `https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients/${clients[editingClientIndex].id}`
+            : 'https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients';
+
+        const method = editingClientIndex !== null ? 'put' : 'post';
+
+        axios[method](url, clientData, { timeout: 5000 })
+            .then(response => {
+                if (editingClientIndex !== null) {
                     const updatedClients = [...clients];
-                    updatedClients[editingClientIndex] = response.data; // Actualiza la lista de clientes en el estado.
-                    setClients(updatedClients); // Guarda los clientes actualizados en el estado.
-                })
-                .catch(error => {
-                    console.error('Error updating client:', error); // Maneja errores en la actualización.
-                });
-        } else { // Si se está creando un nuevo cliente:
-            axios.post('https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients', clientData, {
-                timeout: 5000 // por ejemplo, 5 segundos
-            }) // Hace una petición POST para agregar un nuevo cliente.
-                .then(response => {
-                    setClients(prevClients => [...prevClients, response.data]); // Añade el nuevo cliente a la lista de clientes.
-                })
-                .catch(error => {
-                    console.error('Error adding client:', error); // Maneja errores en la creación.
-                });
-        }
-
-        setIsModalOpen(false); // Cierra el modal después de enviar el formulario.
-        setEditingClientIndex(null); // Resetea el índice de edición a null.
-        setNewClient({ firstName: '', lastName: '', phone: '', email: '' }); // Limpia los valores de 'newClient'.
-    };
-
-    // Delete client (DELETE request)
-    const handleDeleteClient = (indexToDelete) => {
-        const clientId = clients[indexToDelete].id; // Obtiene el ID del cliente a eliminar.
-        axios.delete(`https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients/${clientId}`) // Hace una petición DELETE para eliminar el cliente.
-            .then(() => {
-                setClients(prevClients => prevClients.filter((_, index) => index !== indexToDelete)); // Elimina el cliente de la lista local.
+                    updatedClients[editingClientIndex] = response.data;
+                    setClients(updatedClients);
+                } else {
+                    setClients(prevClients => [...prevClients, response.data]);
+                }
+                closeModal(); // Usar la nueva función closeModal
             })
             .catch(error => {
-                console.error('Error deleting client:', error); // Maneja errores en la eliminación.
+                if (error.response && error.response.status === 400 && error.response.data === 'Email already exists') {
+                    setError('El correo electrónico ya existe. Por favor, use uno diferente.');
+                } else {
+                    setError('Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo.');
+                }
+                console.error('Error processing client:', error);
             });
     };
 
+    // Manejador para eliminar un cliente
+    const handleDeleteClient = (indexToDelete) => {
+        const clientId = clients[indexToDelete].id;
+        axios.delete(`https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients/${clientId}`)
+            .then(() => {
+                setClients(prevClients => prevClients.filter((_, index) => index !== indexToDelete));
+            })
+            .catch(error => {
+                console.error('Error deleting client:', error);
+                setError('Hubo un error al eliminar el cliente. Por favor, inténtelo de nuevo.');
+            });
+    };
+
+    // Manejador para editar un cliente
     const handleEditClient = (indexToEdit) => {
-        const client = clients[indexToEdit]; // Obtiene el cliente que se va a editar.
+        const client = clients[indexToEdit];
         setNewClient({
             firstName: client.first_name,
             lastName: client.last_name,
             phone: client.phone,
             email: client.email,
-        }); // Llena el formulario con los datos del cliente seleccionado.
-        setEditingClientIndex(indexToEdit); // Guarda el índice del cliente que se está editando.
-        setIsModalOpen(true); // Abre el modal para editar al cliente.
+        });
+        setEditingClientIndex(indexToEdit);
+        setIsModalOpen(true);
     };
 
     return (
@@ -102,6 +121,11 @@ const ClientListTable = () => {
                 <h2 className="fw-semibold">Clientes</h2>
                 <button onClick={() => setIsModalOpen(true)} className="btn btn-warning text-white">+ Agregar cliente</button>
             </div>
+
+            {/* Mostrar errores generales */}
+            {error && !isModalOpen && (
+                <div className="alert alert-danger mt-3">{error}</div>
+            )}
 
             {/* Tabla de clientes */}
             <table className="table table-bordered w-100">
@@ -117,9 +141,7 @@ const ClientListTable = () => {
                     {clients.map((client, index) => (
                         <tr key={index}>
                             <td>{client.first_name} {client.last_name}</td>
-                            <td>
-                                {client.email}
-                            </td>
+                            <td>{client.email}</td>
                             <td>{client.phone}</td>
                             <td>
                                 <div className="d-flex justify-content-around">
@@ -154,10 +176,12 @@ const ClientListTable = () => {
                                     <div className="d-flex align-items-center justify-content-center">
                                         <MdGroups className="fs-1" />
                                     </div>
-                                    <button type="button" className="btn-close" onClick={() => setIsModalOpen(false)}></button>
+                                    <button type="button" className="btn-close" onClick={closeModal}></button>
                                 </div>
                                 <div className="modal-body">
                                     <form onSubmit={handleSubmit}>
+                                        {/* Mostrar errores específicos del formulario */}
+                                        {error && <div className="alert alert-danger">{error}</div>}
                                         <div className="mb-3">
                                             <label className="form-label">Nombre</label>
                                             <input
@@ -205,7 +229,7 @@ const ClientListTable = () => {
                                             </div>
                                         </div>
                                         <div className="modal-footer mt-3">
-                                            <button type="button" className="btn btn-danger" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                                            <button type="button" className="btn btn-danger" onClick={closeModal}>Cancelar</button>
                                             <button type="submit" className="btn btn-warning">{editingClientIndex !== null ? 'Actualizar' : 'Crear'}</button>
                                         </div>
                                     </form>
