@@ -1,10 +1,11 @@
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db, User
-from api.routes import api, direcciones_bp
+from api.routes import api, direcciones_bp, socios_bp
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_cors import CORS
@@ -34,6 +35,8 @@ db.init_app(app)
 app.register_blueprint(api)
 # Registra el blueprint de direcciones
 app.register_blueprint(direcciones_bp)
+# Registrar el Blueprint de socios
+app.register_blueprint(socios_bp)
 
 
 # Handle/serialize errors like a JSON object

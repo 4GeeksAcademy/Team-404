@@ -10,8 +10,6 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from api.models import Direccion, db, User, ContactMessage , Vehiculo, Client
 
 
-
-
 # Habilita CORS para todas las rutas y orígenes
 api = Blueprint('api', __name__)
 CORS(api)
@@ -186,8 +184,7 @@ def reset_password(token):
     except Exception as e:
         print(f"Error en /api/reset-password: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
-
-   
+      
 # Define el blueprint para las direcciones
 direcciones_bp = Blueprint('direcciones', __name__)
 
@@ -257,6 +254,7 @@ def add_direccion():
     except Exception as e:
         print(f"Error en /api/direcciones: {e}")  # Esto imprimirá el error en la consola
         return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+
 # EDITAR DIRECCION
 @direcciones_bp.route('/api/direcciones/<int:id>', methods=['PUT'])
 def update_direccion(id):
@@ -351,7 +349,6 @@ def submit_contact_form():
         return jsonify({"message": "Mensaje de contacto recibido exitosamente"}), 201
 
     except Exception as e:
-
         print(f"Error en /api/contact: {e}")  # Imprime el error completo
         return jsonify({"error": "Error interno del servidor"}), 500
     
@@ -508,3 +505,115 @@ def delete_vehiculo(id):
     else:
         return jsonify({'error': 'Vehículo no encontrado.'}), 404
 
+# Define el blueprint para los socios
+socios_bp = Blueprint('socios', __name__)
+
+# Obtener todos los socios de un usuario
+@socios_bp.route('/api/socios', methods=['GET'])
+def obtener_socios():
+    try:
+        # Obtener el user_id de los parámetros de la consulta (query string)
+        user_id = request.args.get('user_id')
+
+        if not user_id:
+            return jsonify({"error": "Falta el parámetro 'user_id'"}), 400
+
+        # Filtrar los socios por el user_id
+        socios = Socio.query.filter_by(user_id=user_id).all()
+
+        # Serializar los socios
+        return jsonify([socio.serialize() for socio in socios]), 200
+
+    except Exception as e:
+        print(f"Error en /api/socios: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+
+# Crear un nuevo socio
+@socios_bp.route('/api/socios', methods=['POST'])
+def agregar_socio():
+    try:
+        # Obtener datos del cuerpo de la petición (request body)
+        data = request.get_json()
+
+        # Validar si se enviaron todos los campos necesarios
+        user_id = data.get('user_id')
+        nombre = data.get('nombre')
+        email = data.get('email')
+        tipo_precio = data.get('tipo_precio')
+        precio = data.get('precio')
+        periodos_espera = data.get('periodos_espera')
+        incluir_peajes = data.get('incluir_peajes')
+
+        if not user_id or not nombre or not email or not tipo_precio:
+            return jsonify({'error': 'Faltan datos'}), 400
+
+        # Crear un nuevo socio
+        nuevo_socio = Socio(
+            user_id=user_id,
+            nombre=nombre,
+            email=email,
+            tipo_precio=tipo_precio,
+            precio=precio,
+            periodos_espera=periodos_espera,
+            incluir_peajes=incluir_peajes
+        )
+
+        # Agregar el socio a la base de datos
+        db.session.add(nuevo_socio)
+        db.session.commit()
+
+        # Devolver respuesta
+        return jsonify({'mensaje': 'Socio agregado exitosamente', 'socio': nuevo_socio.serialize()}), 201
+
+    except Exception as e:
+        print(f"Error en /api/socios: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+
+# Editar un socio
+@socios_bp.route('/api/socios/<email>', methods=['PUT'])
+def editar_socio(email):
+    try:
+        # Buscar el socio por su email
+        socio = Socio.query.filter_by(email=email).first()
+
+        if not socio:
+            return jsonify({'error': 'Socio no encontrado'}), 404
+
+        # Obtener datos del cuerpo de la petición
+        data = request.get_json()
+
+        # Actualizar los datos del socio
+        socio.nombre = data.get('nombre', socio.nombre)
+        socio.tipo_precio = data.get('tipo_precio', socio.tipo_precio)
+        socio.precio = data.get('precio', socio.precio)
+        socio.periodos_espera = data.get('periodos_espera', socio.periodos_espera)
+        socio.incluir_peajes = data.get('incluir_peajes', socio.incluir_peajes)
+
+        # Guardar los cambios en la base de datos
+        db.session.commit()
+
+        return jsonify({'mensaje': 'Socio actualizado exitosamente', 'socio': socio.serialize()}), 200
+
+    except Exception as e:
+        print(f"Error en /api/socios/<email>: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+
+# Eliminar un socio
+@socios_bp.route('/api/socios/<email>', methods=['DELETE'])
+def eliminar_socio(email):
+    try:
+        # Buscar el socio por su email
+        socio = Socio.query.filter_by(email=email).first()
+
+        if not socio:
+            return jsonify({'error': 'Socio no encontrado'}), 404
+
+        # Eliminar el socio de la base de datos
+        db.session.delete(socio)
+        db.session.commit()
+
+        return jsonify({'mensaje': 'Socio eliminado exitosamente'}), 200
+
+    except Exception as e:
+        print(f"Error en /api/socios/<email>: {e}")
+        return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
