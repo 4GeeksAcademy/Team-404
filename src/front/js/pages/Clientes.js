@@ -20,7 +20,7 @@ const ClientListTable = () => {
 
     // Efecto para cargar los clientes al montar el componente
     useEffect(() => {
-        axios.get('https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients')
+        axios.get('https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/clients')
             .then(response => {
                 setClients(response.data);
             })
@@ -63,8 +63,8 @@ const ClientListTable = () => {
         };
 
         const url = editingClientIndex !== null
-            ? `https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients/${clients[editingClientIndex].id}`
-            : 'https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients';
+            ? `https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/clients/${clients[editingClientIndex].id}`
+            : 'https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/clients';
 
         const method = editingClientIndex !== null ? 'put' : 'post';
 
@@ -92,7 +92,7 @@ const ClientListTable = () => {
     // Manejador para eliminar un cliente
     const handleDeleteClient = (indexToDelete) => {
         const clientId = clients[indexToDelete].id;
-        axios.delete(`https://curly-umbrella-pj7vjjxqwxqr2v74-3001.app.github.dev/api/clients/${clientId}`)
+        axios.delete(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/clients/${clientId}`)
             .then(() => {
                 setClients(prevClients => prevClients.filter((_, index) => index !== indexToDelete));
             })

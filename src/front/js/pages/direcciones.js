@@ -53,7 +53,7 @@ export const Direcciones = () => {
 
     useEffect(() => {
         if (currentUserId) {
-            axios.get(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones?user_id=${currentUserId}`)
+            axios.get(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/direcciones?user_id=${currentUserId}`)
                 .then(response => {
                     if (Array.isArray(response.data)) {
                         setDirecciones(response.data);
@@ -149,7 +149,7 @@ export const Direcciones = () => {
             user_id: currentUserId,
         };
 
-        axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones', newAddress)
+        axios.post('https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/direcciones', newAddress)
             .then(response => {
                 console.log("Dirección creada: ", response.data);
                 setDirecciones(prevDirecciones => [...prevDirecciones, response.data]);
@@ -188,7 +188,7 @@ export const Direcciones = () => {
             user_id: currentUserId,
         };
 
-        axios.put(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones/${currentAddressId}`, updatedAddress)
+        axios.put(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/direcciones/${currentAddressId}`, updatedAddress)
             .then(response => {
                 console.log("Dirección actualizada: ", response.data);
                 setDirecciones(prevDirecciones =>
@@ -213,7 +213,7 @@ export const Direcciones = () => {
     const handleDelete = (id) => {
         const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta dirección?");
         if (confirmDelete) {
-            axios.delete(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/direcciones/${id}`, {
+            axios.delete(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/direcciones/${id}`, {
                 data: { user_id: currentUserId } // Asegúrate de que currentUserId esté definido
             })
                 .then(() => {

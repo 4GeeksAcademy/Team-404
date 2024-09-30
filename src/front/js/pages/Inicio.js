@@ -50,7 +50,7 @@ export const Inicio = () => {
 
         try {
             const response = await axios.post(
-                'https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/login',
+                'https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/login',
                 signupData,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -78,7 +78,7 @@ export const Inicio = () => {
 
         try {
             const response = await axios.post(
-                'https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/register',
+                'https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/register',
                 registerData,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -103,7 +103,7 @@ export const Inicio = () => {
 
         try {
             await axios.post(
-                'https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/forgot-password',
+                'https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/forgot-password',
                 { email: forgotPasswordEmail },
                 {
                     headers: { "Content-Type": "application/json" },

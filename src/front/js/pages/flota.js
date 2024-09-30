@@ -95,11 +95,11 @@ export const Flota = () => {
 
                 if (vehiculoData.id) {
                     // Editar vehículo existente
-                    const response = await axios.put(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/vehiculos/${vehiculoData.id}`, updatedVehiculoData);
+                    const response = await axios.put(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/vehiculos/${vehiculoData.id}`, updatedVehiculoData);
                     console.log('Vehículo editado', response.data);
                 } else {
                     // Agregar nuevo vehículo
-                    const response = await axios.post('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/vehiculos', updatedVehiculoData);
+                    const response = await axios.post('https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/vehiculos', updatedVehiculoData);
                     console.log('Vehículo guardado', response.data);
                 }
                 fetchVehiculos();
@@ -115,7 +115,7 @@ export const Flota = () => {
 
     const fetchVehiculos = async () => {
         try {
-            const response = await axios.get('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/vehiculos');
+            const response = await axios.get('https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/vehiculos');
             setVehiculos(response.data);
         } catch (error) {
             console.error('Error al obtener vehículos:', error);
@@ -130,7 +130,7 @@ export const Flota = () => {
     const handleDelete = async (id) => {
         if (window.confirm("¿Estás seguro de que quieres eliminar este vehículo?")) {
             try {
-                await axios.delete(`https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/vehiculos/${id}`);
+                await axios.delete(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/vehiculos/${id}`);
                 console.log('Vehículo eliminado');
                 fetchVehiculos();
             } catch (error) {

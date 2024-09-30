@@ -38,7 +38,6 @@ class User(db.Model):
             'created_at': self.created_at,
             'direcciones': [direccion.serialize() for direccion in self.direcciones],
             'vehiculos': [vehiculo.serialize() for vehiculo in self.vehiculos],
-            'conductores': [conductor.to_dict() for conductor in self.conductores]
         }
 
 class Direccion(db.Model):
@@ -139,44 +138,4 @@ class Vehiculo(db.Model):
             'emision': self.emision,
             'created_at': self.created_at.isoformat(),  # Formato ISO
             'user_id': self.user_id
-        }
-
-
-class Conductor(db.Model):
-    __tablename__ = 'conductores'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(100), nullable=False)
-    apellidos = db.Column(db.String(100), nullable=False)
-    fecha_nacimiento = db.Column(db.Date, nullable=False)
-    poblacion = db.Column(db.String(100), nullable=True)
-    ciudad = db.Column(db.String(100), nullable=True)
-    sueldo = db.Column(db.Float, nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    # Clave foránea que establece la relación con User
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # Opcionalmente puedes hacer que no sea nulo si cada conductor debe tener un usuario
-    user = db.relationship('User', backref='conductores')  # Relación inversa para acceder a los conductores desde el usuario
-
-    def __repr__(self):
-        return f'<Conductor {self.nombre} {self.apellidos}>'
-
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-
-            'first_name': self.first_name,
-            'last_name': self.last_name,
-            'phone': self.phone,
-            'email': self.email,
-            'nombre': self.nombre,
-            'apellidos': self.apellidos,
-            'fecha_nacimiento': self.fecha_nacimiento.strftime('%Y-%m-%d'),
-            'poblacion': self.poblacion,
-            'ciudad': self.ciudad,
-            'sueldo': self.sueldo,
-            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-            'user_id': self.user_id,  # Incluir user_id en la representación del dict
-
         }

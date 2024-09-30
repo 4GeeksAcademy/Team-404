@@ -7,10 +7,7 @@ import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-
-from api.models import Direccion, db, User, ContactMessage
-from api.models import Client
-from api.models import Direccion, db, User, ContactMessage , Vehiculo
+from api.models import Direccion, db, User, ContactMessage , Vehiculo, Client
 
 
 
@@ -19,19 +16,19 @@ from api.models import Direccion, db, User, ContactMessage , Vehiculo
 api = Blueprint('api', __name__)
 CORS(api)
 
-SECRET_KEY = 'tu_clave_secreta'  # Cambia esto a una clave secreta más segura
-RESET_SECRET_KEY = 'tu_clave_secreta_reset'  # Otra clave secreta para la recuperación
-MAIL_SENDER = 'your-email@example.com'
+SECRET_KEY = os.getenv('SECRET_KEY', 'tu_clave_secreta')  # Usa una variable de entorno para mayor seguridad
+RESET_SECRET_KEY = os.getenv('RESET_SECRET_KEY', 'tu_clave_secreta_reset')
+MAIL_SENDER = os.getenv('MAIL_SENDER', 'your-email@example.com')
 
 mail = Mail()
 serializer = URLSafeTimedSerializer(RESET_SECRET_KEY)
 
-
 # Endpoint para decir hola
-@api.route('/api/hello', methods=['POST', 'GET'])
+
+@api.route('/api/hello', methods=['GET', 'POST'])
 def handle_hello():
     response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
+        "message": "Hello! I'm a message that came from the backend."
     }
     return jsonify(response_body), 200
 
@@ -107,6 +104,7 @@ def login_user():
         print(f"Error en /api/login: {e}")
         return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
+# Obtener datos del usuario autenticado (con JWT)
 # Obtener datos del usuario autenticado (con JWT)
 @api.route('/api/user', methods=['GET'])
 def get_user_profile():

@@ -17,7 +17,7 @@ const Contacto = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/contact', {
+            const response = await fetch('https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/contact', {
 
                 method: 'POST',
                 headers: {

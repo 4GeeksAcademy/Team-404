@@ -34,7 +34,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error("Token no disponible.");
 					}
 
-					const apiUrl = "https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/user";
+					const apiUrl = "https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/user";
 					const headers = {
 						Authorization: `Bearer ${token}`
 					};
@@ -43,7 +43,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					// Almacena los datos del usuario en el estado global
 					setStore({ userData: response.data });
-					
+
 				} catch (err) {
 					console.log("Error al cargar los datos del usuario:", err.message);
 				}
@@ -58,7 +58,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Función para obtener el mensaje del backend
 			getMessage: async () => {
 				try {
-					const resp = await fetch("https://refactored-space-couscous-69wrxv6769929wr-3001.app.github.dev/api/hello");
+					const resp = await fetch("https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/hello");
+					if (!resp.ok) {
+						throw new Error(`HTTP error! status: ${resp.status}`);
+					}
 					const data = await resp.json();
 					setStore({ message: data.message });
 					return data;
@@ -66,7 +69,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error);
 				}
 			},
-
 			// Cambiar el color en el array demo
 			changeColor: (index, color) => {
 				const store = getStore();

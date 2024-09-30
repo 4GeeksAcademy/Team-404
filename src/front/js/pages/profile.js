@@ -35,7 +35,7 @@ const Profile = () => {
     };
 
     const handleLogout = () => {
-        window.location.href = "https://refactored-space-couscous-69wrxv6769929wr-3000.app.github.dev/";
+        window.location.href = "https://effective-space-couscous-v66946px9jwjhxw65-3000.app.github.dev//";
     };
 
     const searchLocation = async (location) => {
@@ -61,10 +61,10 @@ const Profile = () => {
             try {
                 // Iniciar el estado de carga
                 setLoading(true);
-                
+
                 // Llamar a la función de Flux para obtener los datos del usuario
                 await actions.fetchUserData();
-                
+
                 // Actualizar el estado 'user' cuando los datos se obtienen
                 if (store.userData) {
                     setUser(store.userData);
@@ -79,7 +79,7 @@ const Profile = () => {
                 setLoading(false);
             }
         };
-    
+
         fetchData();
     }, []); // El array vacío asegura que solo se ejecute una vez al montar el componente
 

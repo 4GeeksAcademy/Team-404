@@ -15,9 +15,7 @@ static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../
 app = Flask(__name__)
 
 # Configura CORS para permitir solicitudes desde los frontends especificados
-CORS(app, resources={r"/api/*": {"origins": [
-    "https://refactored-space-couscous-69wrxv6769929wr-3000.app.github.dev"
-]}})
+CORS(app)
 
 app.url_map.strict_slashes = False
 
