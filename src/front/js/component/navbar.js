@@ -1,19 +1,22 @@
 import React, { useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Cambia useHistory por useNavigate
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Context } from '../store/appContext';
 
 export const Navbar = () => {
-    const { store, actions } = useContext(Context); // Accediendo al contexto
-    const navigate = useNavigate(); // Usando useNavigate para manejar la navegación
+    const { store, actions } = useContext(Context);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        actions.fetchUserData(); // Cargar datos del usuario al montar el componente
+        actions.fetchUserData();
     }, []);
 
     const handleProfileClick = () => {
-        navigate('/profile'); // Navegar a la ruta de perfil
-        window.location.reload(); // Recargar la página
+        navigate('/profile');
+        window.location.reload();
     };
+
+    const isHomePage = location.pathname === "/";
 
     return (
         <>
@@ -28,24 +31,43 @@ export const Navbar = () => {
                     height: '56px'
                 }}>
                 <div className="container-fluid">
-                    <Link 
-                        className="navbar-brand d-flex align-items-center" 
-                        to="#" // Cambia el 'to' a '#'
-                        style={{ 
-                            color: '#000', // Cambiar el color del texto a negro
-                            fontSize: '1.2rem', // Aumentar el tamaño de la fuente
-                            backgroundColor: '#ffc107', // Fondo amarillo
-                            padding: '0.5rem 1rem', // Espaciado interno
-                            borderRadius: '5px', // Bordes redondeados
-                            fontWeight: 'bold', // Negrita
-                            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)', // Sombra
-                            transition: 'all 0.3s', // Transición suave
-                        }}
-                        onClick={handleProfileClick} // Llamar a la función al hacer clic
-                    >
-                        RutaTrack
-                        <span className="ms-2">🚚</span>
-                    </Link>
+                    {isHomePage ? (
+                        <span 
+                            className="navbar-brand d-flex align-items-center" 
+                            style={{ 
+                                color: '#000', 
+                                fontSize: '1.2rem', 
+                                backgroundColor: '#ffc107', 
+                                padding: '0.5rem 1rem', 
+                                borderRadius: '5px', 
+                                fontWeight: 'bold', 
+                                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)', 
+                                transition: 'all 0.3s', 
+                            }}
+                        >
+                            RutaTrack
+                            <span className="ms-2">🚚</span>
+                        </span>
+                    ) : (
+                        <Link 
+                            className="navbar-brand d-flex align-items-center" 
+                            to="#" 
+                            style={{ 
+                                color: '#000', 
+                                fontSize: '1.2rem', 
+                                backgroundColor: '#ffc107', 
+                                padding: '0.5rem 1rem', 
+                                borderRadius: '5px', 
+                                fontWeight: 'bold', 
+                                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)', 
+                                transition: 'all 0.3s', 
+                            }}
+                            onClick={handleProfileClick}
+                        >
+                            RutaTrack
+                            <span className="ms-2">🚚</span>
+                        </Link>
+                    )}
                     <div className="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02">
                         <ul className="navbar-nav mb-2 mb-lg-0">
                             <li className="nav-item">
@@ -61,17 +83,17 @@ export const Navbar = () => {
                                 <span 
                                     className="nav-link" 
                                     style={{ 
-                                        color: '#000', // Cambiar el color del texto a negro
+                                        color: '#000',
                                         fontSize: '0.9rem',
-                                        backgroundColor: '#ffc107', // Fondo amarillo
-                                        padding: '0.5rem 1rem', // Espaciado interno
-                                        borderRadius: '5px', // Bordes redondeados
-                                        fontWeight: 'bold', // Negrita
-                                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)', // Sombra
-                                        transition: 'all 0.3s', // Transición suave
+                                        backgroundColor: '#ffc107',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '5px',
+                                        fontWeight: 'bold',
+                                        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)', 
+                                        transition: 'all 0.3s', 
                                     }}
                                 >
-                                    ¡BIENVENIDO {store.userData && store.userData.name ? store.userData.name : 'Invitado'}!
+                                    {isHomePage ? "¡Bienvenido!" : `Hola ${store.userData && store.userData.name ? store.userData.name : 'Invitado'}!`}
                                 </span>
                             </li>
                         </ul>
