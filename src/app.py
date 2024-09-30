@@ -20,7 +20,7 @@ if ENV == "development":
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 else:
     CORS(app, resources={r"/api/*": {"origins": [
-        "https://improved-space-bassoon-pjgr44q75v47h59r-3000.app.github.dev"
+        "https://urban-enigma-v6gv997pj9x6hxpgw-3000.app.github.dev"
     ]}})
 
 app.url_map.strict_slashes = False

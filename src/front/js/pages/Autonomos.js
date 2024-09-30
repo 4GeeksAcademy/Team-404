@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // Importa axios
 
 const Autonomos = () => {
   // Estado para almacenar los colaboradores
@@ -26,13 +27,10 @@ const Autonomos = () => {
   // Función para agregar un nuevo colaborador (y enviar datos a la API)
   const agregarColaborador = async () => {
     try {
-      // Enviar datos del nuevo colaborador a la API de Flask
-      const response = await fetch('https://improved-space-bassoon-pjgr44q75v47h59r-3001.app.github.dev/api/socios', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Enviar datos del nuevo colaborador a la API de Flask usando axios
+      const response = await axios.post(
+        'https://improved-space-bassoon-pjgr44q75v47h59r-3001.app.github.dev/api/socios',
+        {
           user_id: 1, // Aquí deberías pasar el user_id correcto
           nombre: formData.nombre,
           email: formData.email,
@@ -40,15 +38,16 @@ const Autonomos = () => {
           precio: formData.precio,
           periodos_espera: formData.periodosEspera,
           incluir_peajes: formData.incluirPeajes
-        })
-      });
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
-      if (!response.ok) {
-        throw new Error('Error al agregar colaborador');
-      }
-
-      // Obtener la respuesta JSON
-      const nuevoSocio = await response.json();
+      // Obtener el nuevo socio de la respuesta
+      const nuevoSocio = response.data;
 
       // Agregar el nuevo socio a la lista de colaboradores
       setColaboradores([...colaboradores, nuevoSocio.socio]);
@@ -194,7 +193,6 @@ const Autonomos = () => {
           </div>
         </div>
 
-
         {/* HTML para mostrar los colaboradores */}
         <div className="text-start border border-secondary rounded-3 mw-100 m-3 pb-2">
           <div className="row justify-content-evenly mx-0">
@@ -216,9 +214,10 @@ const Autonomos = () => {
             </div>
           ))}
         </div>
-      </div>;
+      </div>
     </div>
   );
 };
 
 export default Autonomos;
+

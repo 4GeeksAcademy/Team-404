@@ -17,7 +17,7 @@ const Profile = () => {
     const fetchUserData = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/user", {
+            const response = await axios.get("https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/user", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

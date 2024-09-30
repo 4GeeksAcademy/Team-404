@@ -82,7 +82,7 @@
 		"@radix-ui/react-alert-dialog": "^1.1.1",
 		"@react-google-maps/api": "^2.19.3",
 		"@vis.gl/react-google-maps": "^1.1.2",
-		"axios": "^1.7.5",
+		"axios": "^1.7.7",
 		"markerclustererplus": "^2.1.4",
 		"prop-types": "^15.6.1",
 		"react": "^16.14.0",

@@ -49,7 +49,7 @@ export const Inicio = () => {
 
         try {
             const response = await axios.post(
-                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/login',
+                'https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/login',
                 signupData,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -75,7 +75,7 @@ export const Inicio = () => {
 
         try {
             const response = await axios.post(
-                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/register',
+                'https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/register',
                 registerData,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -100,7 +100,7 @@ export const Inicio = () => {
 
         try {
             await axios.post(
-                'https://super-duper-trout-v66946px9wp5f6p6w-3001.app.github.dev/api/forgot-password',
+                'https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/forgot-password',
                 { email: forgotPasswordEmail },
                 {
                     headers: { "Content-Type": "application/json" },
