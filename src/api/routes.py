@@ -6,7 +6,7 @@ import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from api.models import Direccion, db, User, ContactMessage
+from api.models import Direccion, db, User, ContactMessage, Socio
 
 api = Blueprint('api', __name__)
 CORS(api, support_credentials=True)
@@ -346,9 +346,6 @@ def submit_contact_form():
     except Exception as e:
         print(f"Error en /api/contact: {e}")
         return jsonify({"error": "Error interno del servidor"}), 500
-
-
-
 
 # Define el blueprint para los socios
 socios_bp = Blueprint('socios', __name__)
