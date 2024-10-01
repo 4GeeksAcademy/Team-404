@@ -18,6 +18,7 @@ const Autonomos = () => {
 
   // Obtener la lista de colaboradores desde la API al cargar el componente
   useEffect(() => {
+    console.log(process.env.BACKEND_URL)
     const obtenerColaboradores = async () => {
       try {
         const response = await axios.get('https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/socios');
