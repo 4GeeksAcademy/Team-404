@@ -34,7 +34,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw new Error("Token no disponible.");
 					}
 
-					const apiUrl = "https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/user";
+					const apiUrl = `${process.env.BACKEND_URL}/api/user`;
 					const headers = {
 						Authorization: `Bearer ${token}`
 					};
@@ -58,7 +58,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Función para obtener el mensaje del backend
 			getMessage: async () => {
 				try {
-					const resp = await fetch("https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/hello");
+					const resp = await fetch(`${process.env.BACKEND_URL}/api/hello`);
 					if (!resp.ok) {
 						throw new Error(`HTTP error! status: ${resp.status}`);
 					}

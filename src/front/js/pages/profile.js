@@ -22,7 +22,7 @@ const Profile = () => {
     const fetchUserData = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/user", {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/user`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -52,7 +52,7 @@ const Profile = () => {
     };
 
     const handleLogout = () => {
-        window.location.href = "https://effective-space-couscous-v66946px9jwjhxw65-3000.app.github.dev/";
+        window.location.href = `${process.env.BACKEND_URL}`;
     };
 
     const searchLocation = async (location) => {

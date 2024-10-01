@@ -18,9 +18,9 @@ const ClientListTable = () => {
     const [clients, setClients] = useState([]);
     const [error, setError] = useState(null); // Nuevo estado para manejar errores
 
-    // Efecto para cargar los clientes al montar el componente
+    // Efecto para cargar los clientes al montar el componente 
     useEffect(() => {
-        axios.get('https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/clients')
+        axios.get(`${process.env.BACKEND_URL}/api/clients`)
             .then(response => {
                 setClients(response.data);
             })
@@ -63,8 +63,8 @@ const ClientListTable = () => {
         };
 
         const url = editingClientIndex !== null
-            ? `https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/clients/${clients[editingClientIndex].id}`
-            : 'https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/clients';
+            ? `${process.env.BACKEND_URL}/api/clients/${clients[editingClientIndex].id}`
+            : `${process.env.BACKEND_URL}/api/clients`;
 
         const method = editingClientIndex !== null ? 'put' : 'post';
 
@@ -92,7 +92,7 @@ const ClientListTable = () => {
     // Manejador para eliminar un cliente
     const handleDeleteClient = (indexToDelete) => {
         const clientId = clients[indexToDelete].id;
-        axios.delete(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/clients/${clientId}`)
+        axios.delete(`${process.env.BACKEND_URL}/api/clients/${clientId}`)
             .then(() => {
                 setClients(prevClients => prevClients.filter((_, index) => index !== indexToDelete));
             })

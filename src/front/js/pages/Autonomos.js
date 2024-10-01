@@ -18,10 +18,9 @@ const Autonomos = () => {
 
   // Obtener la lista de colaboradores desde la API al cargar el componente
   useEffect(() => {
-    console.log(process.env.BACKEND_URL)
     const obtenerColaboradores = async () => {
       try {
-        const response = await axios.get('https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/socios');
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/socios`);
         setColaboradores(response.data); // Cambia aquí para usar Axios
       } catch (error) {
         console.error('Error:', error);
@@ -44,7 +43,7 @@ const Autonomos = () => {
   const agregarColaborador = async () => {
     try {
       // Enviar datos del nuevo colaborador a la API de Flask usando Axios
-      const response = await axios.post('https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/socios', {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/socios`, {
         user_id: 1, // Aquí deberías pasar el user_id correcto
         nombre: formData.nombre,
         email: formData.email,
@@ -80,7 +79,7 @@ const Autonomos = () => {
   // Función para eliminar un colaborador (y eliminarlo del servidor)
   const eliminarColaborador = async (id) => {
     try {
-      await axios.delete(`https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/socios/${id}`); 
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/socios/${id}`); 
 
       // Actualizar la lista de colaboradores eliminando el colaborador eliminado
       setColaboradores(colaboradores.filter(colaborador => colaborador.id !== id));

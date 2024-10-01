@@ -3,6 +3,7 @@ import axios from "axios";
 import { Loader } from '@googlemaps/js-api-loader';
 import "../../styles/direccion.css";
 import { Context } from '../store/appContext';
+import ControlPanel from "../component/panelControl";
 
 export const Direcciones = () => {
     const { store } = useContext(Context);
@@ -53,7 +54,7 @@ export const Direcciones = () => {
 
     useEffect(() => {
         if (currentUserId) {
-            axios.get(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/direcciones?user_id=${currentUserId}`)
+            axios.get(`${process.env.BACKEND_URL}/api/direcciones?user_id=${currentUserId}`)
                 .then(response => {
                     if (Array.isArray(response.data)) {
                         setDirecciones(response.data);
@@ -149,7 +150,7 @@ export const Direcciones = () => {
             user_id: currentUserId,
         };
 
-        axios.post('https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/direcciones', newAddress)
+        axios.post(`${process.env.BACKEND_URL}/api/direcciones`, newAddress)
             .then(response => {
                 console.log("Dirección creada: ", response.data);
                 setDirecciones(prevDirecciones => [...prevDirecciones, response.data]);
@@ -188,7 +189,7 @@ export const Direcciones = () => {
             user_id: currentUserId,
         };
 
-        axios.put(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/direcciones/${currentAddressId}`, updatedAddress)
+        axios.put(`${process.env.BACKEND_URL}/api/direcciones/${currentAddressId}`, updatedAddress)
             .then(response => {
                 console.log("Dirección actualizada: ", response.data);
                 setDirecciones(prevDirecciones =>
@@ -213,7 +214,7 @@ export const Direcciones = () => {
     const handleDelete = (id) => {
         const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar esta dirección?");
         if (confirmDelete) {
-            axios.delete(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/direcciones/${id}`, {
+            axios.delete(`${process.env.BACKEND_URL}/api/direcciones/${id}`, {
                 data: { user_id: currentUserId } // Asegúrate de que currentUserId esté definido
             })
                 .then(() => {
