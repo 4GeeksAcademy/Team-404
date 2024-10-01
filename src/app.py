@@ -18,6 +18,7 @@ app = Flask(__name__)
 # Configura CORS para permitir solicitudes desde los frontends especificados
 CORS(app)
 
+
 app.url_map.strict_slashes = False
 
 # Database configuration

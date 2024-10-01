@@ -7,8 +7,7 @@ import jwt
 import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
-from api.models import Direccion, db, User, ContactMessage , Vehiculo, Client
-
+from api.models import Direccion, db, User, ContactMessage , Vehiculo, Client, Socio
 
 # Habilita CORS para todas las rutas y orígenes
 api = Blueprint('api', __name__)
@@ -406,8 +405,6 @@ def delete_client(id):
     db.session.commit()
     
     return '', 204
-
-
 
 # Parte "VEHICULOS"
 # Metodo "GET"

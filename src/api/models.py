@@ -148,7 +148,7 @@ class Socio(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     tipo_precio = db.Column(db.String(50), nullable=False)
     precio = db.Column(db.Float, nullable=True)
-    periodos_espera = db.Column(db.Integer, nullable=True)
+    periodos_espera = db.Column(db.Float, nullable=True)
     incluir_peajes = db.Column(db.Boolean, nullable=True)
 
     def serialize(self):

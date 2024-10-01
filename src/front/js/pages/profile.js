@@ -18,6 +18,23 @@ const Profile = () => {
 
 
 
+    // Función para obtener los datos del usuario autenticado
+    const fetchUserData = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.get("https://urban-enigma-v6gv997pj9x6hxpgw-3001.app.github.dev/api/user", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setUser(response.data);
+        } catch (err) {
+            setError("No se pudieron cargar los datos del usuario.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const initializeMap = () => {
         const loader = new Loader({
             apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
