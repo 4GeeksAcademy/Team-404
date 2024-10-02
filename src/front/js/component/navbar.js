@@ -2,6 +2,10 @@ import React, { useEffect, useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Context } from '../store/appContext';
 import '../../styles/navbar.css'; // Archivo CSS actualizado
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+
+
 
 export const Navbar = () => {
     const { store, actions } = useContext(Context);
@@ -138,15 +142,61 @@ export const Navbar = () => {
                     )}
                     <div className="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02">
                         <ul className="navbar-nav mb-2 mb-lg-0">
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/" aria-current="page" style={{ color: '#ffc107', fontSize: '0.9rem' }}>Inicio</Link>
+                            {/* Botón Panel de Control */}
+                            <li className="nav-item dropdown">
+                                <button
+                                    className="btn btn-secondary dropdown-toggle"
+                                    type="button"
+                                    id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    style={{
+                                        marginRight: '10px', // Espaciado a la derecha
+                                        fontWeight: 'bold', // Negrita
+                                    }}
+                                >
+                                    Panel de Control
+                                </button>
+                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <Link className="dropdown-item" to="/Mapa" onClick={() => { window.location.href = "/Mapa"; }}>
+                                            <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link className="dropdown-item" to="/direcciones">
+                                            <FontAwesomeIcon icon={faHome} /> Mis Direcciones
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link className="dropdown-item" to="/flota">
+                                            <FontAwesomeIcon icon={faTruck} /> Vehículos
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link className="dropdown-item" to="/autonomos">
+                                            <FontAwesomeIcon icon={faUserTie} /> Autónomos
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link className="dropdown-item" to="/clientes">
+                                            <FontAwesomeIcon icon={faUsers} /> Clientes
+                                        </Link>
+                                    </li>
+                                </ul>
                             </li>
+
+                            {/* Enlace a Nosotros */}
                             <li className="nav-item">
                                 <Link className="nav-link" to="/sobreNosotros" style={{ color: '#ffc107', fontSize: '0.9rem' }}>Nosotros</Link>
                             </li>
+
+                            {/* Enlace a Contacto */}
                             <li className="nav-item">
                                 <Link className="nav-link" to="/Contacto" style={{ color: '#ffc107', fontSize: '0.9rem' }}>Contacto</Link>
                             </li>
+
+                            {/* Botón de usuario */}
                             <li className="nav-item dropdown">
                                 <button
                                     className="nav-link dropdown-toggle"
