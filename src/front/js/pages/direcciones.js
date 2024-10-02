@@ -262,7 +262,7 @@ export const Direcciones = () => {
                             <option value="cliente">🤵  Cliente</option>
                         </select>
                     </label>
-                    <button className="btn btn-primary" onClick={openModal}>Nueva dirección</button>
+                    <button className="btn btn-warning" onClick={openModal}>Nueva dirección</button>
                 </div>
 
                 <table className="table table-striped table-hover text-center">
@@ -402,7 +402,7 @@ export const Direcciones = () => {
                                 {currentAddressId ? (
                                     <button type="button" className="direccion-btn" onClick={handleSaveChanges}>Guardar Cambios</button>
                                 ) : (
-                                    <button type="button" className="direccion-btn" onClick={handleCreateAddress}>Crear Dirección</button>
+                                    <button type="button" className="direccion-btn " onClick={handleCreateAddress}>Crear Dirección</button>
                                 )}
                             </div>
                         </div>

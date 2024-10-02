@@ -134,7 +134,7 @@
 }
 
 .search-btn {
-    background-color: #007bff; /* Azul moderno */
+    background-color: #ffc107; /* Azul moderno */
     color: white;
     border: none;
     padding: 10px 20px;
@@ -174,7 +174,7 @@
 
 /* Estilo para el botón de dirección */
 .direccion-btn {
-    background-color: #007bff;
+    background-color: #ffc107;
     color: white;
     border: none;
     padding: 10px 20px;

@@ -2,13 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import CalculateDistance from '../component/calculateDistance';
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { Link } from 'react-router-dom';
 import ControlPanel from '../component/panelControl';
-import { useNavigate } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom'; // Importa useNavigate
 
 const Mapa = () => {
     const apiOptions = { apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY };
+    const navigate = useNavigate(); // Define navigate para manejar navegación
 
     const mapRef = useRef(null);
     const [map, setMap] = useState(null);
@@ -59,10 +58,17 @@ const Mapa = () => {
         setRouteInfo(null);
     };
 
+    // Función para navegar al perfil
+    const handleProfileClick = () => {
+        navigate('/profile'); // Navega al perfil sin recargar
+        window.location.reload();
+    };
+
     const iconStyle = {
         fontSize: '2rem',
         color: '#ffc107',
         transition: 'color 0.3s ease',
+        cursor: 'pointer', // Añade cursor pointer para mostrar que es clicable
     };
 
     return (
@@ -93,6 +99,7 @@ const Mapa = () => {
                                     onRouteInfo={handleRouteInfo}
                                     onClearRoute={clearRoute}
                                 />
+
                             </div>
                         </div>
                     </div>

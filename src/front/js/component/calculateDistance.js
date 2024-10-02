@@ -298,7 +298,7 @@ const CalculateDistance = ({ map, onRouteCalculated, onRouteInfo, onClearRoute }
           </div>
         </div>
 
-        <button className="btn btn-primary mt-3" onClick={calculateRoute}>
+        <button className="btn btn-warning mt-3" onClick={calculateRoute}>
           Calcular Ruta
         </button>
         <button className="btn btn-secondary mt-3 ms-2" onClick={resetRoute}>
