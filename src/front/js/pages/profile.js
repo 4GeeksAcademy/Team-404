@@ -18,6 +18,23 @@ const Profile = () => {
 
 
 
+    // Función para obtener los datos del usuario autenticado
+    const fetchUserData = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.get(`${process.env.BACKEND_URL}/api/user`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setUser(response.data);
+        } catch (err) {
+            setError("No se pudieron cargar los datos del usuario.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const initializeMap = () => {
         const loader = new Loader({
             apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -35,7 +52,7 @@ const Profile = () => {
     };
 
     const handleLogout = () => {
-        window.location.href = process.env.REACT_APP_BACKEND_URL;
+        window.location.href = `${process.env.BACKEND_URL}`;
     };
 
     const searchLocation = async (location) => {

@@ -145,3 +145,26 @@ class Vehiculo(db.Model):
             'created_at': self.created_at.isoformat(),  # Formato ISO
             'user_id': self.user_id
         }
+
+class Socio(db.Model):
+    __tablename__ = 'socios'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    nombre = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    tipo_precio = db.Column(db.String(50), nullable=False)
+    precio = db.Column(db.Float, nullable=True)
+    periodos_espera = db.Column(db.Float, nullable=True)
+    incluir_peajes = db.Column(db.Boolean, nullable=True)
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'nombre': self.nombre,
+            'email': self.email,
+            'tipo_precio': self.tipo_precio,
+            'precio': self.precio,
+            'periodos_espera': self.periodos_espera,
+            'incluir_peajes': self.incluir_peajes
+        }

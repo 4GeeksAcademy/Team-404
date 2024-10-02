@@ -22,6 +22,7 @@ import LimitacionDeResponsabilidad from "./pages/limitacionResponsabilidad";
 import Jurisdiccion from "./pages/jurisdiccion";
 import SobreNosotros from "./pages/sobreNosotros";
 import Contacto from "./pages/Contacto";
+import Autonomos from "./pages/Autonomos";
 
 //create your first component
 const Layout = () => {
@@ -53,6 +54,7 @@ const Layout = () => {
                             <Route element={<PoliticaDeCookies />} path="/politicaCookies" />
                             <Route element={<LimitacionDeResponsabilidad />} path="/limitacionResponsabilidad" />
                             <Route element={<Jurisdiccion />} path="/jurisdiccion" />
+                            <Route element={<Autonomos />} path="/autonomos" />
                         </Routes>
                     </div>
                     <Footer />
