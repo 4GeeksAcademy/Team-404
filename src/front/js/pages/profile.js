@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
@@ -15,6 +15,7 @@ const Profile = () => {
     const [map, setMap] = useState(null);
     const mapRef = useRef(null);
     const { store, actions } = useContext(Context);
+    const navigate = useNavigate();
 
 
 
@@ -52,7 +53,7 @@ const Profile = () => {
     };
 
     const handleLogout = () => {
-        window.location.href = `${process.env.BACKEND_URL}`;
+        window.location.href = process.env.REACT_APP_LOGOUT_URL;
     };
 
     const searchLocation = async (location) => {
@@ -146,9 +147,12 @@ const Profile = () => {
                         </Link>
                     </li>
                 </ul>
-                <button onClick={handleLogout} className="logout-button">
-                    <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
-                </button>
+                <Link >
+                    <button onClick={handleLogout} className="logout-button">
+                        <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
+                    </button>
+                </Link>
+
             </div>
 
             <div className="profile-section">
