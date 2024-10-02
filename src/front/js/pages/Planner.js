@@ -7,8 +7,6 @@ import { Link, useNavigate } from 'react-router-dom'; // Importa useNavigate
 
 const Mapa = () => {
     const apiOptions = { apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY };
-    const navigate = useNavigate(); // Define navigate para manejar navegación
-
     const mapRef = useRef(null);
     const [map, setMap] = useState(null);
     const [directionsRenderer, setDirectionsRenderer] = useState(null);

@@ -9,7 +9,12 @@ const ControlPanel = ({ onLogout }) => {
             <h1>Panel de Control</h1>
             <ul>
                 <li>
-                    <Link to="/Mapa">
+                    <Link
+                        to="/Mapa"
+                        onClick={() => {
+                            window.location.href = "/Mapa";
+                        }}
+                    >
                         <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
                     </Link>
                 </li>
