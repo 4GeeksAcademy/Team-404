@@ -502,6 +502,28 @@ def delete_vehiculo(id):
     else:
         return jsonify({'error': 'Vehículo no encontrado.'}), 404
 
+
+#EDITAR LOS DATOS DEL USUARIO DESDE "MI PERFIL"
+@api.route('/api/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    data = request.get_json()
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    # Actualiza los campos permitidos
+    user.name = data.get('name', user.name)
+    user.last_name = data.get('last_name', user.last_name)
+    user.email = data.get('email', user.email)
+    user.company = data.get('company', user.company)
+    user.location = data.get('location', user.location)
+
+    db.session.commit()
+
+    return jsonify(user.serialize()), 200
+
+
 # Define el blueprint para los socios
 socios_bp = Blueprint('socios', __name__)
 
@@ -614,3 +636,4 @@ def eliminar_socio(email):
     except Exception as e:
         print(f"Error en /api/socios/<email>: {e}")
         return jsonify({"error": f"Ocurrió un error en el servidor: {str(e)}"}), 500
+
