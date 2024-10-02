@@ -94,14 +94,14 @@ export const Flota = () => {
                     ejes: vehiculoData.ejes !== '' ? parseInt(vehiculoData.ejes, 10) : null,
                     peso: vehiculoData.peso !== '' ? parseFloat(vehiculoData.peso) : null,
                 };
-
+    
                 if (vehiculoData.id) {
                     // Editar vehículo existente
                     const response = await axios.put(`${process.env.BACKEND_URL}/api/vehiculos/${vehiculoData.id}`, updatedVehiculoData);
                     console.log('Vehículo editado', response.data);
                 } else {
-                    // Agregar nuevo vehículo
-                    const response = await axios.put(`${process.env.BACKEND_URL}/api/vehiculos/${vehiculoData.id}`, updatedVehiculoData);
+                    // Agregar nuevo vehículo (usar POST)
+                    const response = await axios.post(`${process.env.BACKEND_URL}/api/vehiculos`, updatedVehiculoData);
                     console.log('Vehículo guardado', response.data);
                 }
                 fetchVehiculos();
@@ -114,6 +114,7 @@ export const Flota = () => {
         }
         handleClose();
     };
+    
 
     const fetchVehiculos = async () => {
         try {
@@ -192,7 +193,7 @@ export const Flota = () => {
                         </div>
                     )}
 
-                    {/* Modal para Vehículos y Conductores */}
+                    {/* Modal para Vehículos  */}
                     <Modal show={showModal} onHide={handleClose} size="lg" aria-labelledby="modal-title">
                         <Modal.Header closeButton>
                             <Modal.Title id="modal-title">
@@ -310,7 +311,7 @@ export const Flota = () => {
                             </Button>
                         </Modal.Footer>
                     </Modal>
+                </div>
             </div>
-        </div>
     );
 };

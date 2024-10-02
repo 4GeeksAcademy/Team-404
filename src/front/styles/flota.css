@@ -4,6 +4,9 @@
     display: flex;
     flex-direction: column;
     height: 100%; /* Asegura que el modal body ocupe el 100% de la altura */
+    background-color: #fdfdfd; /* Color de fondo más claro para modernidad */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
 }
 
 /* Asegura que los títulos estén bien espaciados */
@@ -22,18 +25,22 @@
 /* Ajustes para los encabezados */
 .form-label {
     font-weight: bold;
+    color: #555; /* Color más oscuro para el texto */
 }
 
 /* Estilo de los botones */
 .btn-primary {
-    background-color: #007bff; /* Color de fondo */
-    border-color: #007bff; /* Color del borde */
+    background-color: #ffc107; /* Color de fondo */
+    border-color: #ffc107; /* Color del borde */
     font-weight: bold; /* Negrita para el texto */
+    border-radius: 5px; /* Bordes redondeados para botones */
+    transition: background-color 0.3s, transform 0.3s; /* Transición suave */
 }
 
 .btn-primary:hover {
-    background-color: #0056b3; /* Color de fondo en hover */
-    border-color: #0056b3; /* Color del borde en hover */
+    background-color: #ffc107; /* Color de fondo en hover */
+    border-color: #ffc107; /* Color del borde en hover */
+    transform: translateY(-2px); /* Efecto de elevación */
 }
 
 /* Espaciado de los formularios */
@@ -48,6 +55,7 @@
 
 .custom-tab-link {
     font-weight: bold; /* Negrita para los enlaces de las pestañas */
+    color: #333; /* Color por defecto */
 }
 
 .custom-tab-link.active {
@@ -57,8 +65,11 @@
 
 /* Estilo de la cabecera del modal */
 .modal-header {
-    background-color: #f8f9fa; /* Color de fondo */
-    border-bottom: 1px solid #dee2e6; /* Línea inferior */
+    background-color: #ffc107; /* Color de fondo */
+    color: BLACK; /* Color del texto */
+    border-bottom: 1px solid #0056b3; /* Línea inferior más clara */
+    border-top-left-radius: 10px; /* Bordes redondeados en la parte superior */
+    border-top-right-radius: 10px; /* Bordes redondeados en la parte superior */
 }
 
 /* Espaciado de los botones en el pie del modal */
@@ -75,6 +86,7 @@
 .form-content > div {
     width: 100%; /* Cada div dentro de form-content ocupa el 100% */
 }
+
 .custom-calendar {
     border: 1px solid #ddd; /* Añade un borde */
     border-radius: 8px; /* Bordes redondeados */
@@ -106,4 +118,3 @@
     cursor: pointer;
     color: #007bff; /* Color del icono */
 }
-

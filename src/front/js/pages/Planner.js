@@ -4,6 +4,7 @@ import CalculateDistance from '../component/calculateDistance';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import ControlPanel from '../component/panelControl';
+import { useNavigate } from 'react-router-dom';
 
 
 const Mapa = () => {
@@ -13,6 +14,7 @@ const Mapa = () => {
     const [map, setMap] = useState(null);
     const [directionsRenderer, setDirectionsRenderer] = useState(null);
     const [routeInfo, setRouteInfo] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loader = new Loader({
@@ -45,6 +47,11 @@ const Mapa = () => {
         setRouteInfo(info);
     };
 
+    const handleProfile = () => {
+        navigate('/profile'); // Mostrar el modal al hacer clic en "Mi Perfil"
+        window.location.reload()
+    };
+
     const clearRoute = () => {
         if (directionsRenderer) {
             directionsRenderer.setDirections({ routes: [] });
@@ -68,8 +75,9 @@ const Mapa = () => {
                             <div className="card-body">
                                 <div className="d-flex flex-column align-items-start mb-4">
                                     <Link
-                                        to="/profile"
+                                        to="#"
                                         style={{ textDecoration: 'none', marginBottom: '0.5rem' }}
+                                        onClick={handleProfile}
                                     >
                                         <IoMdArrowRoundBack
                                             style={iconStyle}
