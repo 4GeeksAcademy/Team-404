@@ -3,6 +3,8 @@ import { Loader } from '@googlemaps/js-api-loader';
 import CalculateDistance from '../component/calculateDistance';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Link } from 'react-router-dom';
+import ControlPanel from '../component/panelControl';
+
 
 const Mapa = () => {
     const apiOptions = { apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY };
@@ -57,106 +59,109 @@ const Mapa = () => {
     };
 
     return (
-        <div className="container-fluid">
-            <div className="row g-4">
-                <div className="col-lg-4">
-                    <div className="card h-100">
-                        <div className="card-body">
-                            <div className="d-flex flex-column align-items-start mb-4">
-                                <Link 
-                                    to="/profile" 
-                                    style={{ textDecoration: 'none', marginBottom: '0.5rem' }}
-                                >
-                                    <IoMdArrowRoundBack 
-                                        style={iconStyle}
-                                        onMouseEnter={(e) => e.target.style.color = '#ffc107'}
-                                        onMouseLeave={(e) => e.target.style.color = '#000000'}
-                                    />
-                                </Link>
-                                <h1 className="card-title">Planner</h1>
-                            </div>
-                            <CalculateDistance
-                                map={map}
-                                onRouteCalculated={handleRouteCalculated}
-                                onRouteInfo={handleRouteInfo}
-                                onClearRoute={clearRoute}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="col-lg-8">
-                    <div className="card h-100">
-                        <div className="card-body">
-                            <div
-                                ref={mapRef}
-                                style={{ height: "100%", minHeight: "500px", borderRadius: "10px" }}
-                                className="border border-primary"
-                            ></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {routeInfo && (
-                <div className="row mt-4">
-                    <div className="col-12">
-                        <div className="card">
+        <div className="min-vh-100 d-flex">
+            <ControlPanel />
+            <div className="container-fluid">
+                <div className="row g-4">
+                    <div className="col-lg-4">
+                        <div className="card h-100">
                             <div className="card-body">
-                                <h3 className="card-title">Información de la ruta</h3>
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <table className="table table-striped table-bordered">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Distancia</th>
-                                                    <td>{routeInfo.distance}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Duración</th>
-                                                    <td>{routeInfo.duration}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Precio por km</th>
-                                                    <td>{routeInfo.pricePerKm}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Costo operacional</th>
-                                                    <td>{routeInfo.operationalCost}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div className="col-md-6">
-                                        <table className="table table-striped table-bordered">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Precio base</th>
-                                                    <td>{routeInfo.basePrice}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Recargo por peso</th>
-                                                    <td>{routeInfo.weightSurcharge}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Adicionales</th>
-                                                    <td>{routeInfo.optionsSurcharge}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Precio final</th>
-                                                    <td>{routeInfo.finalPrice}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Beneficio</th>
-                                                    <td>{routeInfo.profit}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                <div className="d-flex flex-column align-items-start mb-4">
+                                    <Link
+                                        to="/profile"
+                                        style={{ textDecoration: 'none', marginBottom: '0.5rem' }}
+                                    >
+                                        <IoMdArrowRoundBack
+                                            style={iconStyle}
+                                            onMouseEnter={(e) => e.target.style.color = '#ffc107'}
+                                            onMouseLeave={(e) => e.target.style.color = '#000000'}
+                                        />
+                                    </Link>
+                                    <h1 className="card-title">Planner</h1>
+                                </div>
+                                <CalculateDistance
+                                    map={map}
+                                    onRouteCalculated={handleRouteCalculated}
+                                    onRouteInfo={handleRouteInfo}
+                                    onClearRoute={clearRoute}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-8">
+                        <div className="card h-100">
+                            <div className="card-body">
+                                <div
+                                    ref={mapRef}
+                                    style={{ height: "100%", minHeight: "500px", borderRadius: "10px" }}
+                                    className="border border-primary"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {routeInfo && (
+                    <div className="row mt-4">
+                        <div className="col-12">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h3 className="card-title">Información de la ruta</h3>
+                                    <div className="row">
+                                        <div className="col-md-6">
+                                            <table className="table table-striped table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Distancia</th>
+                                                        <td>{routeInfo.distance}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Duración</th>
+                                                        <td>{routeInfo.duration}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Precio por km</th>
+                                                        <td>{routeInfo.pricePerKm}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Costo operacional</th>
+                                                        <td>{routeInfo.operationalCost}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <table className="table table-striped table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Precio base</th>
+                                                        <td>{routeInfo.basePrice}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Recargo por peso</th>
+                                                        <td>{routeInfo.weightSurcharge}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Adicionales</th>
+                                                        <td>{routeInfo.optionsSurcharge}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Precio final</th>
+                                                        <td>{routeInfo.finalPrice}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Beneficio</th>
+                                                        <td>{routeInfo.profit}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };

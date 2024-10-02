@@ -34,12 +34,10 @@ const getState = ({ getStore, getActions, setStore }) => {
                         throw new Error("Token no disponible.");
                     }
 
-
-					const apiUrl = `${process.env.BACKEND_URL}/api/user`;
-					const headers = {
-						Authorization: `Bearer ${token}`
-					};
-
+                    const apiUrl = `${process.env.BACKEND_URL}/api/user`;
+                    const headers = {
+                        Authorization: `Bearer ${token}`
+                    };
 
                     const response = await axios.get(apiUrl, { headers });
 
@@ -57,44 +55,40 @@ const getState = ({ getStore, getActions, setStore }) => {
                 return store.userData.id;  // Asegúrate de que esto apunte al ID correcto del usuario
             },
 
-
-
             // Nueva función para actualizar los datos del usuario
             updateUserData: (updatedUserData) => {
                 setStore((prevStore) => ({
                     ...prevStore,
                     userData: updatedUserData
                 }));
+            },
+
+            // Función para obtener el mensaje del backend
+            getMessage: async () => {
+                try {
+                    const resp = await fetch(`${process.env.BACKEND_URL}/api/hello`);
+                    if (!resp.ok) {
+                        throw new Error(`HTTP error! status: ${resp.status}`);
+                    }
+                    const data = await resp.json();
+                    setStore({ message: data.message });
+                    return data;
+                } catch (error) {
+                    console.log("Error loading message from backend", error);
+                }
+            },
+
+            // Cambiar el color en el array demo
+            changeColor: (index, color) => {
+                const store = getStore();
+                const demo = store.demo.map((elm, i) => {
+                    if (i === index) elm.background = color;
+                    return elm;
+                });
+                setStore({ demo: demo });
             }
         }
     };
-
-			// Función para obtener el mensaje del backend
-			getMessage: async () => {
-				try {
-					const resp = await fetch(`${process.env.BACKEND_URL}/api/hello`);
-					if (!resp.ok) {
-						throw new Error(`HTTP error! status: ${resp.status}`);
-					}
-					const data = await resp.json();
-					setStore({ message: data.message });
-					return data;
-				} catch (error) {
-					console.log("Error loading message from backend", error);
-				}
-			},
-			// Cambiar el color en el array demo
-			changeColor: (index, color) => {
-				const store = getStore();
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-				setStore({ demo: demo });
-			}
-		}
-	};
-
 };
 
 export default getState;

@@ -3,7 +3,8 @@ import axios from "axios";
 import { Loader } from '@googlemaps/js-api-loader';
 import "../../styles/direccion.css";
 import { Context } from '../store/appContext';
-import ControlPanel from "../component/panelControl";
+import ControlPanel from '../component/panelControl';
+
 
 export const Direcciones = () => {
     const { store } = useContext(Context);
@@ -247,7 +248,8 @@ export const Direcciones = () => {
     }, [isModalOpen]);
 
     return (
-        <div>
+        <div className="min-vh-100 d-flex">
+            <ControlPanel />
             <div className="container mt-4">
                 <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
                     <h3>Mis Direcciones</h3>
