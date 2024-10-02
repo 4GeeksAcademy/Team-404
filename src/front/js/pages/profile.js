@@ -35,7 +35,7 @@ const Profile = () => {
     };
 
     const handleLogout = () => {
-        window.location.href = "https://effective-space-couscous-v66946px9jwjhxw65-3000.app.github.dev/";
+        window.location.href = process.env.REACT_APP_BACKEND_URL;
     };
 
     const searchLocation = async (location) => {

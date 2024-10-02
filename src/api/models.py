@@ -4,6 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
+db = SQLAlchemy()
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -35,10 +40,11 @@ class User(db.Model):
             'last_name': self.last_name,
             'company': self.company,
             'location': self.location,
-            'created_at': self.created_at,
+            'created_at': self.created_at.isoformat(),  # Convertir a formato ISO
             'direcciones': [direccion.serialize() for direccion in self.direcciones],
             'vehiculos': [vehiculo.serialize() for vehiculo in self.vehiculos],
         }
+
 
 class Direccion(db.Model):
     id = db.Column(db.Integer, primary_key=True)

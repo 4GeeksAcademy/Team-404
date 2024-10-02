@@ -12,7 +12,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Importa tu Base y modelos
-from src.api.models import db, User, Conductor, Vehiculo, Client, ContactMessage  # Ajusta esto según la estructura de tu proyecto
+from src.api.models import db, User, Vehiculo, Client, ContactMessage  # Ajusta esto según la estructura de tu proyecto
 target_metadata = db.Model.metadata  # Establecer el target_metadata
 
 def run_migrations_offline() -> None:
