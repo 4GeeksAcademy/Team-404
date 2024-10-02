@@ -94,7 +94,7 @@ const Autonomos = () => {
       <div className="flex-grow-1 p-4">
         <div className="border border-secondary rounded d-flex justify-content-between mb-3 p-3">
           <h1 className="d-flex align-items-center m-0">Autónomos</h1>
-          <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarSocio">
+          <button type="button" className="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalAgregarSocio">
             + Agregar Socio
           </button>
         </div>
@@ -200,7 +200,7 @@ const Autonomos = () => {
               </div>
               <div className="modal-footer p-4">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" className="btn btn-primary" onClick={agregarColaborador}>
+                <button type="button" className="btn btn-warning" onClick={agregarColaborador}>
                   Guardar
                 </button>
               </div>
