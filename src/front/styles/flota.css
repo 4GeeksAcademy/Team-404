@@ -35,6 +35,7 @@
     font-weight: bold; /* Negrita para el texto */
     border-radius: 5px; /* Bordes redondeados para botones */
     transition: background-color 0.3s, transform 0.3s; /* Transición suave */
+    color: black;
 }
 
 .btn-primary:hover {
