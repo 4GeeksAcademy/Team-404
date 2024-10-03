@@ -8,6 +8,7 @@ import datetime
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from api.models import Direccion, db, User, ContactMessage , Vehiculo, Client, Socio
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # Habilita CORS para todas las rutas y orígenes
 api = Blueprint('api', __name__)
@@ -528,7 +529,7 @@ def update_user(user_id):
 socios_bp = Blueprint('socios', __name__)
 
 # Obtener todos los socios de un usuario
-@socios_bp.route('/api/socios', methods=['GET'])
+@socios_bp.route('/api/socios', methods=['GET'])    
 def obtener_socios():
     try:
         # Obtener el user_id de los parámetros de la consulta (query string)
@@ -555,26 +556,26 @@ def agregar_socio():
         data = request.get_json()
 
         # Validar si se enviaron todos los campos necesarios
-        user_id = data.get('user_id')
         nombre = data.get('nombre')
         email = data.get('email')
         tipo_precio = data.get('tipo_precio')
         precio = data.get('precio')
         periodos_espera = data.get('periodos_espera')
         incluir_peajes = data.get('incluir_peajes')
+        user_id = data.get('user_id')
 
         if not user_id or not nombre or not email or not tipo_precio:
             return jsonify({'error': 'Faltan datos'}), 400
 
         # Crear un nuevo socio
         nuevo_socio = Socio(
-            user_id=user_id,
             nombre=nombre,
             email=email,
             tipo_precio=tipo_precio,
             precio=precio,
             periodos_espera=periodos_espera,
-            incluir_peajes=incluir_peajes
+            incluir_peajes=incluir_peajes,
+            user_id=user_id,
         )
 
         # Agregar el socio a la base de datos
@@ -607,6 +608,8 @@ def editar_socio(email):
         socio.precio = data.get('precio', socio.precio)
         socio.periodos_espera = data.get('periodos_espera', socio.periodos_espera)
         socio.incluir_peajes = data.get('incluir_peajes', socio.incluir_peajes)
+        socio.user_id = data.get('user_id', socio.user_id)
+        
 
         # Guardar los cambios en la base de datos
         db.session.commit()

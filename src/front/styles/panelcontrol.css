@@ -1,0 +1,19 @@
+#mi-perfil-button {
+    background-color: #f04c4c; /* Cambia el color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    padding: 10px 15px; /* Espaciado */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cursor de puntero */
+    transition: background-color 0.3s; /* Transición suave */
+    display: flex; /* Usar flexbox para centrar contenido */
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    height: 40px;
+    width: 143px;
+    margin-bottom: 15px;
+}
+
+#mi-perfil-button:hover {
+    background-color: #ff0000; /* Color al pasar el mouse */
+}

@@ -1,7 +1,10 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager
+
 
 db = SQLAlchemy()
+jwt = JWTManager()
 
 
 from flask_sqlalchemy import SQLAlchemy
@@ -21,8 +24,9 @@ class User(db.Model):
     location = db.Column(db.String(150), nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-    # Relación uno a muchos con Direccion
-    direcciones = db.relationship('Direccion', backref='user', lazy=True)
+    # Relación uno a muchos con Direccion y Socios
+    direcciones = db.relationship('Direccion', backref='usuario', lazy=True)
+    socios = db.relationship('Socio', backref='usuario', lazy=True)
 
     def __init__(self, email, password_hash, name=None, last_name=None, company=None, location=None):
         self.email = email
@@ -43,6 +47,7 @@ class User(db.Model):
             'created_at': self.created_at.isoformat(),  # Convertir a formato ISO
             'direcciones': [direccion.serialize() for direccion in self.direcciones],
             'vehiculos': [vehiculo.serialize() for vehiculo in self.vehiculos],
+            'socios' : [socio.serialize() for socio in self.socios],
         }
 
 
@@ -148,23 +153,33 @@ class Vehiculo(db.Model):
 
 class Socio(db.Model):
     __tablename__ = 'socios'
+
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
     nombre = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    tipo_precio = db.Column(db.String(50), nullable=False)
-    precio = db.Column(db.Float, nullable=True)
-    periodos_espera = db.Column(db.Float, nullable=True)
-    incluir_peajes = db.Column(db.Boolean, nullable=True)
+    tipo_precio = db.Column(db.String(100), nullable=False)
+    precio = db.Column(db.Float, nullable=False)
+    periodos_espera = db.Column(db.Float, nullable=False)
+    incluir_peajes = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    def __init__(self, nombre, email, tipo_precio, precio, periodos_espera, incluir_peajes, user_id):
+        self.nombre = nombre
+        self.email = email
+        self.tipo_precio = tipo_precio
+        self.precio = precio
+        self.periodos_espera = periodos_espera
+        self.incluir_peajes = incluir_peajes
+        self.user_id = user_id
 
     def serialize(self):
         return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'nombre': self.nombre,
-            'email': self.email,
-            'tipo_precio': self.tipo_precio,
-            'precio': self.precio,
-            'periodos_espera': self.periodos_espera,
-            'incluir_peajes': self.incluir_peajes
+            'id' : self.id,
+            'nombre' : self.nombre,
+            'email' : self.email,
+            'tipo_precio' : self.tipo_precio, 
+            'precio' : self.precio, 
+            'periodos_espera' : self.periodos_espera,
+            'incluir_peajes' : self.incluir_peajes,
+            'user_id' : self.user_id
         }

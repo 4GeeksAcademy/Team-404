@@ -19,6 +19,7 @@ const Profile = () => {
 
 
 
+
     // Función para obtener los datos del usuario autenticado
     const fetchUserData = async () => {
         try {
@@ -52,8 +53,14 @@ const Profile = () => {
         });
     };
 
+
+
     const handleLogout = () => {
-        window.location.href = process.env.REACT_APP_LOGOUT_URL;
+        // Eliminar el token de autenticación de localStorage
+        localStorage.removeItem('authToken');
+
+        // Redirigir a la página de inicio de sesión usando la variable global del .env
+        window.location.href = process.env.REACT_APP_BACKEND_URL;
     };
 
     const searchLocation = async (location) => {
