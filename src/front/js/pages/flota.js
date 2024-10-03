@@ -148,7 +148,6 @@ export const Flota = () => {
     }, []);
 
     return (
-
         <div className="min-vh-100 d-flex">
             <ControlPanel />
                 <div className="container mt-4">
@@ -318,7 +317,7 @@ export const Flota = () => {
                 <Modal show={showModal} onHide={handleClose} size="lg" aria-labelledby="modal-title">
                     <Modal.Header closeButton>
                         <Modal.Title id="modal-title">
-                            {activeTab === 'vehiculos' ? '🚚​ Añadir Vehículos' : '🤵🏻 Añadir Conductores'}
+                            {activeTab === 'vehiculos' ? 'Añadir Vehículos' : '🤵🏻 Añadir Conductores'}
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
