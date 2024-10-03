@@ -4,6 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Inicio } from "./pages/Inicio";
+
 import Profile from "./pages/profile";
 import Mapa from "./pages/Planner";
 import CondicionesDeUso from "./pages/CondicionesUso";
@@ -23,6 +24,7 @@ import Jurisdiccion from "./pages/jurisdiccion";
 import SobreNosotros from "./pages/sobreNosotros";
 import Contacto from "./pages/Contacto";
 import Autonomos from "./pages/Autonomos";
+
 
 //create your first component
 const Layout = () => {

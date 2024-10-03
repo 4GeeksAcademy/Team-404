@@ -8,6 +8,7 @@ import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt } fro
 
 
 export const Navbar = () => {
+
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const location = useLocation();
