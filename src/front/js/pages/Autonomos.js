@@ -4,6 +4,7 @@ import { FaTrash } from "react-icons/fa";
 import { LuPenSquare } from "react-icons/lu";
 import { jwtDecode } from 'jwt-decode';
 import ColaboradorForm from '../component/colaboradorForm';
+import ControlPanel from '../component/panelControl';
 
 const Autonomos = () => {
   const [colaboradores, setColaboradores] = useState([]);
@@ -210,10 +211,11 @@ const Autonomos = () => {
   };
 
   return (
-    <div className="container-fluid mt-3">
-      <div className="p-4">
+    <div className="min-vh-100 d-flex">
+      <ControlPanel />
+      <div className="container-fluid p-4">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 className="d-inline-flex mb-3">Colaboradores</h1>
+          <h2 className="d-inline-flex mb-3">Colaboradores</h2>
           <button
             className="btn btn-warning fw-bold mb-3"
             data-bs-toggle="modal"
@@ -230,7 +232,7 @@ const Autonomos = () => {
               setIsEditing(false); // Cambiar el modo a agregar
             }}
           >
-            Agregar nuevo colaborador
+            Agregar colaborador
           </button>
         </div>
 
