@@ -4,6 +4,7 @@ import { FaTrash } from "react-icons/fa";
 import { LuPenSquare } from "react-icons/lu";
 import { jwtDecode } from 'jwt-decode';
 import ColaboradorForm from '../component/colaboradorForm';
+import ControlPanel from '../component/panelControl';
 
 const Autonomos = () => {
   const [colaboradores, setColaboradores] = useState([]);
@@ -124,19 +125,19 @@ const Autonomos = () => {
     }
   }, [currentUserId, formData, colaboradores]);
 
-  const eliminarColaborador = async (id) => {
+  const eliminarColaborador = async (email) => {
     try {
-      await axios.delete(`${process.env.BACKEND_URL}/api/socios/${id}?user_id=${currentUserId}`);
+      await axios.delete(`${process.env.BACKEND_URL}/api/socios/${email}?user_id=${currentUserId}`);
 
-      setColaboradores(colaboradores.filter(colaborador => colaborador.id !== id));
+      setColaboradores(colaboradores.filter(colaborador => colaborador.email !== email));
     } catch (error) {
       console.error('Error:', error);
       setError('Hubo un error al eliminar el colaborador.');
     }
   };
 
-  const editarColaborador = (id) => {
-    const colaborador = colaboradores.find((colaborador) => colaborador.id === id);
+  const editarColaborador = (email) => {
+    const colaborador = colaboradores.find((colaborador) => colaborador.email === email);
     if (colaborador) {
       setFormData({
         nombre: colaborador.nombre || '',
@@ -146,13 +147,13 @@ const Autonomos = () => {
         periodosEspera: colaborador.periodos_espera || '',
         incluirPeajes: colaborador.incluir_peajes || false
       });
-      setColaboradorId(id); // Guardar el ID del colaborador a editar
       setIsEditing(true); // Cambiar el modo a edición
       const modalElement = document.getElementById('modalAgregarSocio');
       const modal = new window.bootstrap.Modal(modalElement);
       modal.show(); // Mostrar el modal
     }
   };
+  
 
   const actualizarColaborador = async () => {
     const errores = validarFormulario();
@@ -160,21 +161,24 @@ const Autonomos = () => {
       setWarning(errores.join(' '));
       return;
     }
-
+  
     try {
-      await axios.put(`${process.env.BACKEND_URL}/api/socios/${colaboradorId}`, {
+      // Usar el email del formData en la URL de la solicitud PUT
+      await axios.put(`${process.env.BACKEND_URL}/api/socios/${formData.email}`, {
         nombre: formData.nombre,
-        email: formData.email,
+        email: formData.email, // Actualiza si es necesario
         tipo_precio: formData.tipoPrecio,
         precio: formData.precio,
         periodos_espera: formData.periodosEspera,
-        incluir_peajes: formData.incluirPeajes
+        incluir_peajes: formData.incluirPeajes,
+        user_id: currentUserId
       });
-
+  
+      // Actualizar la lista de colaboradores
       setColaboradores(colaboradores.map(colaborador =>
-        colaborador.id === colaboradorId ? { ...colaborador, ...formData } : colaborador
+        colaborador.email === formData.email ? { ...colaborador, ...formData } : colaborador
       ));
-
+  
       // Reiniciar el formulario y estado de edición
       setFormData({
         nombre: '',
@@ -184,9 +188,8 @@ const Autonomos = () => {
         periodosEspera: '',
         incluirPeajes: false
       });
-      setColaboradorId(null);
       setIsEditing(false);
-
+  
       const modalElement = document.getElementById('modalAgregarSocio');
       const modal = window.bootstrap.Modal.getInstance(modalElement);
       modal.hide();
@@ -210,10 +213,11 @@ const Autonomos = () => {
   };
 
   return (
-    <div className="container-fluid mt-3">
-      <div className="p-4">
+    <div className="min-vh-100 d-flex">
+      <ControlPanel />
+      <div className="container-fluid p-4">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 className="d-inline-flex mb-3">Colaboradores</h1>
+          <h2 className="d-inline-flex mb-3">Colaboradores</h2>
           <button
             className="btn btn-warning fw-bold mb-3"
             data-bs-toggle="modal"
@@ -230,7 +234,7 @@ const Autonomos = () => {
               setIsEditing(false); // Cambiar el modo a agregar
             }}
           >
-            Agregar nuevo colaborador
+            Agregar colaborador
           </button>
         </div>
 
@@ -259,10 +263,10 @@ const Autonomos = () => {
                 <td>{colaborador.periodos_espera}</td>
                 <td>{colaborador.incluir_peajes ? 'Sí' : 'No'}</td>
                 <td>
-                  <button className="btn" onClick={() => editarColaborador(colaborador.id)}>
+                  <button className="btn" onClick={() => editarColaborador(colaborador.email)}>
                     <LuPenSquare />
                   </button>
-                  <button className="btn text-danger" onClick={() => eliminarColaborador(colaborador.id)}>
+                  <button className="btn text-danger" onClick={() => eliminarColaborador(colaborador.email)}>
                     <FaTrash />
                   </button>
                 </td>
