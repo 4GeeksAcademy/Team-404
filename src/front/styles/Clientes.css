@@ -1,0 +1,10 @@
+.modal-backdrop-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(105, 105, 105, 0.7); /* Gris claro con algo de transparencia */
+    z-index: 1040; /* Asegúrate de que esté debajo del modal */
+}
+
