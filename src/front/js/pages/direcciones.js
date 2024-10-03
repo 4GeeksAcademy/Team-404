@@ -296,7 +296,7 @@ export const Direcciones = () => {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <h2>{currentAddressId ? "Editar Dirección" : "Crear Nueva Dirección"}</h2>
-                        <div className="modal-body">
+                        <div id="modal-body">
                             <div className="form-detail-section">
                                 <div className="form-section">
                                     <h3>Dirección</h3>
