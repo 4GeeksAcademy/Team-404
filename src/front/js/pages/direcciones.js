@@ -4,6 +4,9 @@ import { Loader } from '@googlemaps/js-api-loader';
 import "../../styles/direccion.css";
 import { Context } from '../store/appContext';
 import ControlPanel from '../component/panelControl';
+import { FaTrash } from "react-icons/fa";
+import { LuPenSquare } from "react-icons/lu";
+
 
 export const Direcciones = () => {
     const { store } = useContext(Context);
@@ -283,8 +286,8 @@ export const Direcciones = () => {
                                     {direccion.categoria}
                                 </td>
                                 <td>
-                                    <button onClick={() => handleEdit(direccion)} className="btn btn-warning">🔄​</button>
-                                    <button onClick={() => handleDelete(direccion.id)} className="btn btn-danger">🗑️​</button>
+                                    <button className="btn" onClick={() => handleEdit(direccion)}><LuPenSquare />​</button>
+                                    <button className="btn text-danger"onClick={() => handleDelete(direccion.id)}><FaTrash />​</button>
                                 </td>
                             </tr>
                         ))}

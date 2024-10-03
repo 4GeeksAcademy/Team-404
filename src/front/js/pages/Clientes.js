@@ -148,18 +148,8 @@ const ClientListTable = () => {
                                 <td>{client.email}</td>
                                 <td>{client.phone}</td>
                                 <td>
-                                        <button
-                                            className="btn btn-light btn-sm"
-                                            onClick={() => handleEditClient(index)}
-                                        >
-                                            <LuPenSquare />
-                                        </button>
-                                        <button
-                                            className="btn btn-light btn-sm text-danger"
-                                            onClick={() => handleDeleteClient(index)}
-                                        >
-                                            <FaTrash />
-                                        </button>
+                                    <button className="btn" onClick={() => handleEditClient(index)}><LuPenSquare /></button>
+                                    <button className="btn text-danger" onClick={() => handleDeleteClient(index)}><FaTrash /></button>
                                 </td>
                             </tr>
                         ))}
