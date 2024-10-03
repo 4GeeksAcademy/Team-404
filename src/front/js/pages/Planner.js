@@ -66,13 +66,12 @@ const Mapa = () => {
     return (
         <div className="min-vh-100 d-flex">
             <ControlPanel />
-            <div className="container-fluid">
+            <div className="container mt-4">
+                <h2 className="card-title">Planner</h2>
                 <div className="row g-4">
                     <div className="col-lg-4">
-                        <div className="card h-100">
-                            <div className="card-body">
                                 <div className="d-flex flex-column align-items-start mb-4">
-                                    <h1 className="card-title">Planner</h1>
+
                                 </div>
                                 <CalculateDistance
                                     map={map}
@@ -80,9 +79,6 @@ const Mapa = () => {
                                     onRouteInfo={handleRouteInfo}
                                     onClearRoute={clearRoute}
                                 />
-
-                            </div>
-                        </div>
                     </div>
                     <div className="col-lg-8">
                         <div className="card h-100">

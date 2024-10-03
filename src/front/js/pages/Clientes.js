@@ -120,7 +120,7 @@ const ClientListTable = () => {
     return (
         <div className="min-vh-100 d-flex">
             <ControlPanel />
-            <div className="container-fluid py-4">
+            <div className="container mt-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2 className="fw-semibold">Clientes</h2>
                     <button onClick={() => setIsModalOpen(true)} className="btn btn-warning text-black"><strong>+ Agregar cliente</strong></button>
@@ -132,8 +132,8 @@ const ClientListTable = () => {
                 )}
 
                 {/* Tabla de clientes */}
-                <table className="table table-bordered w-100">
-                    <thead className="table-light">
+                <table className="table table-striped w-100">
+                    <thead>
                         <tr>
                             <th>Nombre</th>
                             <th>Correo electrónico</th>
@@ -148,7 +148,6 @@ const ClientListTable = () => {
                                 <td>{client.email}</td>
                                 <td>{client.phone}</td>
                                 <td>
-                                    <div className="d-flex justify-content-around">
                                         <button
                                             className="btn btn-light btn-sm"
                                             onClick={() => handleEditClient(index)}
@@ -161,7 +160,6 @@ const ClientListTable = () => {
                                         >
                                             <FaTrash />
                                         </button>
-                                    </div>
                                 </td>
                             </tr>
                         ))}

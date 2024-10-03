@@ -4,6 +4,8 @@ import "../../styles/flota.css";
 import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
 import ControlPanel from '../component/panelControl';
+import { FaTrash } from "react-icons/fa";
+import { LuPenSquare } from "react-icons/lu";
 
 
 export const Flota = () => {
@@ -152,16 +154,15 @@ export const Flota = () => {
             <ControlPanel />
                 <div className="container mt-4">
                     <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
-                        <h3>Vehículos</h3>
-                        <button className="btn btn-primary" onClick={handleShowModal}>
+                        <h2>Vehículos</h2>
+                        <button className="btn btn-warning fw-bold" onClick={handleShowModal}>
                             {activeTab === 'vehiculos' ? 'Añadir Vehículos' : 'Añadir Conductores'}
                         </button>
                     </div>
                     {/* Tabla de Vehículos */}
                     {activeTab === 'vehiculos' && (
                         <div className="mb-4">
-                            <h5>Lista de Vehículos</h5>
-                            <table className="table">
+                            <table className="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -183,8 +184,8 @@ export const Flota = () => {
                                             <td>{vehiculo.costo_km}</td>
                                             <td>{vehiculo.costo_hora}</td>
                                             <td>
-                                                <Button variant="warning" onClick={() => handleEdit(vehiculo)}>🔄</Button>
-                                                <Button variant="danger" onClick={() => handleDelete(vehiculo.id)}>🗑️</Button>
+                                                <button className="btn" onClick={() => handleEdit(vehiculo)}><LuPenSquare /></button>
+                                                <button className="btn text-danger" onClick={() => handleDelete(vehiculo.id)}><FaTrash /></button>
                                             </td>
                                         </tr>
                                     ))}

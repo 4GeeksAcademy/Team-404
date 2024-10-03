@@ -215,11 +215,11 @@ const Autonomos = () => {
   return (
     <div className="min-vh-100 d-flex">
       <ControlPanel />
-      <div className="container-fluid p-4">
-        <div className="d-flex justify-content-between align-items-center">
-          <h2 className="d-inline-flex mb-3">Colaboradores</h2>
+      <div className="container mt-4">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2>Colaboradores</h2>
           <button
-            className="btn btn-warning fw-bold mb-3"
+            className="btn btn-warning fw-bold"
             data-bs-toggle="modal"
             data-bs-target="#modalAgregarSocio"
             onClick={() => {
@@ -233,9 +233,7 @@ const Autonomos = () => {
               });
               setIsEditing(false); // Cambiar el modo a agregar
             }}
-          >
-            Agregar colaborador
-          </button>
+          >+ Agregar colaborador</button>
         </div>
 
         {error && <div className="alert alert-danger">{error}</div>}

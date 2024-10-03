@@ -251,7 +251,7 @@ export const Direcciones = () => {
             <ControlPanel />
             <div className="container mt-4">
                 <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
-                    <h3>Mis Direcciones</h3>
+                    <h2>Mis Direcciones</h2>
                     <label>
                         Filtrar por categoría:
                         <select onChange={(e) => setFilter(e.target.value)}>
@@ -264,8 +264,8 @@ export const Direcciones = () => {
                     <button className="btn btn-warning" onClick={openModal}><strong>Nueva dirección</strong></button>
                 </div>
 
-                <table className="table table-striped table-hover text-center">
-                    <thead className="thead-dark">
+                <table className="table table-striped table-hover">
+                    <thead>
                         <tr>
                             <th>Nombre</th>
                             <th>Dirección</th>
