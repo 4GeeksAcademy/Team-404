@@ -1,21 +1,20 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Context } from '../store/appContext';
-import '../../styles/navbar.css'; // Archivo CSS actualizado
+import { AuthContext } from "./AuthContext";
+import '../../styles/navbar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
-
-
 export const Navbar = () => {
-
     const { store, actions } = useContext(Context);
+    const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     const [showModal, setShowModal] = useState(false);
     const [editableUserData, setEditableUserData] = useState({});
     const [isEditing, setIsEditing] = useState(false);
-    const [successMessage, setSuccessMessage] = useState(''); // Estado para el mensaje de éxito
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         actions.fetchUserData(); // Cargar datos del usuario al montar el componente
@@ -23,41 +22,28 @@ export const Navbar = () => {
 
     useEffect(() => {
         if (store.userData) {
-            setEditableUserData(store.userData); // Actualizar editableUserData al cargar datos
+            setEditableUserData(store.userData);
         }
     }, [store.userData]);
 
     const handleProfileClick = () => {
-        setShowModal(true); // Mostrar el modal al hacer clic en "Mi Perfil"
+        setShowModal(true);
     };
 
     const handleProfile = () => {
-        navigate('/profile'); // Mostrar el modal al hacer clic en "Mi Perfil"
-        window.location.reload()
+        navigate('/profile');
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
-        setIsEditing(false); // Reiniciar el estado de edición
-        setSuccessMessage(''); // Reiniciar el mensaje de éxito al cerrar el modal
-    };
-
-    const handleLogout = (event) => {
-        // Prevenir el comportamiento por defecto del enlace
-        event.preventDefault();
-
-        // Eliminar el token de autenticación de localStorage
-        localStorage.removeItem('authToken');
-
-        // Redirigir a la página de inicio de sesión usando la variable global del .env
-        window.location.href = process.env.REACT_APP_BACKEND_URL;
+        setIsEditing(false);
+        setSuccessMessage('');
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
         if (name === "fullName") {
-            const [firstName, lastName] = value.split(" "); // Divide el valor en nombre y apellido
+            const [firstName, lastName] = value.split(" ");
             setEditableUserData({
                 ...editableUserData,
                 name: firstName || '',
@@ -85,20 +71,23 @@ export const Navbar = () => {
             const updatedUser = await response.json();
             actions.updateUserData(updatedUser);
 
-            // Mostrar mensaje de éxito
-            setSuccessMessage("Datos de usuario guardados correctamente."); // Establecer mensaje de éxito
+            setSuccessMessage("Datos de usuario guardados correctamente.");
 
-            // Actualizar la página de perfil
             setTimeout(() => {
-                navigate("/profile"); // Redirigir a la página de perfil para actualizarla
-            }, 2000); // Tiempo para mostrar el mensaje de éxito antes de redirigir
+                navigate("/profile");
+            }, 2000);
 
-            handleCloseModal(); // Cerrar el modal
+            handleCloseModal();
         } catch (error) {
             console.error('Error al guardar los cambios:', error);
         }
     };
 
+    const handleLogout = async (event) => {
+        event.preventDefault();
+        await logout();
+        navigate("/");
+    };
 
     const isHomePage = location.pathname === "/";
 
@@ -107,7 +96,6 @@ export const Navbar = () => {
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark"
                 style={{
                     padding: '0.5rem 1.5rem',
-                    position: 'fixed',
                     top: 0,
                     left: 0,
                     right: 0,
@@ -116,8 +104,7 @@ export const Navbar = () => {
                 }}>
                 <div className="container-fluid">
                     {isHomePage ? (
-                        <span
-                            className="navbar-brand d-flex align-items-center"
+                        <span className="navbar-brand d-flex align-items-center"
                             style={{
                                 color: '#000',
                                 fontSize: '1.2rem',
@@ -127,14 +114,12 @@ export const Navbar = () => {
                                 fontWeight: 'bold',
                                 boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)',
                                 transition: 'all 0.3s',
-                            }}
-                        >
+                            }}>
                             RutaTrack
                             <span className="ms-2">🚚</span>
                         </span>
                     ) : (
-                        <Link
-                            className="navbar-brand d-flex align-items-center"
+                        <Link className="navbar-brand d-flex align-items-center"
                             to="#"
                             style={{
                                 color: '#000',
@@ -146,15 +131,13 @@ export const Navbar = () => {
                                 boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)',
                                 transition: 'all 0.3s',
                             }}
-                            onClick={handleProfile}
-                        >
+                            onClick={handleProfile}>
                             RutaTrack
                             <span className="ms-2">🚚</span>
                         </Link>
                     )}
                     <div className="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02">
                         <ul className="navbar-nav mb-2 mb-lg-0">
-                            {/* Botón Panel de Control */}
                             <li className="nav-item dropdown">
                                 <button
                                     className="btn btn-secondary dropdown-toggle"
@@ -163,10 +146,9 @@ export const Navbar = () => {
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false"
                                     style={{
-                                        marginRight: '10px', // Espaciado a la derecha
-                                        fontWeight: 'bold', // Negrita
-                                    }}
-                                >
+                                        marginRight: '10px',
+                                        fontWeight: 'bold',
+                                    }}>
                                     Panel de Control
                                 </button>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -198,17 +180,14 @@ export const Navbar = () => {
                                 </ul>
                             </li>
 
-                            {/* Enlace a Nosotros */}
                             <li className="nav-item">
                                 <Link className="nav-link" to="/sobreNosotros" style={{ color: '#ffc107', fontSize: '0.9rem' }}>Nosotros</Link>
                             </li>
 
-                            {/* Enlace a Contacto */}
                             <li className="nav-item">
                                 <Link className="nav-link" to="/Contacto" style={{ color: '#ffc107', fontSize: '0.9rem' }}>Contacto</Link>
                             </li>
 
-                            {/* Botón de usuario */}
                             <li className="nav-item dropdown">
                                 <button
                                     className="nav-link dropdown-toggle"
@@ -225,8 +204,7 @@ export const Navbar = () => {
                                     id="navbarDropdown"
                                     role="button"
                                     data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                >
+                                    aria-expanded="false">
                                     {isHomePage ? "¡Bienvenido!" : `Hola ${store.userData && store.userData.name ? store.userData.name : 'Invitado'}!`}
                                 </button>
                                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -236,8 +214,7 @@ export const Navbar = () => {
                                         <a
                                             className="dropdown-item"
                                             href="/logout"
-                                            onClick={handleLogout}
-                                        >
+                                            onClick={handleLogout}>
                                             Cerrar Sesión
                                         </a>
                                     </li>
@@ -247,114 +224,47 @@ export const Navbar = () => {
                     </div>
                 </div>
             </nav>
-            <div style={{ height: '56px' }}></div>
+
             {/* Modal del perfil */}
             {showModal && (
-                <div className="modal show" style={{ display: 'block' }} tabIndex="-1">
-                    <div className="modal-dialog" style={{ maxWidth: '700px' }}>
+                <div className="modal show" style={{ display: 'block' }} aria-hidden="false">
+                    <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">Perfil del Usuario</h5>
+                                <h5 className="modal-title">Editar Perfil</h5>
                                 <button type="button" className="btn-close" onClick={handleCloseModal}></button>
                             </div>
                             <div className="modal-body">
-                                {store.loading ? (
-                                    <div className="profile-loading">
-                                        <div className="loading-circle"></div>
+                                {successMessage && <div className="alert alert-success">{successMessage}</div>}
+                                <form>
+                                    <div className="mb-3">
+                                        <label htmlFor="fullName" className="form-label">Nombre Completo</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="fullName"
+                                            name="fullName"
+                                            value={`${editableUserData.name || ''} ${editableUserData.last_name || ''}`}
+                                            onChange={handleInputChange}
+                                        />
                                     </div>
-                                ) : store.error ? (
-                                    <div className="profile-error">
-                                        <p>{store.error}</p>
+                                    <div className="mb-3">
+                                        <label htmlFor="email" className="form-label">Correo Electrónico</label>
+                                        <input
+                                            type="email"
+                                            className="form-control"
+                                            id="email"
+                                            name="email"
+                                            value={editableUserData.email || ''}
+                                            onChange={handleInputChange}
+                                            readOnly
+                                        />
                                     </div>
-                                ) : store.userData ? (
-                                    <div style={{ backgroundColor: '#d09e14', padding: '20px', borderRadius: '10px', boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)' }}>
-                                        <div className="profile-header">
-                                            <div className="profile-info">
-                                                <h2>
-                                                    {isEditing ? (
-                                                        <input
-                                                            type="text"
-                                                            name="fullName"
-                                                            value={`${editableUserData.name || ''} ${editableUserData.last_name || ''}`}
-                                                            onChange={handleInputChange}
-                                                            className="form-control"
-                                                            placeholder="Nombre y Apellido"
-                                                            style={{ marginBottom: '10px' }}
-                                                        />
-                                                    ) : (
-                                                        `${editableUserData.name || ''} ${editableUserData.last_name || ''}`
-                                                    )}
-                                                </h2>
-                                                <div>
-                                                    <label style={{ color: '#000', fontWeight: 'bold' }}>Email:</label>
-                                                    {isEditing ? (
-                                                        <input
-                                                            type="email"
-                                                            name="email"
-                                                            value={editableUserData.email}
-                                                            onChange={handleInputChange}
-                                                            className="form-control"
-                                                            style={{ marginBottom: '10px' }}
-                                                        />
-                                                    ) : (
-                                                        <p>{editableUserData.email}</p>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label style={{ color: '#000', fontWeight: 'bold' }}>Empresa:</label>
-                                                    {isEditing ? (
-                                                        <input
-                                                            type="text"
-                                                            name="company"
-                                                            value={editableUserData.company || ''}
-                                                            onChange={handleInputChange}
-                                                            className="form-control"
-                                                            style={{ marginBottom: '10px' }}
-                                                        />
-                                                    ) : (
-                                                        <p>{editableUserData.company || 'No especificada'}</p>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label style={{ color: '#000', fontWeight: 'bold' }}>Ubicación:</label>
-                                                    {isEditing ? (
-                                                        <input
-                                                            type="text"
-                                                            name="location"
-                                                            value={editableUserData.location || ''}
-                                                            onChange={handleInputChange}
-                                                            className="form-control"
-                                                            style={{ marginBottom: '10px' }}
-                                                        />
-                                                    ) : (
-                                                        <p>{editableUserData.location || 'No especificada'}</p>
-                                                    )}
-                                                </div>
-                                                <div>
-                                                    <label style={{ color: '#000', fontWeight: 'bold' }}>Cuenta creada en:</label>
-                                                    <p>{new Date(editableUserData.created_at).toLocaleDateString()}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="profile-no-data">
-                                        <p>No se encontraron datos del usuario.</p>
-                                    </div>
-                                )}
-                                {successMessage && (
-                                    <div className="alert alert-success mt-2">
-                                        {successMessage}
-                                    </div>
-                                )}
+                                </form>
                             </div>
                             <div className="modal-footer">
-                                {isEditing ? (
-                                    <button type="button" className="btn btn-primary" onClick={handleSaveChanges}>Guardar Cambios</button>
-                                ) : (
-                                    <button type="button" className="btn btn-warning" onClick={() => setIsEditing(true)}>Editar</button>
-                                )}
                                 <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>Cerrar</button>
+                                <button type="button" className="btn btn-primary" onClick={handleSaveChanges}>Guardar Cambios</button>
                             </div>
                         </div>
                     </div>
