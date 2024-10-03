@@ -50,7 +50,7 @@ export const Inicio = () => {
 
         try {
             const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/login`,
+                `${process.env.BACKEND_URL}/api/login`,
                 signupData,
                 {
                     headers: { "Content-Type": "application/json" },
@@ -78,7 +78,7 @@ export const Inicio = () => {
 
         try {
             const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/register`,
+                `${process.env.BACKEND_URL}/api/register`,
                 registerData,
                 {
                     headers: { "Content-Type": "application/json" },

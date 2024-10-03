@@ -118,8 +118,8 @@ const ClientListTable = () => {
     return (
         <div className="container-fluid py-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="fw-semibold">Clientes</h2>
-                <button onClick={() => setIsModalOpen(true)} className="btn btn-warning text-white">+ Agregar cliente</button>
+                <h1 className="fw-semibold">Clientes</h1>
+                <button onClick={() => setIsModalOpen(true)} className="btn btn-warning"><strong>+ Agregar cliente</strong></button>
             </div>
 
             {/* Mostrar errores generales */}
@@ -229,7 +229,7 @@ const ClientListTable = () => {
                                             </div>
                                         </div>
                                         <div className="modal-footer mt-3">
-                                            <button type="button" className="btn btn-danger" onClick={closeModal}>Cancelar</button>
+                                            <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancelar</button>
                                             <button type="submit" className="btn btn-warning">{editingClientIndex !== null ? 'Actualizar' : 'Crear'}</button>
                                         </div>
                                     </form>

@@ -149,8 +149,8 @@ export const Flota = () => {
             <div className="container mt-4">
                 <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
                     <h3>Vehículos</h3>
-                    <button className="btn btn-primary" onClick={handleShowModal}>
-                        {activeTab === 'vehiculos' ? 'Añadir Vehículos' : 'Añadir Conductores'}
+                    <button className="btn btn-warning" onClick={handleShowModal}>
+                        <strong>{activeTab === 'vehiculos' ? 'Añadir Vehículos' : 'Añadir Conductores'}</strong>
                     </button>
                 </div>
                 {/* Tabla de Vehículos */}
@@ -193,7 +193,7 @@ export const Flota = () => {
                 <Modal show={showModal} onHide={handleClose} size="lg" aria-labelledby="modal-title">
                     <Modal.Header closeButton>
                         <Modal.Title id="modal-title">
-                            {activeTab === 'vehiculos' ? '🚚​ Añadir Vehículos' : '🤵🏻 Añadir Conductores'}
+                            {activeTab === 'vehiculos' ? 'Añadir Vehículos' : '🤵🏻 Añadir Conductores'}
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -302,7 +302,7 @@ export const Flota = () => {
                         <Button variant="secondary" onClick={handleClose}>
                             Cerrar
                         </Button>
-                        <Button variant="primary" onClick={handleSave}>
+                        <Button variant="warning" onClick={handleSave}>
                             Guardar
                         </Button>
                     </Modal.Footer>
