@@ -4,6 +4,8 @@ import { FaTrash } from "react-icons/fa";
 import { LuPenSquare } from "react-icons/lu";
 import { MdGroups } from "react-icons/md";
 import '../../styles/Clientes.css';
+import ControlPanel from '../component/panelControl';
+
 
 const ClientListTable = () => {
     // Estados para manejar la interfaz de usuario y los datos
@@ -116,129 +118,132 @@ const ClientListTable = () => {
     };
 
     return (
-        <div className="container-fluid py-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h1 className="fw-semibold">Clientes</h1>
-                <button onClick={() => setIsModalOpen(true)} className="btn btn-warning"><strong>+ Agregar cliente</strong></button>
-            </div>
+        <div className="min-vh-100 d-flex">
+            <ControlPanel />
+            <div className="container-fluid py-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h2 className="fw-semibold">Clientes</h2>
+                    <button onClick={() => setIsModalOpen(true)} className="btn btn-warning text-white">+ Agregar cliente</button>
+                </div>
 
-            {/* Mostrar errores generales */}
-            {error && !isModalOpen && (
-                <div className="alert alert-danger mt-3">{error}</div>
-            )}
+                {/* Mostrar errores generales */}
+                {error && !isModalOpen && (
+                    <div className="alert alert-danger mt-3">{error}</div>
+                )}
 
-            {/* Tabla de clientes */}
-            <table className="table table-bordered w-100">
-                <thead className="table-light">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Correo electrónico</th>
-                        <th>Teléfono</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {clients.map((client, index) => (
-                        <tr key={index}>
-                            <td>{client.first_name} {client.last_name}</td>
-                            <td>{client.email}</td>
-                            <td>{client.phone}</td>
-                            <td>
-                                <div className="d-flex justify-content-around">
-                                    <button
-                                        className="btn btn-light btn-sm"
-                                        onClick={() => handleEditClient(index)}
-                                    >
-                                        <LuPenSquare />
-                                    </button>
-                                    <button
-                                        className="btn btn-light btn-sm text-danger"
-                                        onClick={() => handleDeleteClient(index)}
-                                    >
-                                        <FaTrash />
-                                    </button>
-                                </div>
-                            </td>
+                {/* Tabla de clientes */}
+                <table className="table table-bordered w-100">
+                    <thead className="table-light">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo electrónico</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-
-            {/* Modal para agregar o editar clientes */}
-            {isModalOpen && (
-                <>
-                    <div className="modal-backdrop-custom"></div>
-                    <div className="modal show d-block" tabIndex="-1">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
-                                <div className="modal-header bg-secondary text-white d-flex justify-content-between align-items-center">
-                                    <h5 className="modal-title">{editingClientIndex !== null ? 'Editar cliente' : 'Agregar cliente'}</h5>
-                                    <div className="d-flex align-items-center justify-content-center">
-                                        <MdGroups className="fs-1" />
+                    </thead>
+                    <tbody>
+                        {clients.map((client, index) => (
+                            <tr key={index}>
+                                <td>{client.first_name} {client.last_name}</td>
+                                <td>{client.email}</td>
+                                <td>{client.phone}</td>
+                                <td>
+                                    <div className="d-flex justify-content-around">
+                                        <button
+                                            className="btn btn-light btn-sm"
+                                            onClick={() => handleEditClient(index)}
+                                        >
+                                            <LuPenSquare />
+                                        </button>
+                                        <button
+                                            className="btn btn-light btn-sm text-danger"
+                                            onClick={() => handleDeleteClient(index)}
+                                        >
+                                            <FaTrash />
+                                        </button>
                                     </div>
-                                    <button type="button" className="btn-close" onClick={closeModal}></button>
-                                </div>
-                                <div className="modal-body">
-                                    <form onSubmit={handleSubmit}>
-                                        {/* Mostrar errores específicos del formulario */}
-                                        {error && <div className="alert alert-danger">{error}</div>}
-                                        <div className="mb-3">
-                                            <label className="form-label">Nombre</label>
-                                            <input
-                                                type="text"
-                                                name="firstName"
-                                                value={newClient.firstName}
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                required
-                                            />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                {/* Modal para agregar o editar clientes */}
+                {isModalOpen && (
+                    <>
+                        <div className="modal-backdrop-custom"></div>
+                        <div className="modal show d-block" tabIndex="-1">
+                            <div className="modal-dialog">
+                                <div className="modal-content">
+                                    <div className="modal-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                                        <h5 className="modal-title">{editingClientIndex !== null ? 'Editar cliente' : 'Agregar cliente'}</h5>
+                                        <div className="d-flex align-items-center justify-content-center">
+                                            <MdGroups className="fs-1" />
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Apellido</label>
-                                            <input
-                                                type="text"
-                                                name="lastName"
-                                                value={newClient.lastName}
-                                                onChange={handleInputChange}
-                                                className="form-control"
-                                                required
-                                            />
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-md-6">
-                                                <label className="form-label">Teléfono</label>
+                                        <button type="button" className="btn-close" onClick={closeModal}></button>
+                                    </div>
+                                    <div className="modal-body">
+                                        <form onSubmit={handleSubmit}>
+                                            {/* Mostrar errores específicos del formulario */}
+                                            {error && <div className="alert alert-danger">{error}</div>}
+                                            <div className="mb-3">
+                                                <label className="form-label">Nombre</label>
                                                 <input
-                                                    type="tel"
-                                                    name="phone"
-                                                    value={newClient.phone}
+                                                    type="text"
+                                                    name="firstName"
+                                                    value={newClient.firstName}
                                                     onChange={handleInputChange}
                                                     className="form-control"
                                                     required
                                                 />
                                             </div>
-                                            <div className="col-md-6">
-                                                <label className="form-label">Correo electrónico</label>
+                                            <div className="mb-3">
+                                                <label className="form-label">Apellido</label>
                                                 <input
-                                                    type="email"
-                                                    name="email"
-                                                    value={newClient.email}
+                                                    type="text"
+                                                    name="lastName"
+                                                    value={newClient.lastName}
                                                     onChange={handleInputChange}
                                                     className="form-control"
                                                     required
                                                 />
                                             </div>
-                                        </div>
-                                        <div className="modal-footer mt-3">
-                                            <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancelar</button>
-                                            <button type="submit" className="btn btn-warning">{editingClientIndex !== null ? 'Actualizar' : 'Crear'}</button>
-                                        </div>
-                                    </form>
+                                            <div className="row">
+                                                <div className="col-md-6">
+                                                    <label className="form-label">Teléfono</label>
+                                                    <input
+                                                        type="tel"
+                                                        name="phone"
+                                                        value={newClient.phone}
+                                                        onChange={handleInputChange}
+                                                        className="form-control"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="col-md-6">
+                                                    <label className="form-label">Correo electrónico</label>
+                                                    <input
+                                                        type="email"
+                                                        name="email"
+                                                        value={newClient.email}
+                                                        onChange={handleInputChange}
+                                                        className="form-control"
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="modal-footer mt-3">
+                                                <button type="button" className="btn btn-danger" onClick={closeModal}>Cancelar</button>
+                                                <button type="submit" className="btn btn-warning">{editingClientIndex !== null ? 'Actualizar' : 'Crear'}</button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </>
-            )}
+                    </>
+                )}
+            </div>
         </div>
     );
 };

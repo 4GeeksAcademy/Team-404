@@ -1,0 +1,47 @@
+/* Estilo del botón Panel de Control */
+.btn-secondary.dropdown-toggle {
+    background-color: transparent; /* Sin color de fondo */
+    color: #ffc107; /* Color del texto */
+    padding: 5px 15px; /* Espaciado interno reducido */
+    font-weight: bold; /* Negrita */
+    transition: all 0.3s; /* Transición suave */
+    box-shadow: none; /* Sin sombra */
+    border: none; /* Sin borde */
+}
+
+.btn-secondary.dropdown-toggle:hover {
+    background-color: rgba(138, 118, 30, 0.1); /* Color de fondo al pasar el ratón (sombra ligera) */
+    transform: translateY(-2px); /* Efecto de elevación al pasar el ratón */
+}
+
+/* Estilo del menú desplegable */
+.dropdown-menu {
+    border-radius: 0 0 10px 10px; /* Esquinas redondeadas del menú */
+    box-shadow: 0 4px 10px rgba(255, 0, 0, 0.1); /* Sombra del menú */
+}
+
+/* Estilo de los elementos del menú */
+.dropdown-item {
+    transition: background-color 0.2s; /* Transición de color de fondo */
+}
+
+.dropdown-item:hover {
+    background-color: #ffc107; /* Color al pasar el ratón */
+}
+
+/* Estilo del botón de usuario */
+.nav-link.dropdown-toggle {
+    color: #000; /* Color del texto */
+    background-color: transparent; /* Sin color de fondo */
+    padding: 5px 15px; /* Espaciado interno reducido */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Esquinas redondeadas */
+    font-weight: bold; /* Negrita */
+    transition: all 0.3s; /* Transición suave */
+    box-shadow: none; /* Sin sombra */
+}
+
+.nav-link.dropdown-toggle:hover {
+    background-color: rgba(255, 193, 7, 0.1); /* Color de fondo al pasar el ratón (sombra ligera) */
+    transform: translateY(-2px); /* Efecto de elevación al pasar el ratón */
+}

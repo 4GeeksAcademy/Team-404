@@ -88,7 +88,9 @@ const Autonomos = () => {
     }
 
     try {
+      // Enviar datos del nuevo colaborador a la API de Flask usando Axios
       const response = await axios.post(`${process.env.BACKEND_URL}/api/socios`, {
+        user_id: 1, // Aquí deberías pasar el user_id correcto
         nombre: formData.nombre,
         email: formData.email,
         tipo_precio: formData.tipoPrecio,

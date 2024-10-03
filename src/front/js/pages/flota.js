@@ -3,6 +3,8 @@ import { Context } from '../store/appContext';
 import "../../styles/flota.css";
 import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
+import ControlPanel from '../component/panelControl';
+
 
 export const Flota = () => {
     const { actions } = useContext(Context);
@@ -92,14 +94,14 @@ export const Flota = () => {
                     ejes: vehiculoData.ejes !== '' ? parseInt(vehiculoData.ejes, 10) : null,
                     peso: vehiculoData.peso !== '' ? parseFloat(vehiculoData.peso) : null,
                 };
-
+    
                 if (vehiculoData.id) {
                     // Editar vehículo existente
                     const response = await axios.put(`${process.env.BACKEND_URL}/api/vehiculos/${vehiculoData.id}`, updatedVehiculoData);
                     console.log('Vehículo editado', response.data);
                 } else {
-                    // Agregar nuevo vehículo
-                    const response = await axios.put(`${process.env.BACKEND_URL}/api/vehiculos/${vehiculoData.id}`, updatedVehiculoData);
+                    // Agregar nuevo vehículo (usar POST)
+                    const response = await axios.post(`${process.env.BACKEND_URL}/api/vehiculos`, updatedVehiculoData);
                     console.log('Vehículo guardado', response.data);
                 }
                 fetchVehiculos();
@@ -112,6 +114,7 @@ export const Flota = () => {
         }
         handleClose();
     };
+    
 
     const fetchVehiculos = async () => {
         try {
@@ -145,50 +148,171 @@ export const Flota = () => {
     }, []);
 
     return (
-        <div>
-            <div className="container mt-4">
-                <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
-                    <h3>Vehículos</h3>
-                    <button className="btn btn-warning" onClick={handleShowModal}>
-                        <strong>{activeTab === 'vehiculos' ? 'Añadir Vehículos' : 'Añadir Conductores'}</strong>
-                    </button>
-                </div>
-                {/* Tabla de Vehículos */}
-                {activeTab === 'vehiculos' && (
-                    <div className="mb-4">
-                        <h5>Lista de Vehículos</h5>
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Placa</th>
-                                    <th>Remolque</th>
-                                    <th>Costo por KM</th>
-                                    <th>Costo por Hora</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {vehiculos.map((vehiculo) => (
-                                    <tr key={vehiculo.id}>
-                                        <td>{vehiculo.id}</td>
-                                        <td>{vehiculo.nombre}</td>
-                                        <td>{vehiculo.placa}</td>
-                                        <td>{vehiculo.remolque}</td>
-                                        <td>{vehiculo.costo_km}</td>
-                                        <td>{vehiculo.costo_hora}</td>
-                                        <td>
-                                            <Button variant="warning" onClick={() => handleEdit(vehiculo)}>🔄</Button>
-                                            <Button variant="danger" onClick={() => handleDelete(vehiculo.id)}>🗑️</Button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+        <div className="min-vh-100 d-flex">
+            <ControlPanel />
+                <div className="container mt-4">
+                    <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
+                        <h3>Vehículos</h3>
+                        <button className="btn btn-primary" onClick={handleShowModal}>
+                            {activeTab === 'vehiculos' ? 'Añadir Vehículos' : 'Añadir Conductores'}
+                        </button>
                     </div>
-                )}
+                    {/* Tabla de Vehículos */}
+                    {activeTab === 'vehiculos' && (
+                        <div className="mb-4">
+                            <h5>Lista de Vehículos</h5>
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Placa</th>
+                                        <th>Remolque</th>
+                                        <th>Costo por KM</th>
+                                        <th>Costo por Hora</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {vehiculos.map((vehiculo) => (
+                                        <tr key={vehiculo.id}>
+                                            <td>{vehiculo.id}</td>
+                                            <td>{vehiculo.nombre}</td>
+                                            <td>{vehiculo.placa}</td>
+                                            <td>{vehiculo.remolque}</td>
+                                            <td>{vehiculo.costo_km}</td>
+                                            <td>{vehiculo.costo_hora}</td>
+                                            <td>
+                                                <Button variant="warning" onClick={() => handleEdit(vehiculo)}>🔄</Button>
+                                                <Button variant="danger" onClick={() => handleDelete(vehiculo.id)}>🗑️</Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
 
+
+                    {/* Modal para Vehículos  */}
+                    <Modal show={showModal} onHide={handleClose} size="lg" aria-labelledby="modal-title">
+                        <Modal.Header closeButton>
+                            <Modal.Title id="modal-title">
+                                {activeTab === 'vehiculos' ? '🚚​ Añadir Vehículos' : '🤵🏻 Añadir Conductores'}
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            {activeTab === 'vehiculos' && (
+                                <div>
+                                    <form>
+                                        <div className="form-group">
+                                            <label>Nombre</label>
+                                            <input
+                                                type="text"
+                                                name="nombre"
+                                                className="form-control"
+                                                value={vehiculoData.nombre}
+                                                onChange={handleVehiculoChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Placa</label>
+                                            <input
+                                                type="text"
+                                                name="placa"
+                                                className="form-control"
+                                                value={vehiculoData.placa}
+                                                onChange={handleVehiculoChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Remolque</label>
+                                            <input
+                                                type="text"
+                                                name="remolque"
+                                                className="form-control"
+                                                value={vehiculoData.remolque}
+                                                onChange={handleVehiculoChange}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Costo por KM</label>
+                                            <input
+                                                type="number"
+                                                name="costo_km"
+                                                className="form-control"
+                                                value={vehiculoData.costo_km}
+                                                onChange={handleVehiculoChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Costo por Hora</label>
+                                            <input
+                                                type="number"
+                                                name="costo_hora"
+                                                className="form-control"
+                                                value={vehiculoData.costo_hora}
+                                                onChange={handleVehiculoChange}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Ejes</label>
+                                            <input
+                                                type="number"
+                                                name="ejes"
+                                                className="form-control"
+                                                value={vehiculoData.ejes}
+                                                onChange={handleVehiculoChange}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Peso</label>
+                                            <input
+                                                type="number"
+                                                name="peso"
+                                                className="form-control"
+                                                value={vehiculoData.peso}
+                                                onChange={handleVehiculoChange}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Combustible</label>
+                                            <input
+                                                type="text"
+                                                name="combustible"
+                                                className="form-control"
+                                                value={vehiculoData.combustible}
+                                                onChange={handleVehiculoChange}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Emisión</label>
+                                            <input
+                                                type="text"
+                                                name="emision"
+                                                className="form-control"
+                                                value={vehiculoData.emision}
+                                                onChange={handleVehiculoChange}
+                                            />
+                                        </div>
+                                    </form>
+                                </div>
+                            )}
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={handleClose}>
+                                Cerrar
+                            </Button>
+                            <Button variant="primary" onClick={handleSave}>
+                                Guardar
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                </div>
                 {/* Modal para Vehículos y Conductores */}
                 <Modal show={showModal} onHide={handleClose} size="lg" aria-labelledby="modal-title">
                     <Modal.Header closeButton>
@@ -308,6 +432,5 @@ export const Flota = () => {
                     </Modal.Footer>
                 </Modal>
             </div>
-        </div>
     );
 };
