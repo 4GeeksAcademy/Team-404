@@ -179,6 +179,7 @@ class Socio(db.Model):
             'email' : self.email,
             'tipo_precio' : self.tipo_precio, 
             'precio' : self.precio, 
+            'periodos_espera' : self.periodos_espera,
             'incluir_peajes' : self.incluir_peajes,
             'user_id' : self.user_id
         }
