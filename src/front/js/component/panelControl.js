@@ -1,9 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import '../../styles/panelcontrol.css'; // Archivo CSS actualizado
+
 
 const ControlPanel = ({ onLogout }) => {
+
+    const handleLogout = () => {
+        // Eliminar el token de autenticación de localStorage
+        localStorage.removeItem('authToken');
+
+        // Redirigir a la página de inicio de sesión usando la variable global del .env
+        window.location.href = process.env.REACT_APP_BACKEND_URL;
+    };
+
     return (
         <div className="profile-control-panel">
             <h1>Panel de Control</h1>
@@ -39,7 +50,12 @@ const ControlPanel = ({ onLogout }) => {
                     </Link>
                 </li>
             </ul>
-            <button onClick={onLogout} className="logout-button">
+            <Link to="/profile">
+                <button id="mi-perfil-button">
+                    <FontAwesomeIcon icon={faUser} /> Mi Perfil
+                </button>
+            </Link>
+            <button onClick={handleLogout} className="logout-button">
                 <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
             </button>
         </div>

@@ -123,7 +123,7 @@ const ClientListTable = () => {
             <div className="container-fluid py-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2 className="fw-semibold">Clientes</h2>
-                    <button onClick={() => setIsModalOpen(true)} className="btn btn-warning text-white">+ Agregar cliente</button>
+                    <button onClick={() => setIsModalOpen(true)} className="btn btn-warning text-black"><strong>+ Agregar cliente</strong></button>
                 </div>
 
                 {/* Mostrar errores generales */}

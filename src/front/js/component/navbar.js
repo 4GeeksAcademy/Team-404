@@ -8,6 +8,7 @@ import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt } fro
 
 
 export const Navbar = () => {
+
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const location = useLocation();
@@ -39,6 +40,17 @@ export const Navbar = () => {
         setShowModal(false);
         setIsEditing(false); // Reiniciar el estado de edición
         setSuccessMessage(''); // Reiniciar el mensaje de éxito al cerrar el modal
+    };
+
+    const handleLogout = (event) => {
+        // Prevenir el comportamiento por defecto del enlace
+        event.preventDefault();
+
+        // Eliminar el token de autenticación de localStorage
+        localStorage.removeItem('authToken');
+
+        // Redirigir a la página de inicio de sesión usando la variable global del .env
+        window.location.href = process.env.REACT_APP_BACKEND_URL;
     };
 
     const handleInputChange = (e) => {
@@ -220,7 +232,15 @@ export const Navbar = () => {
                                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><button className="dropdown-item" onClick={handleProfileClick}>Mi Perfil</button></li>
                                     <li><hr className="dropdown-divider" /></li>
-                                    <li><a className="dropdown-item" href="/logout">Cerrar Sesión</a></li>
+                                    <li>
+                                        <a
+                                            className="dropdown-item"
+                                            href="/logout"
+                                            onClick={handleLogout}
+                                        >
+                                            Cerrar Sesión
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>

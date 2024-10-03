@@ -56,12 +56,6 @@ const Mapa = () => {
         setRouteInfo(null);
     };
 
-    // Función para navegar al perfil
-    const handleProfileClick = () => {
-        navigate('/profile'); // Navega al perfil sin recargar
-        window.location.reload();
-    };
-
     const iconStyle = {
         fontSize: '2rem',
         color: '#ffc107',
@@ -78,17 +72,6 @@ const Mapa = () => {
                         <div className="card h-100">
                             <div className="card-body">
                                 <div className="d-flex flex-column align-items-start mb-4">
-                                    <Link
-                                        to="#"
-                                        style={{ textDecoration: 'none', marginBottom: '0.5rem' }}
-                                        onClick={handleProfile}
-                                    >
-                                        <IoMdArrowRoundBack
-                                            style={iconStyle}
-                                            onMouseEnter={(e) => e.target.style.color = '#ffc107'}
-                                            onMouseLeave={(e) => e.target.style.color = '#000000'}
-                                        />
-                                    </Link>
                                     <h1 className="card-title">Planner</h1>
                                 </div>
                                 <CalculateDistance
