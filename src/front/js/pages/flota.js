@@ -154,7 +154,7 @@ export const Flota = () => {
             <ControlPanel />
             <div className="container mt-4">
                 <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
-                    <h3>Vehículos</h3>
+                    <h2>Vehículos</h2>
                     <button className="btn btn-warning fw-bold" onClick={handleShowModal}>
                         {activeTab === 'vehiculos' ? 'Añadir Vehículos' : 'Añadir Conductores'}
                     </button>

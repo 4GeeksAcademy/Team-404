@@ -401,9 +401,9 @@ export const Direcciones = () => {
                             <div className="modal-buttons">
                                 <button type="button" className="cancel-btn" onClick={closeModal}>Cancelar</button>
                                 {currentAddressId ? (
-                                    <button type="button" className="direccion-btn" onClick={handleSaveChanges}>Guardar Cambios</button>
+                                    <button className="btn fw-bold" onClick={handleSaveChanges}>Guardar Cambios</button>
                                 ) : (
-                                    <button type="button" className="direccion-crear-btn btn-warning" onClick={handleCreateAddress}>Crear Dirección</button>
+                                    <button className="btn btn-warning" onClick={handleCreateAddress}>Crear Dirección</button>
                                 )}
                             </div>
                         </div>
