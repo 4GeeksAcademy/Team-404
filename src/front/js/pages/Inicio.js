@@ -1,11 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { AuthContext } from "../component/AuthContext"; // Asegúrate de que la ruta sea correcta
 import "../../styles/home.css";
 
 export const Inicio = () => {
-    const { login } = useContext(AuthContext); // Añade esta línea
     const [signupData, setSignUpData] = useState({
         email: "",
         password: ""
@@ -61,7 +59,9 @@ export const Inicio = () => {
 
             if (response.status === 200) {
                 const { token, user } = response.data;  // Suponiendo que el backend devuelva los datos del usuario
-                login(token, user); // Llama a la función login del contexto
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(user));  // Guardar los datos del usuario
+
                 navigate('/profile');  // Redirigir a la página de perfil
             }
         } catch (error) {
