@@ -16,6 +16,7 @@ export const Navbar = () => {
     const [editableUserData, setEditableUserData] = useState({});
     const [isEditing, setIsEditing] = useState(false);
     const [successMessage, setSuccessMessage] = useState(''); // Estado para el mensaje de éxito
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
     useEffect(() => {
         actions.fetchUserData(); // Cargar datos del usuario al montar el componente
@@ -155,48 +156,50 @@ export const Navbar = () => {
                     <div className="collapse navbar-collapse justify-content-end" id="navbarTogglerDemo02">
                         <ul className="navbar-nav mb-2 mb-lg-0">
                             {/* Botón Panel de Control */}
-                            <li className="nav-item dropdown">
-                                <button
-                                    className="btn btn-secondary dropdown-toggle"
-                                    type="button"
-                                    id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                    style={{
-                                        marginRight: '10px', // Espaciado a la derecha
-                                        fontWeight: 'bold', // Negrita
-                                    }}
-                                >
-                                    Panel de Control
-                                </button>
-                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                        <Link className="dropdown-item" to="/Mapa" onClick={() => { window.location.href = "/Mapa"; }}>
-                                            <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item" to="/direcciones">
-                                            <FontAwesomeIcon icon={faHome} /> Mis Direcciones
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item" to="/flota">
-                                            <FontAwesomeIcon icon={faTruck} /> Vehículos
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item" to="/autonomos">
-                                            <FontAwesomeIcon icon={faUserTie} /> Autónomos
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link className="dropdown-item" to="/clientes">
-                                            <FontAwesomeIcon icon={faUsers} /> Clientes
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </li>
+                            {window.location.href !== backendUrl && ( // Condición para no mostrar el Panel de Control
+                                <li className="nav-item dropdown">
+                                    <button
+                                        className="btn btn-secondary dropdown-toggle"
+                                        type="button"
+                                        id="dropdownMenuButton"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        style={{
+                                            marginRight: '10px', // Espaciado a la derecha
+                                            fontWeight: 'bold', // Negrita
+                                        }}
+                                    >
+                                        Panel de Control
+                                    </button>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <li>
+                                            <Link className="dropdown-item" to="/Mapa" onClick={() => { window.location.href = "/Mapa"; }}>
+                                                <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link className="dropdown-item" to="/direcciones">
+                                                <FontAwesomeIcon icon={faHome} /> Mis Direcciones
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link className="dropdown-item" to="/flota">
+                                                <FontAwesomeIcon icon={faTruck} /> Vehículos
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link className="dropdown-item" to="/autonomos">
+                                                <FontAwesomeIcon icon={faUserTie} /> Autónomos
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link className="dropdown-item" to="/clientes">
+                                                <FontAwesomeIcon icon={faUsers} /> Clientes
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                </li>
+                            )}
 
                             {/* Enlace a Nosotros */}
                             <li className="nav-item">
