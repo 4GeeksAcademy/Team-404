@@ -1,21 +1,19 @@
-import React, { useContext } from 'react'; // Asegúrate de importar useContext
-import { Link, useNavigate } from 'react-router-dom'; // Importa useNavigate
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/panelcontrol.css'; // Archivo CSS actualizado
-import { AuthContext } from "./AuthContext";
 
-const ControlPanel = () => {
-    const { logout } = useContext(AuthContext); // Asegúrate de usar useContext correctamente
-    const navigate = useNavigate(); // Crea una instancia de useNavigate
 
-    const handleLogout = async (event) => {
-        event.preventDefault();
-        await logout();
-        navigate("/");
+const ControlPanel = ({ onLogout }) => {
+
+    const handleLogout = () => {
+        // Eliminar el token de autenticación de localStorage
+        localStorage.removeItem('authToken');
+
+        // Redirigir a la página de inicio de sesión usando la variable global del .env
+        window.location.href = process.env.REACT_APP_BACKEND_URL;
     };
-
-    const isHomePage = location.pathname === "/";
 
     return (
         <div className="profile-control-panel">
@@ -23,7 +21,11 @@ const ControlPanel = () => {
             <ul>
                 <li>
                     <Link
-                        to="/Mapa">
+                        to="/Mapa"
+                        onClick={() => {
+                            window.location.href = "/Mapa";
+                        }}
+                    >
                         <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
                     </Link>
                 </li>
@@ -61,4 +63,3 @@ const ControlPanel = () => {
 };
 
 export default ControlPanel;
-

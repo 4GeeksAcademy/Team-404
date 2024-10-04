@@ -4,9 +4,6 @@ import { Loader } from '@googlemaps/js-api-loader';
 import "../../styles/direccion.css";
 import { Context } from '../store/appContext';
 import ControlPanel from '../component/panelControl';
-import { FaTrash } from "react-icons/fa";
-import { LuPenSquare } from "react-icons/lu";
-
 
 export const Direcciones = () => {
     const { store } = useContext(Context);
@@ -254,7 +251,7 @@ export const Direcciones = () => {
             <ControlPanel />
             <div className="container mt-4">
                 <div className="direcciones-header d-flex justify-content-between align-items-center mb-4">
-                    <h2>Mis Direcciones</h2>
+                    <h3>Mis Direcciones</h3>
                     <label>
                         Filtrar por categoría:
                         <select onChange={(e) => setFilter(e.target.value)}>
@@ -267,8 +264,8 @@ export const Direcciones = () => {
                     <button className="btn btn-warning" onClick={openModal}><strong>Nueva dirección</strong></button>
                 </div>
 
-                <table className="table table-striped table-hover">
-                    <thead>
+                <table className="table table-striped table-hover text-center">
+                    <thead className="thead-dark">
                         <tr>
                             <th>Nombre</th>
                             <th>Dirección</th>
@@ -286,8 +283,8 @@ export const Direcciones = () => {
                                     {direccion.categoria}
                                 </td>
                                 <td>
-                                    <button className="btn" onClick={() => handleEdit(direccion)}><LuPenSquare />​</button>
-                                    <button className="btn text-danger"onClick={() => handleDelete(direccion.id)}><FaTrash />​</button>
+                                    <button onClick={() => handleEdit(direccion)} className="btn btn-warning">🔄​</button>
+                                    <button onClick={() => handleDelete(direccion.id)} className="btn btn-danger">🗑️​</button>
                                 </td>
                             </tr>
                         ))}

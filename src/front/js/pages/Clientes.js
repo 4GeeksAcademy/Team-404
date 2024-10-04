@@ -120,7 +120,7 @@ const ClientListTable = () => {
     return (
         <div className="min-vh-100 d-flex">
             <ControlPanel />
-            <div className="container mt-4">
+            <div className="container-fluid py-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2 className="fw-semibold">Clientes</h2>
                     <button onClick={() => setIsModalOpen(true)} className="btn btn-warning text-black"><strong>+ Agregar cliente</strong></button>
@@ -132,8 +132,8 @@ const ClientListTable = () => {
                 )}
 
                 {/* Tabla de clientes */}
-                <table className="table table-striped w-100">
-                    <thead>
+                <table className="table table-bordered w-100">
+                    <thead className="table-light">
                         <tr>
                             <th>Nombre</th>
                             <th>Correo electrónico</th>
@@ -148,8 +148,20 @@ const ClientListTable = () => {
                                 <td>{client.email}</td>
                                 <td>{client.phone}</td>
                                 <td>
-                                    <button className="btn" onClick={() => handleEditClient(index)}><LuPenSquare /></button>
-                                    <button className="btn text-danger" onClick={() => handleDeleteClient(index)}><FaTrash /></button>
+                                    <div className="d-flex justify-content-around">
+                                        <button
+                                            className="btn btn-light btn-sm"
+                                            onClick={() => handleEditClient(index)}
+                                        >
+                                            <LuPenSquare />
+                                        </button>
+                                        <button
+                                            className="btn btn-light btn-sm text-danger"
+                                            onClick={() => handleDeleteClient(index)}
+                                        >
+                                            <FaTrash />
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

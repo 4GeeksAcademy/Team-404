@@ -1,20 +1,26 @@
-// src/pages/Mapa.js
 import React, { useEffect, useRef, useState } from 'react';
-import loaderInstance from '../component/Loader';  // Importamos el loader singleton
+import { Loader } from '@googlemaps/js-api-loader';
 import CalculateDistance from '../component/calculateDistance';
+import { IoMdArrowRoundBack } from "react-icons/io";
 import ControlPanel from '../component/panelControl';
 import { Link, useNavigate } from 'react-router-dom'; // Importa useNavigate
 
 const Mapa = () => {
+    const apiOptions = { apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY };
     const mapRef = useRef(null);
     const [map, setMap] = useState(null);
     const [directionsRenderer, setDirectionsRenderer] = useState(null);
     const [routeInfo, setRouteInfo] = useState(null);
     const navigate = useNavigate();
 
-    // Usamos el Loader Singleton en el useEffect
     useEffect(() => {
-        loaderInstance.load().then(() => {
+        const loader = new Loader({
+            apiKey: apiOptions.apiKey,
+            version: "weekly",
+            libraries: ["places"]
+        });
+
+        loader.load().then(() => {
             const mapInstance = new window.google.maps.Map(mapRef.current, {
                 center: { lat: 40.416775, lng: -3.703790 },
                 zoom: 6,
@@ -38,9 +44,9 @@ const Mapa = () => {
         setRouteInfo(info);
     };
 
-    // Eliminamos window.location.reload() para evitar recargar la página
     const handleProfile = () => {
-        navigate('/profile');  // Navegamos a /profile sin recargar la página
+        navigate('/profile'); // Mostrar el modal al hacer clic en "Mi Perfil"
+        window.location.reload()
     };
 
     const clearRoute = () => {
@@ -60,19 +66,23 @@ const Mapa = () => {
     return (
         <div className="min-vh-100 d-flex">
             <ControlPanel />
-            <div className="container mt-4">
-                <h2 className="card-title">Planner</h2>
+            <div className="container-fluid">
                 <div className="row g-4">
                     <div className="col-lg-4">
-                        <div className="d-flex flex-column align-items-start mb-4">
-                            {/* Otros elementos del panel de control */}
+                        <div className="card h-100">
+                            <div className="card-body">
+                                <div className="d-flex flex-column align-items-start mb-4">
+                                    <h1 className="card-title">Planner</h1>
+                                </div>
+                                <CalculateDistance
+                                    map={map}
+                                    onRouteCalculated={handleRouteCalculated}
+                                    onRouteInfo={handleRouteInfo}
+                                    onClearRoute={clearRoute}
+                                />
+
+                            </div>
                         </div>
-                        <CalculateDistance
-                            map={map}
-                            onRouteCalculated={handleRouteCalculated}
-                            onRouteInfo={handleRouteInfo}
-                            onClearRoute={clearRoute}
-                        />
                     </div>
                     <div className="col-lg-8">
                         <div className="card h-100">
@@ -153,4 +163,3 @@ const Mapa = () => {
 };
 
 export default Mapa;
-
