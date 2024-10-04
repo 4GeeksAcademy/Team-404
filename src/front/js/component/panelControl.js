@@ -11,8 +11,8 @@ const ControlPanel = () => {
 
     const handleLogout = async (event) => {
         event.preventDefault();
-        await logout(); 
-        navigate("/"); 
+        await logout();
+        navigate("/");
     };
 
     const isHomePage = location.pathname === "/";
@@ -23,11 +23,7 @@ const ControlPanel = () => {
             <ul>
                 <li>
                     <Link
-                        to="/Mapa"
-                        onClick={() => {
-                            window.location.href = "/Mapa";
-                        }}
-                    >
+                        to="/Mapa">
                         <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
                     </Link>
                 </li>

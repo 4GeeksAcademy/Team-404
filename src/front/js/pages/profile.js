@@ -1,12 +1,12 @@
+// src/pages/Profile.js
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkedAlt, faHome, faTruck, faUserTie, faUsers, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { Loader } from '@googlemaps/js-api-loader';
 import '../../styles/Profile.css'; // Archivo CSS actualizado
 import { Context } from '../store/appContext';
-
+import loaderInstance from "../component/Loader"; // Importa el Loader singleton
 
 const Profile = () => {
     const [user, setUser] = useState(null);
@@ -16,9 +16,6 @@ const Profile = () => {
     const mapRef = useRef(null);
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-
-
-
 
     // Función para obtener los datos del usuario autenticado
     const fetchUserData = async () => {
@@ -37,12 +34,9 @@ const Profile = () => {
         }
     };
 
+    // Inicializa el mapa usando el loader singleton
     const initializeMap = () => {
-        const loader = new Loader({
-            apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-            version: 'weekly',
-        });
-        loader.load().then(() => {
+        loaderInstance.load().then(() => {
             const newMap = new window.google.maps.Map(mapRef.current, {
                 center: { lat: -34.397, lng: 150.644 },
                 zoom: 8,
@@ -52,8 +46,6 @@ const Profile = () => {
             console.error("Error al cargar la API de Google Maps: ", e);
         });
     };
-
-
 
     const handleLogout = () => {
         // Eliminar el token de autenticación de localStorage
@@ -93,7 +85,7 @@ const Profile = () => {
                 // Actualizar el estado 'user' cuando los datos se obtienen
                 if (store.userData) {
                     setUser(store.userData);
-                    console.log(store.userData)
+                    console.log(store.userData);
                 }
             } catch (error) {
                 // Manejar el error
@@ -109,7 +101,7 @@ const Profile = () => {
     }, []); // El array vacío asegura que solo se ejecute una vez al montar el componente
 
     useEffect(() => {
-        initializeMap();
+        initializeMap();  // Inicializa el mapa usando el Loader singleton
     }, []);
 
     useEffect(() => {
@@ -154,7 +146,7 @@ const Profile = () => {
                         </Link>
                     </li>
                 </ul>
-                <Link >
+                <Link>
                     <button onClick={handleLogout} className="logout-button">
                         <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
                     </button>

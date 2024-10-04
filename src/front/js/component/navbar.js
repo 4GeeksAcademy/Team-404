@@ -31,6 +31,7 @@ export const Navbar = () => {
     };
 
     const handleProfile = () => {
+        event.preventDefault();
         navigate('/profile');
     };
 
@@ -120,7 +121,7 @@ export const Navbar = () => {
                         </span>
                     ) : (
                         <Link className="navbar-brand d-flex align-items-center"
-                            to="#"
+                            to="/profile"
                             style={{
                                 color: '#000',
                                 fontSize: '1.2rem',
@@ -130,8 +131,7 @@ export const Navbar = () => {
                                 fontWeight: 'bold',
                                 boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)',
                                 transition: 'all 0.3s',
-                            }}
-                            onClick={handleProfile}>
+                            }}>
                             RutaTrack
                             <span className="ms-2">🚚</span>
                         </Link>
@@ -153,7 +153,8 @@ export const Navbar = () => {
                                 </button>
                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <li>
-                                        <Link className="dropdown-item" to="/Mapa" onClick={() => { window.location.href = "/Mapa"; }}>
+                                    <Link className="dropdown-item" to="/Mapa" onClick={() => { navigate("/Mapa"); }}>
+
                                             <FontAwesomeIcon icon={faMapMarkedAlt} /> Planner (Ruta)
                                         </Link>
                                     </li>
@@ -205,7 +206,8 @@ export const Navbar = () => {
                                     role="button"
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false">
-                                    {isHomePage ? "¡Bienvenido!" : `Hola ${store.userData && store.userData.name ? store.userData.name : 'Invitado'}!`}
+                                    {isHomePage ? "¡Bienvenido!" : `Hola ${store.userData?.name ?? 'Invitado'}!`}
+
                                 </button>
                                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><button className="dropdown-item" onClick={handleProfileClick}>Mi Perfil</button></li>
