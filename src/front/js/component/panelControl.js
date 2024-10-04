@@ -15,6 +15,11 @@ const ControlPanel = ({ onLogout }) => {
         window.location.href = process.env.REACT_APP_BACKEND_URL;
     };
 
+    const handleClick = () => {
+        // Cambiar la ubicación y recargar la página
+        window.location.href = '/profile';
+    };
+
     return (
         <div className="profile-control-panel">
             <h1>Panel de Control</h1>
@@ -50,11 +55,9 @@ const ControlPanel = ({ onLogout }) => {
                     </Link>
                 </li>
             </ul>
-            <Link to="/profile">
-                <button id="mi-perfil-button">
-                    <FontAwesomeIcon icon={faUser} /> Mi Perfil
-                </button>
-            </Link>
+            <button id="mi-perfil-button" onClick={handleClick}>
+                <FontAwesomeIcon icon={faUser} /> Mi Perfil
+            </button>
             <button onClick={handleLogout} className="logout-button">
                 <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
             </button>
