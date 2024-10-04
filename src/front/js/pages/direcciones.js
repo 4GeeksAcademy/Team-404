@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import axios from "axios";
-import { Loader } from '@googlemaps/js-api-loader';
+import loaderInstance from "../component/Loader";
 import "../../styles/direccion.css";
 import { Context } from '../store/appContext';
 import ControlPanel from '../component/panelControl';
@@ -78,21 +78,19 @@ export const Direcciones = () => {
     });
 
     const initializeMap = () => {
-        const loader = new Loader({
-            apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-            version: 'weekly',
-        });
-
-        loader.load().then(() => {
-            const newMap = new window.google.maps.Map(mapRef.current, {
-                center: { lat: -34.397, lng: 150.644 },
-                zoom: 8,
+        if (!map && mapRef.current) { // Solo inicializa si no hay un mapa ya existente
+            loaderInstance.load().then(() => {
+                const newMap = new window.google.maps.Map(mapRef.current, {
+                    center: { lat: -34.397, lng: 150.644 },
+                    zoom: 8,
+                });
+                setMap(newMap);
+            }).catch(e => {
+                console.error("Error al cargar la API de Google Maps: ", e);
             });
-            setMap(newMap);
-        }).catch(e => {
-            console.error("Error al cargar la API de Google Maps: ", e);
-        });
+        }
     };
+
 
     const handleCountryChange = (event) => {
         const countryCode = event.target.value;
@@ -247,7 +245,8 @@ export const Direcciones = () => {
         if (isModalOpen && !map) {
             initializeMap();
         }
-    }, [isModalOpen]);
+    }, [isModalOpen, map]); // Inicializa solo si el modal está abierto y el mapa no ha sido creado
+
 
     return (
         <div className="min-vh-100 d-flex">
@@ -287,7 +286,7 @@ export const Direcciones = () => {
                                 </td>
                                 <td>
                                     <button className="btn" onClick={() => handleEdit(direccion)}><LuPenSquare />​</button>
-                                    <button className="btn text-danger"onClick={() => handleDelete(direccion.id)}><FaTrash />​</button>
+                                    <button className="btn text-danger" onClick={() => handleDelete(direccion.id)}><FaTrash />​</button>
                                 </td>
                             </tr>
                         ))}
