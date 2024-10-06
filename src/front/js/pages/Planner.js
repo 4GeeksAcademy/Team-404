@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import CalculateDistance from '../component/calculateDistance';
-import { IoMdArrowRoundBack } from "react-icons/io";
+
 import ControlPanel from '../component/panelControl';
-import { Link, useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 
 const Mapa = () => {
     const apiOptions = { apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY };
