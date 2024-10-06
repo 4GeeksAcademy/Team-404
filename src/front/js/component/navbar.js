@@ -71,7 +71,7 @@ export const Navbar = () => {
 
     const handleSaveChanges = async () => {
         try {
-            const response = await fetch(`https://effective-space-couscous-v66946px9jwjhxw65-3001.app.github.dev/api/users/${store.userData.id}`, {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/users/${store.userData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
